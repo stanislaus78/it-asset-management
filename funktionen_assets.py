@@ -266,25 +266,50 @@ def assets_freigeben(assets, inventarnummer):
 
 
 def assets_speichern_csv(assets):
-    assets.csv
-    for asset in assets:
-        with open("assets.csv", "w") as datei:
-            datei.write("Hallo")
 
-        """asset.inventarnummer
-        asset.hersteller
-        asset.status
-        asset.geraetetyp
-        asset.standort
-        asset.zimmer
-        asset.organisationseinheit"""
+    with open("assets.csv", "w") as datei:
+
+        datei.write(
+            "inventarnummer,hersteller,status,geraetetyp,standort,zimmer,organisationseinheit\n"
+        )
+        for asset in assets:
+            zeile = zeile = (
+                f"{asset.inventarnummer},"
+                f"{asset.hersteller},"
+                f"{asset.status},"
+                f"{asset.geraetetyp},"
+                f"{asset.standort},"
+                f"{asset.zimmer},"
+                f"{asset.organisationseinheit}"
+            )
+            datei.write(zeile + "\n")
 
 
 
 
+
+
+
+from asset import Asset
 
 def assets_laden_csv():
-    assets = assets_laden_csv()
+    assets = []
+    with open("assets.csv", "r") as datei:
+        kopfzeile = datei.readline()
+        for zeile in datei:
+            werte = zeile.strip().split(",")
+            asset = Asset(
+                werte[0],
+                werte[1],
+                werte[2],
+                werte[3],
+                werte[4],
+                werte[5],
+                werte[6]
+            )
+            assets.append(asset)
+    return assets
+
 
 
 def menue():
@@ -305,6 +330,8 @@ def menue():
     print("13 - Assets eines Mitarbeiters anzeigen")
     print("14 - Assets freigeben")
     print("15 - Alle Mitarbeiter anzeigen")
+    print("16 - Änderungen speichern")
+    print("17 - Assets laden")
     print("0 - Beenden")
 
 

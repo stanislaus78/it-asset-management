@@ -1,0 +1,5 @@
+inventarnummer,hersteller,status,geraetetyp,standort,zimmer,organisationseinheit
+LT001,Dell,Ausgegeben,Laptop,Zlb,308,602
+LT002,Lenovo,Lager,Stand-PC,Zlb,348,600
+LT003,HP,Lager,Monitor,Uza,Bio Labor,603
+LT004,Samsung,Lager,Diensthandy,Zlb,349,601
