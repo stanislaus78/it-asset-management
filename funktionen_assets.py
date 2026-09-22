@@ -1,5 +1,6 @@
 from asset import Asset
 from funktionen_mitarbeiter import *
+from funktionen_mitarbeiter import mitarbeiter_suchen
 from mitarbeiter import Mitarbeiter
 
 def asset_suchen(assets,inventarnummer):
@@ -296,7 +297,7 @@ def assets_speichern_csv(assets):
 
 from asset import Asset
 
-def assets_laden_csv():
+def assets_laden_csv(mitarbeiter_liste):
     assets = []
     with open("assets.csv", "r") as datei:
         kopfzeile = datei.readline()
@@ -312,7 +313,15 @@ def assets_laden_csv():
                 werte[6],
                 #werte[7]
             )
+            if len(werte) > 7 and werte[7] != "":
+                mitarbeiter = mitarbeiter_suchen(
+                    mitarbeiter_liste,
+                    werte[7]
+                )
+                if mitarbeiter is not None:
+                    asset.mitarbeiter = mitarbeiter
             assets.append(asset)
+    print(f"{len(assets)} Assets wurden geladen.")
     return assets
 
 

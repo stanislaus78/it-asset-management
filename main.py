@@ -141,7 +141,8 @@ while True:
         assets_speichern_csv(assets)
 
     elif auswahl == "17":
-        assets = assets_laden_csv()
+        mitarbeiter_liste = mitarbeiter_laden_csv()
+        assets = assets_laden_csv(mitarbeiter_liste)
         if len(assets) > 0:
             print(f"{len(assets)} Assets wurden geladen.")
         else:
