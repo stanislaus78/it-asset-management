@@ -141,9 +141,19 @@ while True:
         assets_speichern_csv(assets)
 
     elif auswahl == "17":
-        assets_laden_csv()
+        assets = assets_laden_csv()
         if len(assets) > 0:
             print(f"{len(assets)} Assets wurden geladen.")
+        else:
+            print("Keine Assets gefunden.")
+
+    elif auswahl == "18":
+        mitarbeiter_csv(mitarbeiter_liste)
+
+    elif auswahl == "19":
+        mitarbeiter_liste = mitarbeiter_laden_csv()
+        if len(mitarbeiter_liste) > 0:
+            print(f"{len(mitarbeiter_liste)} Assets wurden geladen.")
         else:
             print("Keine Assets gefunden.")
 

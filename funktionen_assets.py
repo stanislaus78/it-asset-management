@@ -1,6 +1,6 @@
 from asset import Asset
 from funktionen_mitarbeiter import *
-
+from mitarbeiter import Mitarbeiter
 
 def asset_suchen(assets,inventarnummer):
 
@@ -270,17 +270,21 @@ def assets_speichern_csv(assets):
     with open("assets.csv", "w") as datei:
 
         datei.write(
-            "inventarnummer,hersteller,status,geraetetyp,standort,zimmer,organisationseinheit\n"
+            "inventarnummer,hersteller,status,geraetetyp,standort,zimmer,organisationseinheit, mitarbeiter\n"
         )
         for asset in assets:
-            zeile = zeile = (
+            mitarbeiter_name = ""
+            if asset.mitarbeiter is not None:
+                mitarbeiter_name = asset.mitarbeiter.name
+            zeile = (
                 f"{asset.inventarnummer},"
                 f"{asset.hersteller},"
                 f"{asset.status},"
                 f"{asset.geraetetyp},"
                 f"{asset.standort},"
                 f"{asset.zimmer},"
-                f"{asset.organisationseinheit}"
+                f"{asset.organisationseinheit},"
+                f"{mitarbeiter_name}"
             )
             datei.write(zeile + "\n")
 
@@ -305,10 +309,12 @@ def assets_laden_csv():
                 werte[3],
                 werte[4],
                 werte[5],
-                werte[6]
+                werte[6],
+                #werte[7]
             )
             assets.append(asset)
     return assets
+
 
 
 
@@ -332,6 +338,8 @@ def menue():
     print("15 - Alle Mitarbeiter anzeigen")
     print("16 - Änderungen speichern")
     print("17 - Assets laden")
+    print("18 - Mitarbeiter speichern")
+    print("19 - Mitarbeiter laden")
     print("0 - Beenden")
 
 
