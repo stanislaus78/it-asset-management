@@ -33,6 +33,12 @@ cursor = verbindung.cursor()
 #cursor.execute("SELECT * FROM assets")
 cursor.execute("SELECT * FROM assets WHERE inventarnummer = 'LT001';")
 
+# cursor.execute("""
+# UPDATE assets
+# SET status = 'Lager'
+# WHERE inventarnummer = 'LT001';
+# """)
+
 for asset in cursor.fetchall():
     print(asset)
 verbindung.commit()
