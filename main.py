@@ -8,20 +8,22 @@ from funktionen_mitarbeiter import *
 
 # Mitarbeiter
 
-m1 = Mitarbeiter("Stanislav", "IT")
-m2 = Mitarbeiter("Marina", "Forschung")
-m3 = Mitarbeiter("Peter", "Buchhaltung")
-
-mitarbeiter_liste = [m1, m2, m3]
+# m1 = Mitarbeiter("Stanislav", "IT")
+# m2 = Mitarbeiter("Marina", "Forschung")
+# m3 = Mitarbeiter("Peter", "Buchhaltung")
+#
+# mitarbeiter_liste = [m1, m2, m3]
+mitarbeiter_liste = []
 
 # Assets
 
-a1 = Asset("LT001", "Dell", "Ausgegeben", "Laptop", "Zlb", "308", "602")
-a2 = Asset("LT002", "Lenovo", "Lager", "Stand-PC", "Zlb", "348", "600")
-a3 = Asset("LT003", "HP", "Lager", "Monitor", "Uza", "Bio Labor", "603")
-a4 = Asset("LT004", "Samsung", "Lager", "Diensthandy", "Zlb", "349", "601")
-
-assets = [a1, a2, a3, a4]
+# a1 = Asset("LT001", "Dell", "Ausgegeben", "Laptop", "Zlb", "308", "602")
+# a2 = Asset("LT002", "Lenovo", "Lager", "Stand-PC", "Zlb", "348", "600")
+# a3 = Asset("LT003", "HP", "Lager", "Monitor", "Uza", "Bio Labor", "603")
+# a4 = Asset("LT004", "Samsung", "Lager", "Diensthandy", "Zlb", "349", "601")
+#
+# assets = [a1, a2, a3, a4]
+assets = []
 
 
 
@@ -33,6 +35,10 @@ while True:
     if auswahl == "1":
 
         inventarnummer = input("Inventarnummer: ")
+        print("Aktuelle Assets:")
+
+        for a in assets:
+            print(a.inventarnummer)
 
         asset = asset_suchen(assets, inventarnummer)
 
@@ -41,24 +47,22 @@ while True:
 
         else:
             hersteller = input("Hersteller: ")
-            ...
-        hersteller = input("Hersteller: ")
-        status = input("Status: ")
-        geraetetyp = input("Gerätetyp: ")
-        standort = input("Standort: ")
-        zimmer = input("Zimmer: ")
-        organisationseinheit = input("Organisationseinheit: ")
+            status = input("Status: ")
+            geraetetyp = input("Gerätetyp: ")
+            standort = input("Standort: ")
+            zimmer = input("Zimmer: ")
+            organisationseinheit = input("Organisationseinheit: ")
 
-        neues_asset_erstellen(
-            assets,
-            inventarnummer,
-            hersteller,
-            status,
-            geraetetyp,
-            standort,
-            zimmer,
-            organisationseinheit
-        )
+            neues_asset_erstellen(
+                assets,
+                inventarnummer,
+                hersteller,
+                status,
+                geraetetyp,
+                standort,
+                zimmer,
+                organisationseinheit
+            )
 
 
     elif auswahl == "2":
@@ -137,12 +141,12 @@ while True:
     elif auswahl == "15":
         alle_mitarbeiter_anzeigen(mitarbeiter_liste)
 
-    elif auswahl == "16":
-        assets_speichern_csv(assets)
+    #elif auswahl == "16":
+        #assets_speichern_csv(assets)
 
     elif auswahl == "17":
         mitarbeiter_liste = mitarbeiter_laden_csv()
-        assets = assets_laden_csv(mitarbeiter_liste)
+        assets = assets_laden_sqlite(mitarbeiter_liste)
         if len(assets) > 0:
             print(f"{len(assets)} Assets wurden geladen.")
         else:

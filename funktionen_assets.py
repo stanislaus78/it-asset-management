@@ -2,6 +2,7 @@ from asset import Asset
 from funktionen_mitarbeiter import *
 from funktionen_mitarbeiter import mitarbeiter_suchen
 from mitarbeiter import Mitarbeiter
+from datenbank import verbinden
 
 def asset_suchen(assets,inventarnummer):
 
@@ -134,6 +135,7 @@ def anzahl_assets_nach_OA(assets, organisationseinheit):
     return anzahl_OA
 
 def neues_asset_erstellen(assets, inventarnummer, hersteller, status, geraetetyp, standort, zimmer, organisationseinheit):
+
     asset = asset_suchen(assets, inventarnummer)
     if asset is None:
 
@@ -149,20 +151,74 @@ def neues_asset_erstellen(assets, inventarnummer, hersteller, status, geraetetyp
         )
 
         assets.append(neues_asset)
+        verbindung = verbinden()
+
+        cursor = verbindung.cursor()
+
+        cursor.execute(f"""
+        INSERT INTO assets (
+            inventarnummer,
+            hersteller,
+            status,
+            geraetetyp,
+            standort,
+            zimmer,
+            organisationseinheit
+        )
+        VALUES (
+            '{inventarnummer}',
+            '{hersteller}',
+            '{status}',
+            '{geraetetyp}',
+            '{standort}',
+            '{zimmer}',
+            '{organisationseinheit}'
+        )
+        """)
+
+        verbindung.commit()
+
+        verbindung.close()
         print("Asset erfolgreich angelegt")
 
 
 
+# def assets_loeschen(assets, inventarnummer):
+#
+#     for asset in assets:
+#         if asset.inventarnummer.lower() == inventarnummer.lower():
+#             assets.remove(asset)
+#             print("Asset gelöscht")
+#             return
+#
+#     print("Asset nicht gefunden")
+
 def assets_loeschen(assets, inventarnummer):
 
     for asset in assets:
+
         if asset.inventarnummer.lower() == inventarnummer.lower():
+
             assets.remove(asset)
+
+            verbindung = verbinden()
+
+            cursor = verbindung.cursor()
+
+            cursor.execute(f"""
+            DELETE FROM assets
+            WHERE inventarnummer = '{inventarnummer}';
+            """)
+
+            verbindung.commit()
+
+            verbindung.close()
+
             print("Asset gelöscht")
+
             return
 
     print("Asset nicht gefunden")
-
 
 
 #def assets_bearbeiten(assets, inventarnummer):
@@ -172,6 +228,25 @@ def assets_loeschen(assets, inventarnummer):
             #print("Neue Inventarnummer wurde vergeben")
             #return
     #print("Asset nicht gefunden")
+
+def asset_feld_aktualisieren(
+        inventarnummer,
+        feld,
+        neuer_wert):
+
+    verbindung = verbinden()
+
+    cursor = verbindung.cursor()
+
+    cursor.execute(f"""
+    UPDATE assets
+    SET {feld} = '{neuer_wert}'
+    WHERE inventarnummer = '{inventarnummer}';
+    """)
+
+    verbindung.commit()
+
+    verbindung.close()
 
 
 def assets_bearbeiten(assets, inventarnummer):
@@ -188,32 +263,130 @@ def assets_bearbeiten(assets, inventarnummer):
 
             auswahl = input("Was möchten Sie ändern? ")
             if auswahl == "1":
-                asset.inventarnummer = input("Neue Inventarnummer: ")
-                print("Status erfolgreich geändert")
+                neuer_standort = input("Neuer Standort: ")
+
+                asset.standort = neuer_standort
+
+                asset_feld_aktualisieren(
+
+                    inventarnummer,
+
+                    "standort",
+
+                    neuer_standort
+
+                )
+
+                print("Standort erfolgreich geändert")
+
+
 
             elif auswahl == "2":
-                asset.hersteller = input("Neuer Hersteller: ")
-                print("Status erfolgreich geändert")
+
+                neuer_hersteller = input("Neuer Hersteller: ")
+
+                asset.hersteller = neuer_hersteller
+
+                asset_feld_aktualisieren(
+
+                    inventarnummer,
+
+                    "hersteller",
+
+                    neuer_hersteller
+                )
+                print("Hersteller erfolgreich geändert")
+
+
 
             elif auswahl == "3":
-                asset.status = input("Neuer Status: ")
+
+                neuer_status = input("Neuer Status: ")
+
+                asset.status = neuer_status
+
+                asset_feld_aktualisieren(
+
+                    inventarnummer,
+
+                    "status",
+
+                    neuer_status
+                )
                 print("Status erfolgreich geändert")
 
             elif auswahl == "4":
-                asset.geraetetyp = input("Neuer Gerätetyp: ")
-                print("Status erfolgreich geändert")
+                neuer_standort = input("Neuer Standort: ")
+
+                asset.standort = neuer_standort
+
+                asset_feld_aktualisieren(
+
+                    inventarnummer,
+
+                    "standort",
+
+                    neuer_standort
+
+                )
+
+                print("Standort erfolgreich geändert")
+
+
 
             elif auswahl == "5":
-                asset.standort = input("Neuer Standort: ")
-                print("Status erfolgreich geändert")
+
+                neuer_standort = input("Neuer Standort: ")
+
+                asset.standort = neuer_standort
+
+                asset_feld_aktualisieren(
+
+                    inventarnummer,
+
+                    "standort",
+
+                    neuer_standort
+
+                )
+
+                print("Standort erfolgreich geändert")
 
             elif auswahl == "6":
-                asset.zimmer = input("Neues Zimmer: ")
-                print("Status erfolgreich geändert")
+                neuer_standort = input("Neuer Standort: ")
+
+                asset.standort = neuer_standort
+
+                asset_feld_aktualisieren(
+
+                    inventarnummer,
+
+                    "standort",
+
+                    neuer_standort
+
+                )
+
+                print("Standort erfolgreich geändert")
+
 
             elif auswahl == "7":
-                asset.organisationseinheit = input("Neue Organisationseinheit: ")
-                print("Status erfolgreich geändert")
+                neuer_standort = input("Neuer Standort: ")
+
+                asset.standort = neuer_standort
+
+                asset_feld_aktualisieren(
+
+                    inventarnummer,
+
+                    "standort",
+
+                    neuer_standort
+
+                )
+
+                print("Standort erfolgreich geändert")
+
             else:
                 print("Ungültige Auswahl")
 
@@ -266,28 +439,28 @@ def assets_freigeben(assets, inventarnummer):
         print("Asset nicht gefunden")
 
 
-def assets_speichern_csv(assets):
-
-    with open("assets.csv", "w") as datei:
-
-        datei.write(
-            "inventarnummer,hersteller,status,geraetetyp,standort,zimmer,organisationseinheit, mitarbeiter\n"
-        )
-        for asset in assets:
-            mitarbeiter_name = ""
-            if asset.mitarbeiter is not None:
-                mitarbeiter_name = asset.mitarbeiter.name
-            zeile = (
-                f"{asset.inventarnummer},"
-                f"{asset.hersteller},"
-                f"{asset.status},"
-                f"{asset.geraetetyp},"
-                f"{asset.standort},"
-                f"{asset.zimmer},"
-                f"{asset.organisationseinheit},"
-                f"{mitarbeiter_name}"
-            )
-            datei.write(zeile + "\n")
+# def assets_speichern_csv(assets):
+#
+#     with open("assets_backup.csv", "w") as datei:
+#
+#         datei.write(
+#             "inventarnummer,hersteller,status,geraetetyp,standort,zimmer,organisationseinheit, mitarbeiter\n"
+#         )
+#         for asset in assets:
+#             mitarbeiter_name = ""
+#             if asset.mitarbeiter is not None:
+#                 mitarbeiter_name = asset.mitarbeiter.name
+#             zeile = (
+#                 f"{asset.inventarnummer},"
+#                 f"{asset.hersteller},"
+#                 f"{asset.status},"
+#                 f"{asset.geraetetyp},"
+#                 f"{asset.standort},"
+#                 f"{asset.zimmer},"
+#                 f"{asset.organisationseinheit},"
+#                 f"{mitarbeiter_name}"
+#             )
+#             datei.write(zeile + "\n")
 
 
 
@@ -297,31 +470,69 @@ def assets_speichern_csv(assets):
 
 from asset import Asset
 
-def assets_laden_csv(mitarbeiter_liste):
+# def assets_laden_csv(mitarbeiter_liste):
+#     assets = []
+#     with open("assets_backup.csv", "r") as datei:
+#         kopfzeile = datei.readline()
+#         for zeile in datei:
+#             werte = zeile.strip().split(",")
+#             asset = Asset(
+#                 werte[0],
+#                 werte[1],
+#                 werte[2],
+#                 werte[3],
+#                 werte[4],
+#                 werte[5],
+#                 werte[6],
+#                 #werte[7]
+#             )
+#             if len(werte) > 7 and werte[7] != "":
+#                 mitarbeiter = mitarbeiter_suchen(
+#                     mitarbeiter_liste,
+#                     werte[7]
+#                 )
+#                 if mitarbeiter is not None:
+#                     asset.mitarbeiter = mitarbeiter
+#             assets.append(asset)
+#     print(f"{len(assets)} CSV Assets wurden geladen.")
+#     return assets
+
+def assets_laden_sqlite(mitarbeiter_liste):
+
+    verbindung = verbinden()
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+    SELECT
+        inventarnummer,
+        hersteller,
+        status,
+        geraetetyp,
+        standort,
+        zimmer,
+        organisationseinheit
+    FROM assets
+    """)
+
     assets = []
-    with open("assets.csv", "r") as datei:
-        kopfzeile = datei.readline()
-        for zeile in datei:
-            werte = zeile.strip().split(",")
-            asset = Asset(
-                werte[0],
-                werte[1],
-                werte[2],
-                werte[3],
-                werte[4],
-                werte[5],
-                werte[6],
-                #werte[7]
-            )
-            if len(werte) > 7 and werte[7] != "":
-                mitarbeiter = mitarbeiter_suchen(
-                    mitarbeiter_liste,
-                    werte[7]
-                )
-                if mitarbeiter is not None:
-                    asset.mitarbeiter = mitarbeiter
-            assets.append(asset)
-    print(f"{len(assets)} Assets wurden geladen.")
+
+    for werte in cursor.fetchall():
+
+        asset = Asset(
+            werte[0],
+            werte[1],
+            werte[2],
+            werte[3],
+            werte[4],
+            werte[5],
+            werte[6]
+        )
+
+        assets.append(asset)
+
+    verbindung.close()
+
     return assets
 
 
