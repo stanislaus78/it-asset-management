@@ -12,12 +12,20 @@ def mitarbeiter_suchen(mitarbeiter_liste, name):
     return None
 
 
-def alle_mitarbeiter_anzeigen(mitarbeiter_liste):
+def alle_mitarbeiter_anzeigen_sqlite():
+    cursor.execute("SELECT * FROM mitarbeiter")
+    mitarbeiter_liste = cursor.fetchall()
+
+    if not mitarbeiter_liste:
+        print("Keine Mitarbeiter angelegt")
+        return
 
     for mitarbeiter in mitarbeiter_liste:
-        print(mitarbeiter.name)
-        print(mitarbeiter.abteilung)
         print()
+        print(f"ID: {mitarbeiter[0]}")
+        print(f"Name: {mitarbeiter[1]}")
+        print(f"Abteilung: {mitarbeiter[2]}")
+        print("-" * 30)
 
 # def mitarbeiter_csv(mitarbeiter_liste):
 #     with open("mitarbeiter.csv", "w") as datei:
@@ -93,6 +101,29 @@ def mitarbeiter_laden_sqlite():
 
     verbindung.close()
 
-    print(f"{len(mitarbeiter_liste)} Mitarbeiter wurden geladen.")
+    #print(f"{len(mitarbeiter_liste)} Mitarbeiter wurden geladen.")
 
     return mitarbeiter_liste
+
+def mitarbeiter_loeschen_sqlite():
+    name = input("Name des Mitarbeiters: ")
+    cursor.execute(f"""
+    DELETE FROM mitarbeiter
+    WHERE name = '{name}';
+    """)
+    print("Mitarbeiter gelöscht.")
+    verbindung.commit()
+    verbindung.close()
+
+def mitarbeiter_bearbeiten_sqlite():
+    bearbeiten = input("Name eintippen: ")
+    neue_abteilung = input("Neue Abteilung: ")
+    cursor.execute(f"""
+    UPDATE mitarbeiter
+    SET abteilung = '{neue_abteilung}'
+    WHERE name = '{bearbeiten}';
+    """)
+    verbindung.commit()
+    print("Mitarbeiter bearbeitet")
+
+

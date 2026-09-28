@@ -16,7 +16,17 @@ def asset_suchen(assets,inventarnummer):
 def alle_assets_anzeigen(assets):
 
     for asset in assets:
-        asset.anzeigen()
+        for asset in assets:
+            print()
+            print(f"Inventarnummer: {asset.inventarnummer}")
+            print(f"Hersteller: {asset.hersteller}")
+            print(f"Status: {asset.status}")
+            print(f"Geraetetyp: {asset.geraetetyp}")
+            print(f"Standort: {asset.standort}")
+            print(f"Zimmer: {asset.zimmer}")
+            print(f"Organisationseinheit: {asset.organisationseinheit}")
+            print(f"Mitarbeiter: {asset.mitarbeiter}")
+            print("-" * 30)
 
 
 def assets_nach_hersteller(assets, hersteller):
@@ -32,11 +42,16 @@ def assets_nach_hersteller(assets, hersteller):
         print("Keine Assets gefunden")
 
 
-def assets_von_mitarbeiter(assets, mitarbeiter):
+def assets_eines_mitarbeiter(assets, mitarbeiter, inventarnummer, hersteller, status ):
 
     for asset in assets:
         if asset.mitarbeiter == mitarbeiter:
-            asset.anzeigen()
+            print(f"\n===== Assets von {mitarbeiter} =====")
+            print()
+            print(f"Inventarnummer: {inventarnummer} ")
+            print(f"Hersteller: {hersteller}")
+            print(f"Status: {status}")
+            #asset.anzeigen()
 
 
 def lager_assets(assets):
@@ -46,23 +61,24 @@ def lager_assets(assets):
             asset.anzeigen()
 
 
-def assets_statistik(assets):
+def statistik_anzeigen(assets, mitarbeiter_liste):
 
-    lager = 0
+    print("\n===== Statistik =====")
+
+    print(f"Assets gesamt: {len(assets)}")
+    print(f"Mitarbeiter gesamt: {len(mitarbeiter_liste)}")
+
     ausgegeben = 0
+    lager = 0
 
     for asset in assets:
-
-        if asset.status == "Lager":
+        if asset.status.lower() == "ausgegeben":
+            ausgegeben += 1
+        elif asset.status.lower() == "lager":
             lager += 1
 
-        elif asset.status == "Ausgegeben":
-            ausgegeben += 1
-
-    print()
-    print("Assets gesamt:", len(assets))
-    print("Im Lager:", lager)
-    print("Ausgegeben:", ausgegeben)
+    print(f"Ausgegeben: {ausgegeben}")
+    print(f"Im Lager: {lager}")
 
 
 def anzahl_assets_von_mitarbeiter(assets, mitarbeiter):
@@ -417,14 +433,23 @@ def asset_zuweisen(assets, mitarbeiter_liste, inventarnummer, name):
 
 def assets_eines_mitarbeiters(assets, name):
     gefunden = False
+
+    print(f"\n===== Assets von {name} =====")
+
     for asset in assets:
         if asset.mitarbeiter is not None:
             if asset.mitarbeiter.name.lower() == name.lower():
-                asset.anzeigen()
+
+                gefunden = True
+
+                print()
+                print(f"Inventarnummer: {asset.inventarnummer}")
+                print(f"Hersteller: {asset.hersteller}")
+                print(f"Status: {asset.status}")
+                print("-" * 30)
 
     if not gefunden:
-        print("Kein Assets gefunden")
-
+        print("Keine Assets gefunden")
 
 def assets_freigeben(assets, inventarnummer):
     asset = asset_suchen(assets, inventarnummer)
@@ -556,10 +581,12 @@ def menue():
     print("13 - Assets eines Mitarbeiters anzeigen")
     print("14 - Assets freigeben")
     print("15 - Alle Mitarbeiter anzeigen")
-    print("16 - Änderungen speichern")
-    print("17 - Assets laden")
-    print("18 - Mitarbeiter speichern")
-    print("19 - Mitarbeiter laden")
+    print("16 - Assets laden")
+    print("17 - Mitarbeiter laden")
+    print("18 - Mitarbeiter bearbeiten")
+    print("19 - Mitarbeiter löschen")
+    print("20 - Mitarbeiter anlegen")
+
     print("0 - Beenden")
 
 

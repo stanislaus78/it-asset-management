@@ -95,8 +95,8 @@ while True:
         assets_nach_hersteller(assets, hersteller)
 
     elif auswahl == "7":
+        statistik_anzeigen(assets, mitarbeiter_liste)
 
-        assets_statistik(assets)
 
     elif auswahl == "0":
 
@@ -131,37 +131,42 @@ while True:
         name = input("Mitarbeiter: ")
         asset_zuweisen(assets, mitarbeiter_liste, inventarnummer, name)
 
+
     elif auswahl == "13":
-        name = input("Name:")
+        name = input("Name: ")
         assets_eines_mitarbeiters(assets, name)
 
     elif auswahl == "14":
         inventarnummer = input("Inventarnummer:")
 
     elif auswahl == "15":
-        alle_mitarbeiter_anzeigen(mitarbeiter_liste)
+        alle_mitarbeiter_anzeigen_sqlite()
 
-    #elif auswahl == "16":
-        #assets_speichern_csv(assets)
-
-    elif auswahl == "17":
-        mitarbeiter_liste = mitarbeiter_laden_csv()
+    elif auswahl == "16":
+        #mitarbeiter_liste = mitarbeiter_laden_sqlite()
         assets = assets_laden_sqlite(mitarbeiter_liste)
         if len(assets) > 0:
             print(f"{len(assets)} Assets wurden geladen.")
         else:
             print("Keine Assets gefunden.")
 
+    elif auswahl == "17":
+        mitarbeiter_liste = mitarbeiter_laden_sqlite()
+        if len(mitarbeiter_liste) > 0:
+            print(f"{len(mitarbeiter_liste)} Mitarbeiter wurden geladen.")
+        else:
+            print("Kein Mitarbeiter gefunden.")
+
+
     elif auswahl == "18":
-        mitarbeiter_csv(mitarbeiter_liste)
+        #name = input("Name des Mitarbeiters zu bearbeiter: ")
+        mitarbeiter_bearbeiten_sqlite()
 
     elif auswahl == "19":
-        mitarbeiter_liste = mitarbeiter_laden_csv()
-        if len(mitarbeiter_liste) > 0:
-            print(f"{len(mitarbeiter_liste)} Assets wurden geladen.")
-        else:
-            print("Keine Assets gefunden.")
+        mitarbeiter_loeschen_sqlite()
 
+    elif auswahl == "20":
+        mitarbeiter_anlegen_sqlite()
 
 
     else:
