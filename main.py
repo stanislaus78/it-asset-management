@@ -173,8 +173,6 @@ while True:
 
         print("Ungültige Eingabe")
 
-#asset = asset_suchen("LT001")
-
 #a1.zuweisen(m1)
 #asset.ausgeben()
 

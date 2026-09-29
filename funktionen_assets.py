@@ -16,17 +16,21 @@ def asset_suchen(assets,inventarnummer):
 def alle_assets_anzeigen(assets):
 
     for asset in assets:
-        for asset in assets:
-            print()
-            print(f"Inventarnummer: {asset.inventarnummer}")
-            print(f"Hersteller: {asset.hersteller}")
-            print(f"Status: {asset.status}")
-            print(f"Geraetetyp: {asset.geraetetyp}")
-            print(f"Standort: {asset.standort}")
-            print(f"Zimmer: {asset.zimmer}")
-            print(f"Organisationseinheit: {asset.organisationseinheit}")
-            print(f"Mitarbeiter: {asset.mitarbeiter}")
-            print("-" * 30)
+        print()
+        print(f"Inventarnummer: {asset.inventarnummer}")
+        print(f"Hersteller: {asset.hersteller}")
+        print(f"Status: {asset.status}")
+        print(f"Geraetetyp: {asset.geraetetyp}")
+        print(f"Standort: {asset.standort}")
+        print(f"Zimmer: {asset.zimmer}")
+        print(f"Organisationseinheit: {asset.organisationseinheit}")
+
+        if asset.mitarbeiter is not None:
+            print(f"Mitarbeiter: {asset.mitarbeiter.name}")
+        else:
+            print("Mitarbeiter: Nicht zugewiesen")
+
+        print("-" * 30)
 
 
 def assets_nach_hersteller(assets, hersteller):

@@ -6,6 +6,9 @@ class Mitarbeiter:
         self.name = name
         self.abteilung = abteilung
 
+    def __str__(self):
+        return self.name
+
     def alle_mitarbeiter_anzeigen(self, mitarbeiter_liste):
         print("Name: ", self.name)
         print("Mitarbeiter: ", self.abteilung)
