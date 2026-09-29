@@ -455,18 +455,46 @@ def assets_eines_mitarbeiters(assets, name):
     if not gefunden:
         print("Keine Assets gefunden")
 
+# def assets_freigeben(assets, inventarnummer):
+#     asset = asset_suchen(assets, inventarnummer)
+#     if asset is not None and asset.mitarbeiter is not None:
+#         if asset.status == "Ausgegeben":
+#             asset.mitarbeiter = None
+#             asset.status = "Lager"
+#             print("Asset erfolgreich freigegeben")
+#         else:
+#             print("Asset ist nicht ausgegeben")
+#     else:
+#         print("Asset nicht gefunden")
+
+
 def assets_freigeben(assets, inventarnummer):
+
     asset = asset_suchen(assets, inventarnummer)
+
     if asset is not None and asset.mitarbeiter is not None:
+
         if asset.status == "Ausgegeben":
+
             asset.mitarbeiter = None
             asset.status = "Lager"
+
+            cursor.execute("""
+                UPDATE assets
+                SET mitarbeiter = NULL,
+                    status = 'Lager'
+                WHERE inventarnummer = ?
+            """, (inventarnummer,))
+
+            verbindung.commit()
+
             print("Asset erfolgreich freigegeben")
+
         else:
             print("Asset ist nicht ausgegeben")
+
     else:
         print("Asset nicht gefunden")
-
 
 # def assets_speichern_csv(assets):
 #

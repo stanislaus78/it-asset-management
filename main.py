@@ -25,7 +25,8 @@ mitarbeiter_liste = []
 # assets = [a1, a2, a3, a4]
 assets = []
 
-
+assets = assets_laden_sqlite(mitarbeiter_liste)
+mitarbeiter_liste = mitarbeiter_laden_sqlite()
 
 
 while True:
@@ -138,6 +139,7 @@ while True:
 
     elif auswahl == "14":
         inventarnummer = input("Inventarnummer:")
+        assets_freigeben(assets, inventarnummer)
 
     elif auswahl == "15":
         alle_mitarbeiter_anzeigen_sqlite()
