@@ -6,28 +6,6 @@ from funktionen_mitarbeiter import *
 
 
 
-# Mitarbeiter
-
-# m1 = Mitarbeiter("Stanislav", "IT")
-# m2 = Mitarbeiter("Marina", "Forschung")
-# m3 = Mitarbeiter("Peter", "Buchhaltung")
-#
-# mitarbeiter_liste = [m1, m2, m3]
-mitarbeiter_liste = []
-
-# Assets
-
-# a1 = Asset("LT001", "Dell", "Ausgegeben", "Laptop", "Zlb", "308", "602")
-# a2 = Asset("LT002", "Lenovo", "Lager", "Stand-PC", "Zlb", "348", "600")
-# a3 = Asset("LT003", "HP", "Lager", "Monitor", "Uza", "Bio Labor", "603")
-# a4 = Asset("LT004", "Samsung", "Lager", "Diensthandy", "Zlb", "349", "601")
-#
-# assets = [a1, a2, a3, a4]
-assets = []
-
-assets = assets_laden_sqlite(mitarbeiter_liste)
-mitarbeiter_liste = mitarbeiter_laden_sqlite()
-
 
 while True:
 
@@ -36,12 +14,8 @@ while True:
     if auswahl == "1":
 
         inventarnummer = input("Inventarnummer: ")
-        print("Aktuelle Assets:")
 
-        for a in assets:
-            print(a.inventarnummer)
-
-        asset = asset_suchen(assets, inventarnummer)
+        asset = asset_suchen_sqlite(inventarnummer)
 
         if asset is not None:
             print("Inventarnummer bereits vergeben")
@@ -54,8 +28,7 @@ while True:
             zimmer = input("Zimmer: ")
             organisationseinheit = input("Organisationseinheit: ")
 
-            neues_asset_erstellen(
-                assets,
+            neues_asset_erstellen_sqlite(
                 inventarnummer,
                 hersteller,
                 status,
@@ -67,109 +40,109 @@ while True:
 
 
     elif auswahl == "2":
-        inventarnummer = input("Auswahl: ")
-        assets_bearbeiten(assets, inventarnummer)
-
-
+        inventarnummer = input("Inventarnummer: ")
+        assets_bearbeiten_sqlite(inventarnummer)
 
     elif auswahl == "3":
-        inventarnummer = input("Auswahl: ")
-        assets_loeschen(assets, inventarnummer)
+        inventarnummer = input("Inventarnummer: ")
+        assets_loeschen_sqlite(inventarnummer)
+
 
     elif auswahl == "4":
+        inventarnummer = input("Inventarnummer: ")
+        assets_freigeben_sqlite(inventarnummer)
 
-        alle_assets_anzeigen(assets)
 
     elif auswahl == "5":
-
         inventarnummer = input("Inventarnummer: ")
-        asset = asset_suchen(assets, inventarnummer)
+        name = input("Mitarbeiter: ")
+        asset_zuweisen_sqlite(inventarnummer, name)
 
+
+    elif auswahl == "6":
+        inventarnummer = input("Inventarnummer: ")
+        asset = asset_suchen_sqlite(inventarnummer)
         if asset is not None:
-            asset.anzeigen()
+            print()
+            print(f"Inventarnummer: {asset[0]}")
+            print(f"Hersteller: {asset[1]}")
+            print(f"Status: {asset[2]}")
+            print(f"Geraetetyp: {asset[3]}")
+            print(f"Standort: {asset[4]}")
+            print(f"Zimmer: {asset[5]}")
+            print(f"Organisationseinheit: {asset[6]}")
+            print(f"Mitarbeiter: {asset[7]}")
+            print("-" * 30)
         else:
             print("Asset nicht gefunden")
 
-    elif auswahl == "6":
-
-        hersteller = input("Hersteller: ")
-        assets_nach_hersteller(assets, hersteller)
-
     elif auswahl == "7":
-        statistik_anzeigen(assets, mitarbeiter_liste)
+        alle_assets_anzeigen_sqlite()
 
 
-    elif auswahl == "0":
-
-        print("Programm beendet")
-        break
     elif auswahl == "8":
-        geraetetyp = input("Gerätetyp: ")
-        assets_nach_typ(assets, geraetetyp)
-        print("Anzahl:", anzahl_assets_nach_typ(assets,geraetetyp))
+        hersteller = input("Hersteller: ")
+        assets_nach_hersteller_sqlite(hersteller)
+
 
     elif auswahl == "9":
         standort = input("Standort: ")
-        assets_nach_standort(assets, standort)
-        print("Anzahl: ", anzahl_assets_nach_standort(assets, standort))
+        assets_nach_standort_sqlite(standort)
+
 
     elif auswahl == "10":
         organisationseinheit = input("Organisationseinheit: ")
-        assets_nach_OA(assets, organisationseinheit)
-        print("Anzahl: ", anzahl_assets_nach_OA(assets, organisationseinheit))
+        assets_nach_oa_sqlite(organisationseinheit)
+
 
     elif auswahl == "11":
-        name = input("Name des Mitarbeiters eingeben:")
-        mitarbeiter = mitarbeiter_suchen(mitarbeiter_liste, name)
+        statistik_anzeigen_sqlite()
+
+
+    elif auswahl == "12":
+        geraetetyp = input("Gerätetyp: ")
+        assets_nach_typ_sqlite(geraetetyp)
+
+    elif auswahl == "13":
+        lagerbestand_anzeigen_sqlite()
+
+    elif auswahl == "14":
+        mitarbeiter_anlegen_sqlite()
+
+    elif auswahl == "15":
+        mitarbeiter_bearbeiten_sqlite()
+
+    elif auswahl == "16":
+        mitarbeiter_loeschen_sqlite()
+
+    elif auswahl == "17":
+        name = input("Name des Mitarbeiters: ")
+
+        mitarbeiter = mitarbeiter_suchen_sqlite(name)
+
         if mitarbeiter is not None:
-            print(mitarbeiter.name)
-            print(mitarbeiter.abteilung)
+
+            print()
+            print(f"ID: {mitarbeiter[0]}")
+            print(f"Name: {mitarbeiter[1]}")
+            print(f"Abteilung: {mitarbeiter[2]}")
+            print("-" * 30)
+
         else:
             print("Mitarbeiter nicht gefunden")
 
-    elif auswahl == "12":
-        inventarnummer = input("Inventarnummer: ")
-        name = input("Mitarbeiter: ")
-        asset_zuweisen(assets, mitarbeiter_liste, inventarnummer, name)
-
-
-    elif auswahl == "13":
-        name = input("Name: ")
-        assets_eines_mitarbeiters(assets, name)
-
-    elif auswahl == "14":
-        inventarnummer = input("Inventarnummer:")
-        assets_freigeben(assets, inventarnummer)
-
-    elif auswahl == "15":
-        alle_mitarbeiter_anzeigen_sqlite()
-
-    elif auswahl == "16":
-        #mitarbeiter_liste = mitarbeiter_laden_sqlite()
-        assets = assets_laden_sqlite(mitarbeiter_liste)
-        if len(assets) > 0:
-            print(f"{len(assets)} Assets wurden geladen.")
-        else:
-            print("Keine Assets gefunden.")
-
-    elif auswahl == "17":
-        mitarbeiter_liste = mitarbeiter_laden_sqlite()
-        if len(mitarbeiter_liste) > 0:
-            print(f"{len(mitarbeiter_liste)} Mitarbeiter wurden geladen.")
-        else:
-            print("Kein Mitarbeiter gefunden.")
-
 
     elif auswahl == "18":
-        #name = input("Name des Mitarbeiters zu bearbeiter: ")
-        mitarbeiter_bearbeiten_sqlite()
+        name = input("Name: ")
+        assets_eines_mitarbeiters_sqlite(name)
+
 
     elif auswahl == "19":
-        mitarbeiter_loeschen_sqlite()
+        alle_mitarbeiter_anzeigen_sqlite()
 
-    elif auswahl == "20":
-        mitarbeiter_anlegen_sqlite()
-
+    elif auswahl == "0":
+        print("Programm beendet")
+        break
 
     else:
 

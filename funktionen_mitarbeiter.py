@@ -5,11 +5,22 @@ import sqlite3
 verbindung = sqlite3.connect("asset_management.db")
 
 cursor = verbindung.cursor()
-def mitarbeiter_suchen(mitarbeiter_liste, name):
-    for mitarbeiter in mitarbeiter_liste:
-        if mitarbeiter.name.lower() == name.lower():
-            return mitarbeiter
-    return None
+# def mitarbeiter_suchen(mitarbeiter_liste, name):
+#     for mitarbeiter in mitarbeiter_liste:
+#         if mitarbeiter.name.lower() == name.lower():
+#             return mitarbeiter
+#     return None
+
+
+def mitarbeiter_suchen_sqlite(name):
+
+    cursor.execute("""
+        SELECT *
+        FROM mitarbeiter
+        WHERE LOWER(name) = LOWER(?)
+    """, (name,))
+
+    return cursor.fetchone()
 
 
 def alle_mitarbeiter_anzeigen_sqlite():
