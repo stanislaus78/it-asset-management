@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mitarbeiter</title>
+</head>
+<body>
+
+<h1>Mitarbeiter</h1>
+
+<table border="1">
+
+    <tr>
+        <th>Name</th>
+        <th>Abteilung</th>
+    </tr>
+
+    {% for m in mitarbeiter %}
+
+    <tr>
+        <td>{{ m[1] }}</td>
+        <td>{{ m[2] }}</td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+</body>
+</html>

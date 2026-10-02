@@ -9,50 +9,98 @@ def startseite():
 
 @app.route("/assets")
 def assets():
+    return render_template("assets.html")
 
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
-
-    cursor.execute("SELECT * FROM assets")
-
-    assets = cursor.fetchall()
-
-    print(assets)  # zum Testen
-
-    ausgabe = ""
-
-    for a in assets:
-
-        print(a)
-        print(len(a))
-
-        ausgabe += f"Inventarnummer: {a[0]}<br>"
-        ausgabe += f"Hersteller: {a[1]}<br>"
-        ausgabe += f"Status: {a[2]}<br>"
-        ausgabe += f"Gerätetyp: {a[3]}<br>"
-        ausgabe += f"Standort: {a[4]}<br>"
-        ausgabe += f"Zimmer: {a[5]}<br>"
-        ausgabe += f"Organisationseinheit: {a[6]}<br>"
-
-        if len(a) > 7:
-            ausgabe += f"Mitarbeiter: {a[7]}<br><br>"
-        else:
-            ausgabe += "Mitarbeiter: Nicht zugewiesen<br><br>"
-
-    return ausgabe
 @app.route("/mitarbeiter")
 def mitarbeiter():
+    return render_template("mitarbeiter.html")
 
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
-    cursor.execute("SELECT * FROM mitarbeiter")
-    mitarbeiter_liste = cursor.fetchall()
-    ausgabe = ""
-    for m in mitarbeiter_liste:
-        ausgabe += f"ID: {m[0]}<br>"
-        ausgabe += f"Name: {m[1]}<br>"
-        ausgabe += f"Abteilung: {m[2]}<br><br>"
-    return ausgabe
+@app.route("/suche")
+def suche():
+    return render_template("suche.html")
+
+
+@app.route("/infos")
+def infos():
+    return render_template("infos.html")
+
+
+
+@app.route("/asset/anlegen")
+def asset_anlegen():
+    return "Asset anlegen"
+
+@app.route("/asset/bearbeiten")
+def asset_bearbeiten():
+    return "Asset bearbeiten"
+
+@app.route("/asset/loeschen")
+def asset_loeschen():
+    return "Asset loeschen"
+
+@app.route("/asset/zuweisen")
+def asset_zuweisen():
+    return "Asset zuweisen"
+
+@app.route("/asset/freigeben")
+def asset_freigeben():
+    return "Asset freigeben"
+
+@app.route("/mitarbeiter/anzeigen")
+def mitarbeiter_anzeigen():
+    return "Alle Mitarbeiter anzeigen"
+
+
+@app.route("/mitarbeiter/anlegen")
+def mitarbeiter_anlegen():
+    return "Mitarbeiter anlegen"
+
+
+@app.route("/mitarbeiter/bearbeiten")
+def mitarbeiter_bearbeiten():
+    return "Mitarbeiter bearbeiten"
+
+
+@app.route("/mitarbeiter/loeschen")
+def mitarbeiter_loeschen():
+    return "Mitarbeiter löschen"
+
+
+@app.route("/info/statistik")
+def statistik():
+    return "Statistik"
+
+@app.route("/info/lagerbestand")
+def lagerbestand():
+    return "Lagerbestand"
+
+@app.route("/info/geraetetypen")
+def geraetetypen():
+    return "Gerätetypen"
+
+@app.route("/suche/hersteller")
+def suche_hersteller():
+    return "Nach Hersteller suchen"
+
+@app.route("/suche/standort")
+def suche_standort():
+    return "Nach Standort suchen"
+
+@app.route("/suche/organisationseinheit")
+def suche_organisationseinheit():
+    return "Nach Organisationseinheit suchen"
+
+@app.route("/suche/asset")
+def suche_asset():
+    return "Nach Asset suchen"
+
+@app.route("/suche/mitarbeiter")
+def suche_Mitarbeiter():
+    return "Nach Mitarbeiter suchen"
+
+@app.route("/suche/assets-mitarbeiter")
+def suche_assets_mitarbeiten():
+    return "Assets eines Mitarbeiter anzeigen"
 
 if __name__ == "__main__":
     app.run(debug=True)

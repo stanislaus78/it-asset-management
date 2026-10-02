@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assets</title>
+</head>
+<body>
+
+<h1>Assets</h1>
+
+<table border="1">
+
+    <tr>
+        <th>Inventarnummer</th>
+        <th>Hersteller</th>
+        <th>Status</th>
+        <th>Gerätetyp</th>
+        <th>Standort</th>
+        <th>Zimmer</th>
+        <th>Organisationseinheit</th>
+        <th>Mitarbeiter</th>
+    </tr>
+
+    {% for a in assets %}
+
+    <tr>
+        <td>{{ a[0] }}</td>
+        <td>{{ a[1] }}</td>
+        <td>{{ a[2] }}</td>
+        <td>{{ a[3] }}</td>
+        <td>{{ a[4] }}</td>
+        <td>{{ a[5] }}</td>
+        <td>{{ a[6] }}</td>
+        <td>{{ a[7] }}</td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+</body>
+</html>
