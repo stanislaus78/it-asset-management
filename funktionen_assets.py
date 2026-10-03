@@ -1,6 +1,5 @@
 from asset import Asset
 from funktionen_mitarbeiter import *
-from funktionen_mitarbeiter import mitarbeiter_suchen
 from mitarbeiter import Mitarbeiter
 from datenbank import verbinden
 
@@ -15,24 +14,6 @@ def asset_suchen_sqlite(inventarnummer):
     return cursor.fetchone()
 
 
-# def alle_assets_anzeigen(assets):
-#
-#     for asset in assets:
-#         print()
-#         print(f"Inventarnummer: {asset.inventarnummer}")
-#         print(f"Hersteller: {asset.hersteller}")
-#         print(f"Status: {asset.status}")
-#         print(f"Geraetetyp: {asset.geraetetyp}")
-#         print(f"Standort: {asset.standort}")
-#         print(f"Zimmer: {asset.zimmer}")
-#         print(f"Organisationseinheit: {asset.organisationseinheit}")
-#
-#         if asset.mitarbeiter is not None:
-#             print(f"Mitarbeiter: {asset.mitarbeiter.name}")
-#         else:
-#             print("Mitarbeiter: Nicht zugewiesen")
-#
-#         print("-" * 30)
 
 def alle_assets_anzeigen_sqlite():
 
@@ -72,17 +53,6 @@ def assets_freigeben_sqlite(inventarnummer):
 
     print("Asset erfolgreich freigegeben")
 
-# def assets_nach_hersteller(assets, hersteller):
-#
-#     gefunden = False
-#
-#     for asset in assets:
-#         if asset.hersteller.lower() == hersteller.lower():
-#             asset.anzeigen()
-#             gefunden = True
-#
-#     if not gefunden:
-#         print("Keine Assets gefunden")
 
 def assets_nach_hersteller_sqlite(hersteller):
     cursor.execute("""
@@ -101,16 +71,6 @@ def assets_nach_hersteller_sqlite(hersteller):
         print(asset)
 
 
-# def assets_eines_mitarbeiter(assets, mitarbeiter, inventarnummer, hersteller, status ):
-#
-#     for asset in assets:
-#         if asset.mitarbeiter == mitarbeiter:
-#             print(f"\n===== Assets von {mitarbeiter} =====")
-#             print()
-#             print(f"Inventarnummer: {inventarnummer} ")
-#             print(f"Hersteller: {hersteller}")
-#             print(f"Status: {status}")
-#             #asset.anzeigen()
 
 def assets_eines_mitarbeiters_sqlite(name):
 
@@ -143,15 +103,6 @@ def lager_assets(assets):
             asset.anzeigen()
 
 
-# def statistik_anzeigen(assets, mitarbeiter_liste):
-#
-#     print("\n===== Statistik =====")
-#
-#     print(f"Assets gesamt: {len(assets)}")
-#     print(f"Mitarbeiter gesamt: {len(mitarbeiter_liste)}")
-#
-#     ausgegeben = 0
-#     lager = 0
 
 def statistik_anzeigen_sqlite():
 
@@ -209,10 +160,6 @@ def anzahl_lager_assets(assets):
 
     return lager
 
-# def assets_nach_typ(assets, geraetetyp):
-#     for asset in assets:
-#         if asset.geraetetyp.lower() == geraetetyp.lower():
-#             asset.anzeigen()
 
 def assets_nach_typ_sqlite(geraetetyp):
 
@@ -237,26 +184,7 @@ def anzahl_assets_nach_typ(assets, geraetetyp):
             anzahl_typ += 1
     return anzahl_typ
 
-# def assets_nach_standort(assets, standort):
-#     for asset in assets:
-#         if asset.standort.lower() == standort.lower():
-#             asset.anzeigen()
 
-
-# def assets_nach_standort_sqlite(standort):
-#
-#     cursor.execute("""
-#         SELECT *
-#         FROM assets
-#         WHERE LOWER(standort) = LOWER(?)
-#     """, (standort,))
-#
-#     assets = cursor.fetchall()
-#
-#     print(f"Anzahl: {len(assets)}")
-#
-#     for asset in assets:
-#         print(asset)
 
 
 def assets_nach_standort_sqlite(standort):
@@ -297,10 +225,6 @@ def anzahl_assets_nach_standort(assets, standort):
             anzahl_standort += 1
     return anzahl_standort
 
-# def assets_nach_OA(assets, organisationseinheit):
-#     for asset in assets:
-#         if asset.organisationseinheit.lower() == organisationseinheit.lower():
-#             asset.anzeigen()
 
 def assets_nach_oa_sqlite(organisationseinheit):
 
@@ -325,53 +249,6 @@ def anzahl_assets_nach_OA(assets, organisationseinheit):
             anzahl_OA += 1
     return anzahl_OA, assets
 
-# def neues_asset_erstellen(assets, inventarnummer, hersteller, status, geraetetyp, standort, zimmer, organisationseinheit):
-#
-#     asset = asset_suchen(assets, inventarnummer)
-#     if asset is None:
-#
-#
-#         neues_asset = Asset(
-#             inventarnummer,
-#             hersteller,
-#             status,
-#             geraetetyp,
-#             standort,
-#             zimmer,
-#             organisationseinheit
-#         )
-#
-#         assets.append(neues_asset)
-#         verbindung = verbinden()
-#
-#         cursor = verbindung.cursor()
-#
-#         cursor.execute(f"""
-#         INSERT INTO assets (
-#             inventarnummer,
-#             hersteller,
-#             status,
-#             geraetetyp,
-#             standort,
-#             zimmer,
-#             organisationseinheit
-#         )
-#         VALUES (
-#             '{inventarnummer}',
-#             '{hersteller}',
-#             '{status}',
-#             '{geraetetyp}',
-#             '{standort}',
-#             '{zimmer}',
-#             '{organisationseinheit}'
-#         )
-#         """)
-#
-#         verbindung.commit()
-#
-#         verbindung.close()
-#         print("Asset erfolgreich angelegt")
-#
 
 def neues_asset_erstellen_sqlite(
         inventarnummer,
@@ -381,6 +258,9 @@ def neues_asset_erstellen_sqlite(
         standort,
         zimmer,
         organisationseinheit):
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
 
     cursor.execute("""
         INSERT INTO assets (
@@ -409,17 +289,10 @@ def neues_asset_erstellen_sqlite(
 
     print("Asset erfolgreich angelegt")
 
-# def assets_loeschen(assets, inventarnummer):
-#
-#     for asset in assets:
-#         if asset.inventarnummer.lower() == inventarnummer.lower():
-#             assets.remove(asset)
-#             print("Asset gelöscht")
-#             return
-#
-#     print("Asset nicht gefunden")
 
 def assets_loeschen_sqlite(inventarnummer):
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
 
     asset = asset_suchen_sqlite(inventarnummer)
 
@@ -439,20 +312,13 @@ def assets_loeschen_sqlite(inventarnummer):
         """, (inventarnummer,))
 
         verbindung.commit()
+        verbindung.close()
 
         print("Asset erfolgreich gelöscht")
 
     else:
         print("Löschen abgebrochen")
 
-
-#def assets_bearbeiten(assets, inventarnummer):
-    #for asset in assets:
-        #if asset.inventarnummer.lower() == inventarnummer.lower():
-            #asset.inventarnummer = input("Neue Inventarnummer")
-            #print("Neue Inventarnummer wurde vergeben")
-            #return
-    #print("Asset nicht gefunden")
 
 def asset_feld_aktualisieren(
         inventarnummer,
@@ -475,6 +341,8 @@ def asset_feld_aktualisieren(
 
 
 def assets_bearbeiten_sqlite(inventarnummer):
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
 
     asset = asset_suchen_sqlite(inventarnummer)
 
@@ -502,6 +370,9 @@ def assets_bearbeiten_sqlite(inventarnummer):
         """, (neuer_hersteller, inventarnummer))
 
         verbindung.commit()
+        verbindung.close()
+
+
 
         print("Hersteller erfolgreich geändert")
 
@@ -516,6 +387,8 @@ def assets_bearbeiten_sqlite(inventarnummer):
         """, (neuer_status, inventarnummer))
 
         verbindung.commit()
+        verbindung.close()
+
 
         print("Status erfolgreich geändert")
 
@@ -530,6 +403,8 @@ def assets_bearbeiten_sqlite(inventarnummer):
         """, (neuer_typ, inventarnummer))
 
         verbindung.commit()
+        verbindung.close()
+
 
         print("Gerätetyp erfolgreich geändert")
 
@@ -544,6 +419,7 @@ def assets_bearbeiten_sqlite(inventarnummer):
         """, (neuer_standort, inventarnummer))
 
         verbindung.commit()
+        verbindung.close()
 
         print("Standort erfolgreich geändert")
 
@@ -558,6 +434,7 @@ def assets_bearbeiten_sqlite(inventarnummer):
         """, (neues_zimmer, inventarnummer))
 
         verbindung.commit()
+        verbindung.close()
 
         print("Zimmer erfolgreich geändert")
 
@@ -572,31 +449,16 @@ def assets_bearbeiten_sqlite(inventarnummer):
         """, (neue_oe, inventarnummer))
 
         verbindung.commit()
+        verbindung.close()
 
         print("Organisationseinheit erfolgreich geändert")
 
     else:
         print("Ungültige Eingabe")
-    #print(
-              #"1 - Inventarnummer"
-              #"2 - Hersteller"
-              #"3 - Status"
-              #"4 - Gerätetyp"
-             # "5 - Standort"
-              #"6 - Zimmer"
-              #"7 - Organisationseinheit")
-
-        #auswahl = input("Welches Attribut soll verändert werden?")
-
-# def asset_zuweisen(assets, mitarbeiter_liste, inventarnummer, name):
-#     asset = asset_suchen(assets, inventarnummer)
-#     mitarbeiter = mitarbeiter_suchen(mitarbeiter_liste, name)
-#     if asset is not None and mitarbeiter is not None:
-#         asset.mitarbeiter = mitarbeiter
-#         asset.status = "Ausgegeben"
-#         print("Asset erfolgreich zugewiesen")
 
 def asset_zuweisen_sqlite(inventarnummer, name):
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
 
     cursor.execute("""
         UPDATE assets
@@ -606,30 +468,11 @@ def asset_zuweisen_sqlite(inventarnummer, name):
     """, (name, inventarnummer))
 
     verbindung.commit()
+    verbindung.close()
 
     print("Asset erfolgreich zugewiesen")
 
 
-
-# def assets_eines_mitarbeiters(assets, name):
-#     gefunden = False
-#
-#     print(f"\n===== Assets von {name} =====")
-#
-#     for asset in assets:
-#         if asset.mitarbeiter is not None:
-#             if asset.mitarbeiter.name.lower() == name.lower():
-#
-#                 gefunden = True
-#
-#                 print()
-#                 print(f"Inventarnummer: {asset.inventarnummer}")
-#                 print(f"Hersteller: {asset.hersteller}")
-#                 print(f"Status: {asset.status}")
-#                 print("-" * 30)
-#
-#     if not gefunden:
-#         print("Keine Assets gefunden")
 
 def assets_eines_mitarbeiters_sqlite(name):
 
@@ -660,20 +503,10 @@ def assets_eines_mitarbeiters_sqlite(name):
         print("-" * 30)
 
 
-# def assets_freigeben(assets, inventarnummer):
-#     asset = asset_suchen(assets, inventarnummer)
-#     if asset is not None and asset.mitarbeiter is not None:
-#         if asset.status == "Ausgegeben":
-#             asset.mitarbeiter = None
-#             asset.status = "Lager"
-#             print("Asset erfolgreich freigegeben")
-#         else:
-#             print("Asset ist nicht ausgegeben")
-#     else:
-#         print("Asset nicht gefunden")
 
-
-def assets_freigeben_sqlite(inventarnummer):
+def asset_freigeben_sqlite(inventarnummer):
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
 
     asset = asset_suchen_sqlite(inventarnummer)
 
@@ -699,69 +532,18 @@ def assets_freigeben_sqlite(inventarnummer):
         """, (inventarnummer,))
 
         verbindung.commit()
+        verbindung.close()
 
         print("Asset erfolgreich freigegeben")
 
     else:
         print("Freigabe abgebrochen")
 
-# def assets_speichern_csv(assets):
 #
-#     with open("assets_backup.csv", "w") as datei:
-#
-#         datei.write(
-#             "inventarnummer,hersteller,status,geraetetyp,standort,zimmer,organisationseinheit, mitarbeiter\n"
-#         )
-#         for asset in assets:
-#             mitarbeiter_name = ""
-#             if asset.mitarbeiter is not None:
-#                 mitarbeiter_name = asset.mitarbeiter.name
-#             zeile = (
-#                 f"{asset.inventarnummer},"
-#                 f"{asset.hersteller},"
-#                 f"{asset.status},"
-#                 f"{asset.geraetetyp},"
-#                 f"{asset.standort},"
-#                 f"{asset.zimmer},"
-#                 f"{asset.organisationseinheit},"
-#                 f"{mitarbeiter_name}"
-#             )
-#             datei.write(zeile + "\n")
-
-
-
-
-
-
 
 from asset import Asset
 
-# def assets_laden_csv(mitarbeiter_liste):
-#     assets = []
-#     with open("assets_backup.csv", "r") as datei:
-#         kopfzeile = datei.readline()
-#         for zeile in datei:
-#             werte = zeile.strip().split(",")
-#             asset = Asset(
-#                 werte[0],
-#                 werte[1],
-#                 werte[2],
-#                 werte[3],
-#                 werte[4],
-#                 werte[5],
-#                 werte[6],
-#                 #werte[7]
-#             )
-#             if len(werte) > 7 and werte[7] != "":
-#                 mitarbeiter = mitarbeiter_suchen(
-#                     mitarbeiter_liste,
-#                     werte[7]
-#                 )
-#                 if mitarbeiter is not None:
-#                     asset.mitarbeiter = mitarbeiter
-#             assets.append(asset)
-#     print(f"{len(assets)} CSV Assets wurden geladen.")
-#     return assets
+#
 
 def assets_laden_sqlite(mitarbeiter_liste):
 

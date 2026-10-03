@@ -23,7 +23,7 @@ def assets_tabelle_anlegen():
         geraetetyp TEXT,
         standort TEXT,
         zimmer TEXT,
-        organisationseinheit TEXT
+        organisationseinheit TEXT,
         mitarbeiter TEXT
     )
     """)
