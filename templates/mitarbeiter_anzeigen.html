@@ -5,11 +5,14 @@
 </head>
 <body>
 
-<h1>Mitarbeiter</h1>
+<h1>Alle Mitarbeiter</h1>
+<p>Anzahl Mitarbeiter: {{ anzahl }}</p>
+{% if mitarbeiter %}
 
 <table border="1">
 
     <tr>
+        <th>Nr.</th>
         <th>Name</th>
         <th>Abteilung</th>
     </tr>
@@ -17,6 +20,7 @@
     {% for m in mitarbeiter %}
 
     <tr>
+        <td>{{ loop.index }}</td>
         <td>{{ m[1] }}</td>
         <td>{{ m[2] }}</td>
     </tr>
@@ -24,6 +28,14 @@
     {% endfor %}
 
 </table>
+
+{% else %}
+
+<p>Keine Mitarbeiter vorhanden.</p>
+
+{% endif %}
+
+<p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
 
 </body>
 </html>

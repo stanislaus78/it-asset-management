@@ -68,22 +68,33 @@ def alle_mitarbeiter_anzeigen_sqlite():
 from mitarbeiter import Mitarbeiter
 from datenbank import verbinden
 
-def mitarbeiter_anlegen_sqlite():
-    name = input("Name: ")
-    abteilung = input("Abteilung: ")
-    verbindung = verbinden()
+def mitarbeiter_anlegen_sqlite(name, abteilung):
+
+    verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
 
-    cursor.execute(f"""
+    cursor.execute("""
+        SELECT *
+        FROM mitarbeiter
+        WHERE LOWER(name) = LOWER(?)
+    """, (name,))
+
+    vorhanden = cursor.fetchone()
+
+    if vorhanden:
+        verbindung.close()
+        return False
+
+    cursor.execute("""
         INSERT INTO mitarbeiter
         (name, abteilung)
-        VALUES
-        ('{name}', '{abteilung}')
-        """)
+        VALUES (?, ?)
+    """, (name, abteilung))
+
     verbindung.commit()
     verbindung.close()
 
-    print("Mitarbeiter angelegt.")
+    return True
 
 
 def mitarbeiter_laden_sqlite():
@@ -116,25 +127,46 @@ def mitarbeiter_laden_sqlite():
 
     return mitarbeiter_liste
 
-def mitarbeiter_loeschen_sqlite():
-    name = input("Name des Mitarbeiters: ")
-    cursor.execute(f"""
-    DELETE FROM mitarbeiter
-    WHERE name = '{name}';
-    """)
-    print("Mitarbeiter gelöscht.")
+def mitarbeiter_loeschen_sqlite(name):
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM assets
+        WHERE mitarbeiter = ?
+    """, (name,))
+
+    assets = cursor.fetchall()
+
+    if assets:
+
+        verbindung.close()
+        return False
+
+    cursor.execute("""
+        DELETE FROM mitarbeiter
+        WHERE name = ?
+    """, (name,))
+
     verbindung.commit()
     verbindung.close()
 
-def mitarbeiter_bearbeiten_sqlite():
-    bearbeiten = input("Name eintippen: ")
-    neue_abteilung = input("Neue Abteilung: ")
-    cursor.execute(f"""
+    return True
+def mitarbeiter_bearbeiten_sqlite(name, abteilung):
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
     UPDATE mitarbeiter
-    SET abteilung = '{neue_abteilung}'
-    WHERE name = '{bearbeiten}';
-    """)
+    SET abteilung = ?
+    WHERE name = ?
+    """, (abteilung, name))
     verbindung.commit()
+    verbindung.close()
+
     print("Mitarbeiter bearbeitet")
 
 

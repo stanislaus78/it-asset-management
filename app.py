@@ -5,7 +5,9 @@ from funktionen_assets import neues_asset_erstellen_sqlite
 from funktionen_assets import asset_freigeben_sqlite
 from funktionen_assets import assets_bearbeiten_sqlite
 from funktionen_assets import assets_loeschen_sqlite
-
+from funktionen_assets import mitarbeiter_anlegen_sqlite
+from funktionen_mitarbeiter import mitarbeiter_bearbeiten_sqlite
+from funktionen_mitarbeiter import mitarbeiter_loeschen_sqlite
 app = Flask(__name__)
 
 @app.route("/")
@@ -263,22 +265,168 @@ def assets_anzeigen():
         assets=assets
     )
 
+#Mitarbeiter
+@app.route("/mitarbeiter/anzeigen")
+def alle_mitarbeiter_anzeigen():
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    #cursor.execute("PRAGMA table_info(mitarbeiter)")
+    #return str(cursor.fetchall())
+
+    cursor.execute("""
+        SELECT *
+        FROM mitarbeiter
+    """)
+
+    mitarbeiter = cursor.fetchall()
+    anzahl = len(mitarbeiter)
+
+    verbindung.close()
+
+    return render_template(
+        "mitarbeiter_anzeigen.html",
+        mitarbeiter=mitarbeiter,
+        anzahl=anzahl
+    )
+
 
 @app.route("/mitarbeiter/anlegen")
 def mitarbeiter_anlegen():
-    return "Mitarbeiter anlegen"
+    name = request.args.get("name")
+    abteilung = request.args.get("abteilung")
+
+    if name:
+        erfolgreich = mitarbeiter_anlegen_sqlite(
+            name,
+            abteilung
+        )
+        if not erfolgreich:
+
+            return f"""
+    <h1>Mitarbeiter existiert bereits</h1>
+    Mitarbeiter {name} ist bereits vorhanden.<br><br>
+    <p><a href="/mitarbeiter/anlegen">Zurück zu Mitarbeitern</a></p>
+    """
+
+        return f"""
+            <h1>Mitarbeiter erfolgreich angelegt</h1>
+
+            Name: {name}<br>
+            Abteilung: {abteilung}<br><br>
+
+            <p><a href="/mitarbeiter/anlegen">Neuer Mitarbeiter anlegen</a></p>
+            <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
+            """
+
+    return """
+        <h1>Neuer Mitarbeiter anlegen</h1>
+
+        <form>
+
+            Name:<br>
+            <input type="text" name="name"><br><br>
+
+            Abteilung:<br>
+            <input type="text" name="abteilung"><br><br>
+
+
+
+            <button>Anlegen</button>
+
+        </form>
+
+        <p><a href="/mitarbeiter">Zurück zu Mitarbeiter</a></p>
+        """
 
 
 @app.route("/mitarbeiter/bearbeiten")
 def mitarbeiter_bearbeiten():
-    return "Mitarbeiter bearbeiten"
+
+    name = request.args.get("name")
+    abteilung = request.args.get("abteilung")
+
+    if name and abteilung:
+        mitarbeiter_bearbeiten_sqlite(
+            name,
+            abteilung
+        )
+
+        return f"""
+        <h1>Mitarbeiter bearbeitet</h1>
+
+        Mitarbeiter {name} wurde geändert.
+
+        <p><a href="/mitarbeiter/bearbeiten">Einen weiteren Mitarbeiter bearbeiten</a></p>
+        <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
+        """
+
+    return """
+    <h1>Mitarbeiter bearbeiten</h1>
+
+    <form>
+
+        Name:<br>
+        <input type="text" name="name"><br><br>
+
+        Neuer Abteilung:<br>
+        <input type="text" name="abteilung"><br><br>
+
+        <button>Speichern</button>
+
+    </form>
+
+    <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
+    """
 
 
 @app.route("/mitarbeiter/loeschen")
 def mitarbeiter_loeschen():
-    return "Mitarbeiter löschen"
 
+    name = request.args.get("name")
 
+    if name:
+
+        erfolgreich = mitarbeiter_loeschen_sqlite(name)
+
+        if not erfolgreich:
+
+            return f"""
+            <h1>Mitarbeiter kann nicht gelöscht werden</h1>
+
+            Mitarbeiter {name} besitzt noch zugewiesene Assets.<br><br>
+
+            <br>Bitte zuerst alle Assets freigeben.<br>
+
+            <p><a href="/mitarbeiter/loeschen">Einen weiteren Mitarbeiter löschen</a></p>
+            <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
+            """
+
+        return f"""
+        <h1>Mitarbeiter gelöscht</h1>
+
+        Mitarbeiter {name} wurde gelöscht.<br><br>
+
+        <p><a href="/mitarbeiter/loeschen">Einen weiteren Mitarbeiter löschen</a></p>
+
+        <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
+        """
+
+    return """
+    <h1>Mitarbeiter löschen</h1>
+
+    <form>
+
+        Name:<br>
+        <input type="text" name="name"><br><br>
+
+        <button>Löschen</button>
+
+    </form>
+
+    <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
+    """
 @app.route("/info/statistik")
 def statistik():
     return "Statistik"
