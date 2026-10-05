@@ -8,11 +8,83 @@ from funktionen_assets import assets_loeschen_sqlite
 from funktionen_assets import mitarbeiter_anlegen_sqlite
 from funktionen_mitarbeiter import mitarbeiter_bearbeiten_sqlite
 from funktionen_mitarbeiter import mitarbeiter_loeschen_sqlite
+from flask import request, render_template, session, redirect
+
 app = Flask(__name__)
+app.secret_key = "fratelowsky_geheim"
 
 @app.route("/")
 def startseite():
-    return render_template("index.html")
+    if not session.get("eingeloggt"):
+        return redirect("/login")
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM assets")
+    assets = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM mitarbeiter")
+    mitarbeiter = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM assets
+        WHERE status = 'Ausgegeben'
+    """)
+    ausgegeben = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM assets
+        WHERE status = 'Lager'
+    """)
+    lager = cursor.fetchone()[0]
+
+    verbindung.close()
+
+    return render_template(
+        "startseite.html",
+        assets=assets,
+        mitarbeiter=mitarbeiter,
+        ausgegeben=ausgegeben,
+        lager=lager
+    )
+
+@app.route("/login")
+def login():
+
+    benutzer = request.args.get("benutzer")
+    passwort = request.args.get("passwort")
+
+    if benutzer == "admin" and passwort == "1234":
+
+        session["eingeloggt"] = True
+
+        return redirect("/")
+
+    return """
+    <h1>Login</h1>
+
+    <form>
+
+        Benutzer:<br>
+        <input type="text" name="benutzer"><br><br>
+
+        Passwort:<br>
+        <input type="password" name="passwort"><br><br>
+
+        <button>Anmelden</button>
+
+    </form>
+    """
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/login")
 
 @app.route("/assets")
 def assets():
@@ -265,6 +337,8 @@ def assets_anzeigen():
         assets=assets
     )
 
+
+
 #Mitarbeiter
 @app.route("/mitarbeiter/anzeigen")
 def alle_mitarbeiter_anzeigen():
@@ -427,18 +501,175 @@ def mitarbeiter_loeschen():
 
     <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
     """
+
+
+
+#Infos
 @app.route("/info/statistik")
-def statistik():
-    return "Statistik"
+def info_statistik():
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM assets")
+    anzahl_assets = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM mitarbeiter")
+    anzahl_mitarbeiter = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM assets
+        WHERE status = 'Ausgegeben'
+    """)
+    ausgegeben = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM assets
+        WHERE status != 'Ausgegeben'
+    """)
+    verfuegbar = cursor.fetchone()[0]
+
+    verbindung.close()
+
+    return f"""
+    <h1>📊 Statistik</h1>
+
+    <table border="1">
+
+        <tr>
+            <th>Kennzahl</th>
+            <th>Wert</th>
+        </tr>
+
+        <tr>
+            <td>Assets gesamt</td>
+            <td>{anzahl_assets}</td>
+        </tr>
+
+        <tr>
+            <td>Mitarbeiter gesamt</td>
+            <td>{anzahl_mitarbeiter}</td>
+        </tr>
+
+        <tr>
+            <td>Assets ausgegeben</td>
+            <td>{ausgegeben}</td>
+        </tr>
+
+        <tr>
+            <td>Assets verfügbar</td>
+            <td>{verfuegbar}</td>
+        </tr>
+
+    </table>
+
+    <br>
+
+    <p><a href="/">Zurück zur Startseite</a></p>
+    """
 
 @app.route("/info/lagerbestand")
-def lagerbestand():
-    return "Lagerbestand"
+def info_lagerbestand():
 
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM assets
+        WHERE status = 'Lager'
+    """)
+
+    assets = cursor.fetchall()
+
+    verbindung.close()
+
+    ausgabe = f"""
+    <h1>📦 Lagerbestand</h1>
+
+    Anzahl Assets im Lager: {len(assets)}
+
+    <br><br>
+
+    <table border="1">
+
+        <tr>
+            <th>Inventarnummer</th>
+            <th>Hersteller</th>
+            <th>Gerätetyp</th>
+        </tr>
+    """
+
+    for a in assets:
+
+        ausgabe += f"""
+        <tr>
+            <td>{a[0]}</td>
+            <td>{a[1]}</td>
+            <td>{a[3]}</td>
+        </tr>
+        """
+
+    ausgabe += """
+    </table>
+
+    <br>
+
+    <p><a href="/infos">Zurück zu Infos</a></p>
+    """
+
+    return ausgabe
 @app.route("/info/geraetetypen")
-def geraetetypen():
-    return "Gerätetypen"
+def info_geraetetypen():
 
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT geraetetyp, COUNT(*)
+        FROM assets
+        GROUP BY geraetetyp
+    """)
+
+    ergebnisse = cursor.fetchall()
+
+    verbindung.close()
+
+    ausgabe = """
+    <h1>📊 Gerätetypen</h1>
+
+    <table border="1">
+
+        <tr>
+            <th>Gerätetyp</th>
+            <th>Anzahl</th>
+        </tr>
+    """
+
+    for g in ergebnisse:
+
+        ausgabe += f"""
+        <tr>
+            <td>{g[0]}</td>
+            <td>{g[1]}</td>
+        </tr>
+        """
+
+    ausgabe += """
+    </table>
+
+    <br>
+
+    <p><a href="/infos">Zurück zu Infos  """
+
+    return ausgabe
+
+#Startseite Dashboard
+
+
+#Suche
 @app.route("/suche/hersteller")
 def suche_hersteller():
 

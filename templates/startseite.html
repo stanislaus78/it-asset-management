@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>IT Asset Management Dashboard</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .container {
+
+            display: grid;
+            grid-template-columns: repeat(2, 220px);
+            gap: 20px;
+            justify-content: center;
+
+        }
+
+        .kachel {
+
+            height: 140px;
+
+            background-color: white;
+
+            border-radius: 12px;
+
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .titel {
+
+            font-size: 18px;
+            margin-bottom: 10px;
+
+        }
+
+        .zahl {
+
+            font-size: 30px;
+            font-weight: bold;
+            color: #0078d4;
+
+        }
+
+        .navigation {
+
+            margin-top: 50px;
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 200px);
+
+            gap: 20px;
+
+            justify-content: center;
+
+        }
+
+        .navigation a {
+
+            text-align: center;
+
+            padding: 15px;
+
+            background-color: #0078d4;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+
+        }
+
+        .navigation a:hover {
+
+            background-color: #005ea6;
+
+        }
+
+        .logout {
+
+            position: absolute;
+
+            top: 20px;
+
+            right: 20px;
+        }
+
+        .logout a {
+
+            background-color: #dc3545;
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 10px 15px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+        }
+
+        .logout a:hover {
+
+            background-color: #b02a37;
+        }
+
+    </style>
+
+</head>
+
+<body>
+        <div class="logout">
+            <a href="/logout">🚪 Logout</a>
+        </div>
+    <h2 style="text-align: center; color: #666;">
+        Zentrum für LehrerInnenbildung
+    </h2>
+
+    <h1>
+        💻 IT Asset Management Dashboard
+    </h1>
+
+    <div class="container">
+
+        <div class="kachel">
+            <div class="titel">📦 Assets</div>
+            <div class="zahl">{{ assets }}</div>
+        </div>
+
+        <div class="kachel">
+            <div class="titel">👤 Mitarbeiter</div>
+            <div class="zahl">{{ mitarbeiter }}</div>
+        </div>
+
+        <div class="kachel">
+            <div class="titel">✅ Ausgegeben</div>
+            <div class="zahl">{{ ausgegeben }}</div>
+        </div>
+
+        <div class="kachel">
+            <div class="titel">🏢 Im Lager</div>
+            <div class="zahl">{{ lager }}</div>
+        </div>
+
+    </div>
+
+    <div class="navigation">
+
+        <a href="/assets">📦 Assets</a>
+        <a href="/mitarbeiter">👤Mitarbeiter</a>
+        <a href="/suche">🔍Suche</a>
+        <a href="/infos">📊 Infos</a>
+        <a href="/log0ut">🚪 Logaut</a>
+
+    </div>
+
+</body>
+
+</html>

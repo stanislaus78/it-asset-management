@@ -2,6 +2,7 @@ from asset import Asset
 from funktionen_mitarbeiter import *
 from mitarbeiter import Mitarbeiter
 from datenbank import verbinden
+from funktionen_historie import historie_schreiben
 
 def asset_suchen_sqlite(inventarnummer):
 
@@ -116,7 +117,8 @@ def statistik_anzeigen_sqlite():
     print(f"Assets gesamt: {assets}")
     print(f"Mitarbeiter gesamt: {mitarbeiter}")
 
-
+    ausgegeben = 0
+    lager = 0
 
     for asset in assets:
         if asset.status.lower() == "ausgegeben":
@@ -286,7 +288,11 @@ def neues_asset_erstellen_sqlite(
     ))
 
     verbindung.commit()
-
+    historie_schreiben(
+        "Asset",
+        f"Asset {inventarnummer} angelegt"
+    )
+    verbindung.close()
     print("Asset erfolgreich angelegt")
 
 
