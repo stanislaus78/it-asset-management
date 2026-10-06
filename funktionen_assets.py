@@ -51,6 +51,10 @@ def assets_freigeben_sqlite(inventarnummer):
     """, (inventarnummer,))
 
     verbindung.commit()
+    historie_schreiben(
+        "Asset",
+        f"Asset {inventarnummer} freigegeben"
+    )
 
     print("Asset erfolgreich freigegeben")
 
@@ -318,6 +322,10 @@ def assets_loeschen_sqlite(inventarnummer):
         """, (inventarnummer,))
 
         verbindung.commit()
+        historie_schreiben(
+            "Asset",
+            f"Asset {inventarnummer} gelöscht"
+        )
         verbindung.close()
 
         print("Asset erfolgreich gelöscht")
@@ -474,6 +482,10 @@ def asset_zuweisen_sqlite(inventarnummer, name):
     """, (name, inventarnummer))
 
     verbindung.commit()
+    historie_schreiben(
+        "Asset",
+        f"Asset {inventarnummer} an {name} vergeben"
+    )
     verbindung.close()
 
     print("Asset erfolgreich zugewiesen")
@@ -538,6 +550,11 @@ def asset_freigeben_sqlite(inventarnummer):
         """, (inventarnummer,))
 
         verbindung.commit()
+        historie_schreiben(
+            "Asset",
+            f"Asset {inventarnummer} freigegeben"
+        )
+
         verbindung.close()
 
         print("Asset erfolgreich freigegeben")

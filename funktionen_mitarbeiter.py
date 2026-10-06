@@ -1,6 +1,7 @@
 from asset import Asset
 from mitarbeiter import Mitarbeiter
 from datenbank import verbinden
+from funktionen_historie import historie_schreiben
 import sqlite3
 verbindung = sqlite3.connect("asset_management.db")
 
@@ -92,6 +93,10 @@ def mitarbeiter_anlegen_sqlite(name, abteilung):
     """, (name, abteilung))
 
     verbindung.commit()
+    historie_schreiben(
+        "Mitarbeiter",
+        f"Mitarbeiter {name} angelegt"
+    )
     verbindung.close()
 
     return True
@@ -151,6 +156,10 @@ def mitarbeiter_loeschen_sqlite(name):
     """, (name,))
 
     verbindung.commit()
+    historie_schreiben(
+        "Mitarbeiter",
+        f"Mitarbeiter {name} gelöscht"
+    )
     verbindung.close()
 
     return True
@@ -165,6 +174,10 @@ def mitarbeiter_bearbeiten_sqlite(name, abteilung):
     WHERE name = ?
     """, (abteilung, name))
     verbindung.commit()
+    historie_schreiben(
+        "Mitarbeiter",
+        f"Mitarbeiter {name} zu Abteilung {abteilung} geändert"
+    )
     verbindung.close()
 
     print("Mitarbeiter bearbeitet")

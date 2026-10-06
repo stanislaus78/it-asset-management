@@ -926,6 +926,29 @@ def suche_assets_mitarbeiter():
     <p>/sucheZurück zur Suche</a></p>
     """
 
+#Historie
+
+# @app.route("/historie")
+# def historie():
+#
+#     verbindung = sqlite3.connect("asset_management.db")
+#     cursor = verbindung.cursor()
+#
+#     cursor.execute("""
+#         SELECT datum, typ, aktion
+#         FROM historie
+#         ORDER BY id DESC
+#     """)
+#
+#     eintraege = cursor.fetchall()
+#
+#     verbindung.close()
+#
+#     return render_template(
+#         "historie.html",
+#         eintraege=eintraege
+#     )
+
 @app.route("/test")
 def test():
 
@@ -943,14 +966,14 @@ def update_db():
     cursor = verbindung.cursor()
 
     cursor.execute("""
-        ALTER TABLE assets
-        ADD COLUMN mitarbeiter TEXT
+        DELETE FROM historie
+        WHERE typ = 'Test';
     """)
 
     verbindung.commit()
     verbindung.close()
 
-    return "Spalte mitarbeiter hinzugefügt"
+    return "test wurde  entfernt"
 
 @app.route("/asset-test")
 def asset_test():
@@ -972,6 +995,8 @@ def test_zuweisung():
     asset_zuweisen_sqlite("LT001", "Peter")
 
     return "Test erfolgreich"
+
+update_db()
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    margin: 30px;
+}
+
+/* Überschriften */
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+    color: #666;
+}
+
+/* Tabellen */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: #0078d4;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Buttons */
+
+.button {
+
+    display: inline-block;
+
+    padding: 10px 15px;
+
+    background-color: #0078d4;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 6px;
+
+    font-weight: bold;
+}
+
+.button:hover {
+
+    background-color: #005ea6;
+}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Historie</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css')   }}">
+    <style>
+
+          .stylener {
+
+            max-width: 1200px;
+
+            margin: auto;
+        }
+
+        .card {
+
+            background-color: white;
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+
+            margin-top: 20px;
+        }
+
+        .asset {
+
+            color: #0078d4;
+
+            font-weight: bold;
+        }
+
+        .mitarbeiter {
+
+            color: #198754;
+
+            font-weight: bold;
+        }
+
+        .dashboard-link {
+
+            display: inline-block;
+
+            margin-top: 20px;
+
+            padding: 12px 18px;
+
+            background-color: #0078d4;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+        }
+
+        .dashboard-link:hover {
+
+            background-color: #005ea6;
+        }
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        th {
+
+            background-color: #0078d4;
+
+            color: white;
+
+            text-align: left;
+
+            padding: 12px;
+        }
+
+        td {
+
+            padding: 12px;
+
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+
+            background-color: #f5f5f5;
+        }
+
+        .datum {
+
+            width: 220px;
+        }
+
+        .typ {
+
+            width: 180px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📜 System-Chronik</h1>
+
+        <div class="card">
+
+            <table>
+
+                <tr>
+
+                    <th class="datum">Datum</th>
+
+                    <th class="typ">Typ</th>
+
+                    <th>Aktion</th>
+
+                </tr>
+
+                {% for e in eintraege %}
+
+                <tr>
+
+                    <td>{{ e[0] }}</td>
+
+                    <td>
+
+                        {% if e[1] == "Asset" %}
+
+                            <span class="asset">
+                                📦 Asset
+                            </span>
+
+                        {% elif e[1] == "Mitarbeiter" %}
+
+                            <span class="mitarbeiter">
+                                👤 Mitarbeiter
+                            </span>
+
+                        {% else %}
+
+                            {{ e[1] }}
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>{{ e[2] }}</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+        <p><a href="/">🏠 Dashboard</a></p>
+
+    </div>
+
+</body>
+
+</html>
