@@ -88,7 +88,11 @@ def logout():
 
 @app.route("/assets")
 def assets():
-    return render_template("assets.html")
+    return render_template("asset_dashboard.html")
+
+@app.route("/assets")
+def assets_dashboard():
+    return render_template("asset_dashboard.html")
 
 @app.route("/mitarbeiter")
 def mitarbeiter():
@@ -948,6 +952,16 @@ def suche_assets_mitarbeiter():
 #         "historie.html",
 #         eintraege=eintraege
 #     )
+
+
+#Asset_neu
+
+@app.route("/assets/rechner")
+def rechner():
+
+    return render_template("rechner.html")
+
+
 
 @app.route("/test")
 def test():
