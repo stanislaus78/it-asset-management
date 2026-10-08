@@ -961,7 +961,82 @@ def rechner():
 
     return render_template("rechner.html")
 
+@app.route("/assets/mobile")
+def mobile():
 
+    return render_template("mobile.html")
+
+@app.route("/assets/peripherie")
+def peripherie():
+
+    return render_template("peripherie.html")
+
+@app.route("/assets/medientechnik")
+def medientechnik():
+
+    return render_template("medientechnik.html")
+
+
+@app.route("/assets/zubehoer")
+def zubehoer():
+
+    return render_template("zubehoer.html")
+
+#Rechner
+@app.route("/assets/laptop")
+def laptops():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Laptop'
+        ORDER BY inventarnummer
+    """)
+
+    laptops = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "laptops.html",
+        laptops=laptops
+    )
+
+
+@app.route("/assets/standpc")
+def standpcs():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Stand-PC'
+        ORDER BY inventarnummer
+    """)
+
+    standpcs = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "standpc.html",
+        standpcs=standpcs
+    )
 
 @app.route("/test")
 def test():
@@ -972,6 +1047,7 @@ def test():
     cursor.execute("PRAGMA table_info(assets)")
 
     return str(cursor.fetchall())
+
 
 @app.route("/update-db")
 def update_db():
@@ -1010,7 +1086,7 @@ def test_zuweisung():
 
     return "Test erfolgreich"
 
-update_db()
+
 
 if __name__ == "__main__":
     app.run(debug=True)

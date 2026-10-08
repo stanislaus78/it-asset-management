@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Stand-PCs</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <table>
+
+            <tr>
+                <th>Inventarnummer</th>
+                <th>Benutzer</th>
+                <th>Standort</th>
+                <th>Status</th>
+            </tr>
+
+            {% for pc in standpcs %}
+
+            <tr>
+                <td>{{ pc[0] }}</td>
+                <td>{{ pc[1] }}</td>
+                <td>{{ pc[2] }}</td>
+                <td>{{ pc[3] }}</td>
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        <br><br>
+
+        <p><a href="/assets/rechner">💻 Rechner</a></p>
+
+        <p><a href="/assets"> 📦 Assets</a></p>
+
+        <p><a href="/">🏠 Dashboard</a></p>
+
+    </div>
+
+</body>
+
+</html>
