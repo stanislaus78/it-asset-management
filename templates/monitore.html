@@ -3,15 +3,11 @@
 
 <head>
 
-    <title>Laptops</title>
+    <title>Monitore</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
-
 </head>
-
-<body>
-
     <div class="container">
 
         <table>
@@ -23,18 +19,13 @@
                 <th>Status</th>
             </tr>
 
-            {% for laptop in laptops %}
+            {% for monitor in monitore %}
 
             <tr>
-
-                <td>
-                    <a href="/assets/details/{{ laptop[0] }}">{{ laptop[0] }}</a>
-                </td>
-
-                <td>{{ laptop[1] }}</td>
-                <td>{{ laptop[2] }}</td>
-                <td>{{ laptop[3] }}</td>
-
+                <td>{{ monitor[0] }}</td>
+                <td>{{ monitor[1] }}</td>
+                <td>{{ monitor[2] }}</td>
+                <td>{{ monitor[3] }}</td>
             </tr>
 
             {% endfor %}
@@ -43,9 +34,14 @@
 
         <br><br>
 
+        <p><a href="/assets/peripherie">🖨️ Peripherie</a></p>
+
+        <p><a href="/assets"> 📦 Assets</a></p>
+
+        <p><a href="/">🏠 Dashboard</a></p>
+
     </div>
 
 </body>
 
 </html>
-

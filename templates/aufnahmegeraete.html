@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Laptops</title>
+    <title>Aufnahmegerät</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
@@ -14,6 +14,7 @@
 
     <div class="container">
 
+
         <table>
 
             <tr>
@@ -23,18 +24,13 @@
                 <th>Status</th>
             </tr>
 
-            {% for laptop in laptops %}
+            {% for eintrag in scanner %}
 
             <tr>
-
-                <td>
-                    <a href="/assets/details/{{ laptop[0] }}">{{ laptop[0] }}</a>
-                </td>
-
-                <td>{{ laptop[1] }}</td>
-                <td>{{ laptop[2] }}</td>
-                <td>{{ laptop[3] }}</td>
-
+                <td>{{ eintrag[0] }}</td>
+                <td>{{ eintrag[1] }}</td>
+                <td>{{ eintrag[2] }}</td>
+                <td>{{ eintrag[3] }}</td>
             </tr>
 
             {% endfor %}
@@ -43,9 +39,14 @@
 
         <br><br>
 
+        <p><a href="/assets/peripherie">🖨️ Peripherie</a></p>
+
+        <p><a href="/assets"> 📦 Assets</a></p>
+
+        <p><a href="/">🏠 Dashboard</a></p>
+
     </div>
 
 </body>
 
 </html>
-

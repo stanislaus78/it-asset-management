@@ -1038,6 +1038,117 @@ def standpcs():
         standpcs=standpcs
     )
 
+
+@app.route("/assets/tablet")
+def tablets():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Tablet'
+        ORDER BY inventarnummer
+    """)
+
+    tablets = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "tablets.html",
+        tablets=tablets
+    )
+
+@app.route("/assets/diensthandy")
+def diensthandys():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Diensthandy'
+        ORDER BY inventarnummer
+    """)
+
+    tablets = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "diensthandys.html",
+        tablets=tablets
+    )
+
+
+@app.route("/assets/monitor")
+def monitore():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Monitor'
+        ORDER BY inventarnummer
+    """)
+
+    monitore = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "monitore.html",
+        monitore=monitore
+    )
+
+
+@app.route("/assets/drucker")
+def drucker():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Drucker'
+        ORDER BY inventarnummer
+    """)
+
+    drucker = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "drucker.html",
+        drucker=drucker
+    )
+
 @app.route("/test")
 def test():
 
@@ -1047,6 +1158,305 @@ def test():
     cursor.execute("PRAGMA table_info(assets)")
 
     return str(cursor.fetchall())
+
+@app.route("/assets/dockingstation")
+def dockingstations():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Dockingstation'
+        ORDER BY inventarnummer
+    """)
+
+    dockingstations = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "dockingstations.html",
+        dockingstations=dockingstations
+    )
+
+
+@app.route("/assets/scanner")
+def scanner():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Scanner'
+        ORDER BY inventarnummer
+    """)
+
+    scanner = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "scanner.html",
+        scanner=scanner
+    )
+
+
+@app.route("/assets/switch")
+def switches():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Switch'
+        ORDER BY inventarnummer
+    """)
+
+    switches = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "switches.html",
+        switches=switches
+    )
+
+@app.route("/assets/maus")
+def maeuse():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Maus'
+        ORDER BY inventarnummer
+    """)
+
+    maeuse = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "maeuse.html",
+        maeuse=maeuse
+    )
+
+@app.route("/assets/kopfhoerer")
+def kopfhoerer():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Kopfhoerer'
+        ORDER BY inventarnummer
+    """)
+
+    kopfhoerer = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "kopfhoerer.html",
+        kopfhoerer=kopfhoerer
+    )
+
+
+@app.route("/assets/webcams")
+def webcams():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Webcams'
+        ORDER BY inventarnummer
+    """)
+
+    kopfhoerer = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "webcams.html",
+        kopfhoerer=kopfhoerer
+    )
+
+@app.route("/assets/kameras")
+def kameras():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Kameras'
+        ORDER BY inventarnummer
+    """)
+
+    kopfhoerer = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "kameras.html",
+        kopfhoerer=kopfhoerer
+    )
+
+@app.route("/assets/mikrofons")
+def mikrofons():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Mikrofons'
+        ORDER BY inventarnummer
+    """)
+
+    kopfhoerer = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "mikrofons.html",
+        kopfhoerer=kopfhoerer
+    )
+
+@app.route("/assets/konferenzkameras")
+def konferenzkameras():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Konferenzkameras'
+        ORDER BY inventarnummer
+    """)
+
+    kopfhoerer = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "konferenzkameras.html",
+        kopfhoerer=kopfhoerer
+    )
+
+
+@app.route("/assets/aufnahmegeraete")
+def aufnahmegeraete():
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT
+            inventarnummer,
+            mitarbeiter,
+            standort,
+            status
+        FROM assets
+        WHERE geraetetyp = 'Aufnahmegeräte'
+        ORDER BY inventarnummer
+    """)
+
+    kopfhoerer = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "aufnahmegeraete.html",
+        kopfhoerer=kopfhoerer
+    )
+
+#Liste
+
+
+@app.route("/assets/details/<inventarnummer>")
+def asset_details(inventarnummer):
+
+    verbindung = sqlite3.connect("asset_management.db")
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM assets
+        WHERE inventarnummer = ?
+    """, (inventarnummer,))
+
+    asset = cursor.fetchone()
+
+    verbindung.close()
+
+    return render_template(
+        "asset_details.html",
+        asset=asset
+    )
 
 
 @app.route("/update-db")
@@ -1085,6 +1495,12 @@ def test_zuweisung():
     asset_zuweisen_sqlite("LT001", "Peter")
 
     return "Test erfolgreich"
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Asset Details</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Asset Details</h1>
+
+        <table border="1">
+
+            <tr>
+                <th>Eigenschaft</th>
+                <th>Wert</th>
+            </tr>
+
+            <tr>
+                <td>Inventarnummer</td>
+                <td>{{ asset[0] }}</td>
+            </tr>
+
+            <tr>
+                <td>Hersteller</td>
+                <td>{{ asset[1] }}</td>
+            </tr>
+
+            <tr>
+                <td>Status</td>
+                <td>{{ asset[2] }}</td>
+            </tr>
+
+            <tr>
+                <td>Gerätetyp</td>
+                <td>{{ asset[3] }}</td>
+            </tr>
+
+            <tr>
+                <td>Standort</td>
+                <td>{{ asset[4] }}</td>
+            </tr>
+
+            <tr>
+                <td>Zimmer</td>
+                <td>{{ asset[5] }}</td>
+            </tr>
+
+            <tr>
+                <td>Organisationseinheit</td>
+                <td>{{ asset[6] }}</td>
+            </tr>
+
+            <tr>
+                <td>Mitarbeiter</td>
+                <td>{{ asset[7] }}</td>
+            </tr>
+
+        </table>
+<!--        <p><strong>Inventarnummer:</strong> {{ asset[0] }}</p>-->
+
+<!--        <p><strong>Hersteller:</strong> {{ asset[1] }}</p>-->
+
+<!--        <p><strong>Status:</strong> {{ asset[2] }}</p>-->
+
+<!--        <p><strong>Gerätetyp:</strong> {{ asset[3] }}</p>-->
+
+<!--        <p><strong>Standort:</strong> {{ asset[4] }}</p>-->
+
+<!--        <p><strong>Zimmer:</strong> {{ asset[5] }}</p>-->
+
+<!--        <p><strong>Organisationseinheit:</strong> {{ asset[6] }}</p>-->
+
+<!--        <p><strong>Mitarbeiter:</strong> {{ asset[7] }}</p>-->
+
+
+        <br><br>
+        <p><a href="/assets/laptop">🖨️ Zurück zu Laptop</a></p>
+
+        <p><a href="/assets"> 📦 Assets</a></p>
+
+        <p><a href="/">🏠 Dashboard</a></p>
+    </div>
+</body>
+</html>

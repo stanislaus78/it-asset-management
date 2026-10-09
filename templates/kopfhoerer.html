@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Kopfhörer</title>
+
+   <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+        <table>
+
+            <tr>
+                <th>Inventarnummer</th>
+                <th>Benutzer</th>
+                <th>Standort</th>
+                <th>Status</th>
+            </tr>
+
+            {% for kopfhoerer in kopfhoerer %}
+
+            <tr>
+                <td>{{ kopfhoerer[0] }}</td>
+                <td>{{ kopfhoerer[1] }}</td>
+                <td>{{ kopfhoerer[2] }}</td>
+                <td>{{ kopfhoerer[3] }}</td>
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        <br><br>
+
+        <p><a href="/assets/peripherie">🖨️ Peripherie</a></p>
+
+        <p><a href="/assets">📦 Assets</a></p>
+
+        <p><a href="/">🏠 Dashboard</a></p>
+
+    </div>
+
+</body>
+
+</html>

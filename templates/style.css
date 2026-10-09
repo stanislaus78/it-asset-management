@@ -20,18 +20,22 @@ h2 {
 table {
     width: 100%;
     border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 th {
     background-color: #0078d4;
     color: white;
-    padding: 12px;
     text-align: left;
+    padding: 12px;
 }
 
 td {
     padding: 12px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 tr:hover {

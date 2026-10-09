@@ -3,16 +3,12 @@
 
 <head>
 
-    <title>Laptops</title>
+    <title>Mäuse</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
-
 </head>
-
-<body>
-
-    <div class="container">
+        <h1>🖱️ Mäuse</h1>
 
         <table>
 
@@ -23,18 +19,13 @@
                 <th>Status</th>
             </tr>
 
-            {% for laptop in laptops %}
+            {% for maus in maeuse %}
 
             <tr>
-
-                <td>
-                    <a href="/assets/details/{{ laptop[0] }}">{{ laptop[0] }}</a>
-                </td>
-
-                <td>{{ laptop[1] }}</td>
-                <td>{{ laptop[2] }}</td>
-                <td>{{ laptop[3] }}</td>
-
+                <td>{{ maus[0] }}</td>
+                <td>{{ maus[1] }}</td>
+                <td>{{ maus[2] }}</td>
+                <td>{{ maus[3] }}</td>
             </tr>
 
             {% endfor %}
@@ -43,9 +34,14 @@
 
         <br><br>
 
+        <p><a href="/assets/peripherie">🖨️ Peripherie</a></p>
+
+        <p><a href="<assets">📦 Assets</a></p>
+
+        <p><a href="/">🏠 Dashboard</a></p>
+
     </div>
 
 </body>
 
 </html>
-
