@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Asset zuweisen</title>
+
+
+
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+        <div class="container">
+
+        <h1>🎒 Asset zuweisen</h1>
+
+             {% if ergebnis == "erfolg" %}
+
+            <p>
+                ✅ Asset {{ inventarnummer }}
+                wurde an
+                {{ mitarbeiter }}
+                zugewiesen.
+            </p>
+
+            {% endif %}
+            {% if ergebnis == "besetzt" %}
+
+            <p>
+                ❌ Asset ist bereits vergeben.
+            </p>
+
+            {% endif %}
+
+            {% if ergebnis == "nicht_gefunden" %}
+
+            <p>
+                ❌ Inventarnummer nicht gefunden.
+            </p>
+
+            {% endif %}
+        <form>
+
+            <p>Inventarnummer</p>
+
+            <input
+                type="text"
+                name="inventarnummer">
+
+            <p>Mitarbeiter</p>
+
+            <input
+                type="text"
+                name="mitarbeiter">
+
+            <br><br>
+
+            <button type="submit">
+
+                Asset zuweisen
+
+            </button>
+
+        </form>
+
+        <br><br>
+        <p><a href="/mitarbeiter">⬅️ Mitarbeiter</a></p>
+
+        <p><a href="/">🏠 Dashboard</a></p>
+    </div>
+
+</body>
+
+</html>

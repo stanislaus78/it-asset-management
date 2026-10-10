@@ -9,6 +9,7 @@ from funktionen_assets import mitarbeiter_anlegen_sqlite
 from funktionen_mitarbeiter import mitarbeiter_bearbeiten_sqlite
 from funktionen_mitarbeiter import mitarbeiter_loeschen_sqlite
 from flask import request, render_template, session, redirect
+from funktionen_assets import asset_zuweisen_sqlite
 
 app = Flask(__name__)
 app.secret_key = "fratelowsky_geheim"
@@ -256,37 +257,23 @@ def assets_zuweisen():
 
     if inventarnummer and mitarbeiter:
 
-        asset_zuweisen_sqlite(
+        ergebnis = asset_zuweisen_sqlite(
             inventarnummer,
             mitarbeiter
         )
 
-        return f"""
-        <h1>Asset zugewiesen</h1>
+        return render_template(
+            "asset_zuweisen.html",
+            ergebnis=ergebnis,
+            inventarnummer=inventarnummer,
+            mitarbeiter=mitarbeiter
+        )
 
-        Asset {inventarnummer} wurde an
-        {mitarbeiter} zugewiesen.
+    return render_template(
+        "asset_zuweisen.html",
+        ergebnis=""
+    )
 
-        <p><a href="/assets">Zurück zu Assets</a></p>
-        """
-
-    return """
-    <h1>Asset zuweisen</h1>
-
-    <form>
-
-        Inventarnummer:<br>
-        <input type="text" name="inventarnummer"><br><br>
-
-        Mitarbeiter:<br>
-        <input type="text" name="mitarbeiter"><br><br>
-
-        <button>Zuweisen</button>
-
-    </form>
-
-    <p><a href="/assets">Zurück zu Assets</a></p>
-    """
 
 @app.route("/asset/freigeben")
 def assets_freigeben():
@@ -506,6 +493,10 @@ def mitarbeiter_loeschen():
     <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
     """
 
+
+@app.route("/mitarbeiter/oe/<oe>")
+def mitarbeiter_oe(oe):
+    return f"<h1>Organisationseinheit {oe}</h1>"
 
 
 #Infos
@@ -929,6 +920,9 @@ def suche_assets_mitarbeiter():
     </form>
     <p>/sucheZurück zur Suche</a></p>
     """
+
+
+
 
 #Historie
 
@@ -1497,6 +1491,12 @@ def test_zuweisung():
     return "Test erfolgreich"
 
 
+@app.route("/mitarbeiter/asset_zuweisen")
+def asset_zuweisen():
+
+    return render_template(
+        "asset_zuweisen.html"
+    )
 
 
 

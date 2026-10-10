@@ -28,7 +28,9 @@
             {% for tablet in tablets %}
 
             <tr>
-                <td>{{ tablet[0] }}</td>
+                <td>
+                    <a href="/assets/details/{{ tablet[0] }}">{{ tablet[0] }}</a>
+                </td>
                 <td>{{ tablet[1] }}</td>
                 <td>{{ tablet[2] }}</td>
                 <td>{{ tablet[3] }}</td>

@@ -471,8 +471,29 @@ def assets_bearbeiten_sqlite(inventarnummer):
         print("Ungültige Eingabe")
 
 def asset_zuweisen_sqlite(inventarnummer, name):
+
     verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT mitarbeiter
+        FROM assets
+        WHERE inventarnummer = ?
+    """, (inventarnummer,))
+
+    asset = cursor.fetchone()
+
+    if not asset:
+
+        verbindung.close()
+
+        return "nicht_gefunden"
+
+    if asset:
+        verbindung.close()
+        print("Asset bereits vergeben")
+
+        return "besetzt"
 
     cursor.execute("""
         UPDATE assets
@@ -482,14 +503,17 @@ def asset_zuweisen_sqlite(inventarnummer, name):
     """, (name, inventarnummer))
 
     verbindung.commit()
+
     historie_schreiben(
         "Asset",
         f"Asset {inventarnummer} an {name} vergeben"
     )
+
     verbindung.close()
 
     print("Asset erfolgreich zugewiesen")
 
+    return "erfolg"
 
 
 def assets_eines_mitarbeiters_sqlite(name):

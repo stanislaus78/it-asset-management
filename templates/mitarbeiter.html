@@ -2,22 +2,93 @@
 <html>
 <head>
     <title>Mitarbeiter</title>
+
+     <link rel="stylesheet"
+          href="{{ url_for('static', filename='sidebar.css') }}">
 </head>
 <body>
 
-    <h1>👤 Mitarbeiter</h1>
+    <div class="sidebar">
+    <div class="menu-icon">☰</div>
+    <div class="sidebar-content">
 
-    <p><a href="mitarbeiter/anzeigen">Alle Mitarbeiter anzeigen</a></p>
 
-    <p><a href="mitarbeiter/anlegen">Mitarbeiter anlegen</a></p>
 
-    <p><a href="mitarbeiter/bearbeiten">Mitarbeiter bearbeiten</a></p>
+        <h3>👥 MITARBEITER</h3>
 
-    <p><a href="mitarbeiter/loeschen">Mitarbeiter löschen</a></p>
+        <p><a href="/mitarbeiter/anlegen" >➕ Mitarbeiter anlegen</a></p>
+
+        <p><a href="/mitarbeiter/suchen">🔍 Mitarbeiter suchen</a></p>
+
+        <p><a href="/mitarbeiter/anzeigen">📋 Alle Mitarbeiter</a>
+
+        <hr>
+
+        <h3>⚙️ VERWALTUNG</h3>
+
+        <p><a href="/mitarbeiter/bearbeiten">✏️ Mitarbeiter bearbeiten</a></p>
+
+
+        <p><a href="/mitarbeiter/loeschen">🗑️ Mitarbeiter löschen</a></p>
+
+
+        <p><a href="/asset/zuweisen">🎒 Asset zuweisen</a></p>
+
+        <p><a href="/asset/zuweisen">📦 Zugewiesene Assets</a></p>
+
+
+        <hr>
+
+        <h3>📊 AUSWERTUNG</h3>
+
+        <p><a href="/historie">📜 Mitarbeiterhistorie</a></p>
+
+
+    </div>
+
+</div>
+
+<div class="main-content">
 
     <hr>
 
     <p><a href="/">Zurück zur Startseite</a></p>
+
+    <div class="card-container">
+
+    <a href="/mitarbeiter">
+        <h2>A600</h2>
+        <p>👥 34 Mitarbeiter</p>
+    </a>
+
+    <a href="/mitarbeiter">
+        <h2>A601</h2>
+        <p>👥 34 Mitarbeiter</p>
+    </a>
+
+    <a href="/mitarbeiter">
+        <h2>A602</h2>
+        <p>👥 34 Mitarbeiter</p>
+    </a>
+
+    <a href="/mitarbeiter">
+        <h2>A603</h2>
+        <p>👥 34 Mitarbeiter</p>
+    </a>
+
+    <a href="/mitarbeiter">
+        <h2>A736</h2>
+        <p>👥 34 Mitarbeiter</p>
+    </a>
+
+</div>
+
+
+
+
+
+</div>
+
 
 </body>
 </html>

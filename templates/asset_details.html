@@ -10,8 +10,9 @@
           href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Asset Details</h1>
+  <div class="container">
+        <h1>💻 {{ asset[0] }}</h1>
+
 
         <table border="1">
 
@@ -61,25 +62,11 @@
             </tr>
 
         </table>
-<!--        <p><strong>Inventarnummer:</strong> {{ asset[0] }}</p>-->
 
-<!--        <p><strong>Hersteller:</strong> {{ asset[1] }}</p>-->
-
-<!--        <p><strong>Status:</strong> {{ asset[2] }}</p>-->
-
-<!--        <p><strong>Gerätetyp:</strong> {{ asset[3] }}</p>-->
-
-<!--        <p><strong>Standort:</strong> {{ asset[4] }}</p>-->
-
-<!--        <p><strong>Zimmer:</strong> {{ asset[5] }}</p>-->
-
-<!--        <p><strong>Organisationseinheit:</strong> {{ asset[6] }}</p>-->
-
-<!--        <p><strong>Mitarbeiter:</strong> {{ asset[7] }}</p>-->
 
 
         <br><br>
-        <p><a href="/assets/laptop">🖨️ Zurück zu Laptop</a></p>
+        <p><a href="javascript:history.back()">⬅️ Zurück</a></p>
 
         <p><a href="/assets"> 📦 Assets</a></p>
 
