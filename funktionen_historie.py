@@ -37,4 +37,4 @@ def historie_anzeigen():
 
 
 
-historie_anzeigen()
+#historie_anzeigen()

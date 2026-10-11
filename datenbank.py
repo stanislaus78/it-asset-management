@@ -16,16 +16,53 @@ def assets_tabelle_anlegen():
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS assets (
-        id INTEGER PRIMARY KEY,
-        inventarnummer TEXT,
-        hersteller TEXT,
-        status TEXT,
-        geraetetyp TEXT,
-        standort TEXT,
-        zimmer TEXT,
-        organisationseinheit TEXT,
-        mitarbeiter TEXT
-    )
+
+    id INTEGER PRIMARY KEY,
+
+    inventarnummer TEXT,
+    rechnername TEXT,
+    seriennummer TEXT,
+
+    kostenstelle TEXT,
+    organisationseinheit TEXT,
+
+    standort TEXT,
+    zimmer TEXT,
+
+    anschaffungsdatum TEXT,
+    installationsdatum TEXT,
+
+    assettyp TEXT,
+    verwendungsart TEXT,
+
+    status TEXT,
+
+    hersteller TEXT,
+    modell TEXT,
+
+    mac_adresse TEXT,
+    garantie TEXT,
+
+    verwaltungsart TEXT,
+
+    prozessor TEXT,
+    kerne_threads TEXT,
+
+    ram TEXT,
+    festplatte TEXT,
+
+    betriebssystem TEXT,
+
+    displaygroesse TEXT,
+    dockingstation TEXT,
+
+    anlagenummer TEXT,
+
+    mitarbeiter TEXT,
+
+    bemerkung TEXT
+
+)
     """)
 
     verbindung.commit()
@@ -64,13 +101,9 @@ def historie_tabelle_anlegen():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS historie (
-
             id INTEGER PRIMARY KEY,
-
             datum TEXT,
-
             typ TEXT,
-
             aktion TEXT
 
         )

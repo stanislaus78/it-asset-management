@@ -10,6 +10,10 @@ from funktionen_mitarbeiter import mitarbeiter_bearbeiten_sqlite
 from funktionen_mitarbeiter import mitarbeiter_loeschen_sqlite
 from flask import request, render_template, session, redirect
 from funktionen_assets import asset_zuweisen_sqlite
+from funktionen_assets import neues_asset_erstellen_sqlite
+from datenbank import assets_tabelle_anlegen
+from datenbank import mitarbeiter_tabelle_anlegen
+from datenbank import historie_tabelle_anlegen
 
 app = Flask(__name__)
 app.secret_key = "fratelowsky_geheim"
@@ -109,30 +113,96 @@ def infos():
     return render_template("infos.html")
 
 
-
 @app.route("/asset/anlegen")
 def assets_anlegen():
 
+
     inventarnummer = request.args.get("inventarnummer")
-    hersteller = request.args.get("hersteller")
-    status = request.args.get("status")
-    geraetetyp = request.args.get("geraetetyp")
-    standort = request.args.get("standort")
-    zimmer = request.args.get("zimmer")
+    rechnername = request.args.get("rechnername")
+    seriennummer = request.args.get("seriennummer")
+
+    kostenstelle = request.args.get("kostenstelle")
     organisationseinheit = request.args.get("organisationseinheit")
 
-    if inventarnummer:
+    standort = request.args.get("standort")
+    zimmer = request.args.get("zimmer")
 
+    anschaffungsdatum = request.args.get("anschaffungsdatum")
+    installationsdatum = request.args.get("installationsdatum")
+
+    assettyp = request.args.get("assettyp")
+    verwendungsart = request.args.get("verwendungsart")
+
+    status = request.args.get("status")
+
+    hersteller = request.args.get("hersteller")
+    modell = request.args.get("modell")
+
+    mac_adresse = request.args.get("mac_adresse")
+    garantie = request.args.get("garantie")
+
+    verwaltungsart = request.args.get("verwaltungsart")
+
+    prozessor = request.args.get("prozessor")
+    kerne_threads = request.args.get("kerne_threads")
+
+    ram = request.args.get("ram")
+    festplatte = request.args.get("festplatte")
+
+    betriebssystem = request.args.get("betriebssystem")
+
+    displaygroesse = request.args.get("displaygroesse")
+    dockingstation = request.args.get("dockingstation")
+
+    anlagenummer = request.args.get("anlagenummer")
+
+    bemerkung = request.args.get("bemerkung")
+
+    if inventarnummer:
         neues_asset_erstellen_sqlite(
+
             inventarnummer,
-            hersteller,
-            status,
-            geraetetyp,
+            rechnername,
+            seriennummer,
+
+            kostenstelle,
+            organisationseinheit,
+
             standort,
             zimmer,
-            organisationseinheit
-        )
 
+            anschaffungsdatum,
+            installationsdatum,
+
+            assettyp,
+            verwendungsart,
+
+            status,
+
+            hersteller,
+            modell,
+
+            mac_adresse,
+            garantie,
+
+            verwaltungsart,
+
+            prozessor,
+            kerne_threads,
+
+            ram,
+            festplatte,
+
+            betriebssystem,
+
+            displaygroesse,
+            dockingstation,
+
+            anlagenummer,
+
+            bemerkung
+
+        )
         return f"""
         <h1>Asset erfolgreich angelegt</h1>
 
@@ -148,33 +218,92 @@ def assets_anlegen():
 
     <form>
 
-        Inventarnummer:<br>
-        <input type="text" name="inventarnummer"><br><br>
+    Inventarnummer:<br>
+    <input type="text" name="inventarnummer"><br><br>
 
-        Hersteller:<br>
-        <input type="text" name="hersteller"><br><br>
+    Rechnername:<br>
+    <input type="text" name="rechnername"><br><br>
 
-        Status:<br>
-        <input type="text" name="status"><br><br>
+    Seriennummer:<br>
+    <input type="text" name="seriennummer"><br><br>
 
-        Gerätetyp:<br>
-        <input type="text" name="geraetetyp"><br><br>
+    Kostenstelle:<br>
+    <input type="text" name="kostenstelle"><br><br>
 
-        Standort:<br>
-        <input type="text" name="standort"><br><br>
+    Organisationseinheit:<br>
+    <input type="text" name="organisationseinheit"><br><br>
 
-        Zimmer:<br>
-        <input type="text" name="zimmer"><br><br>
+    Standort:<br>
+    <input type="text" name="standort"><br><br>
 
-        Organisationseinheit:<br>
-        <input type="text" name="organisationseinheit"><br><br>
+    Zimmer:<br>
+    <input type="text" name="zimmer"><br><br>
 
-        <button>Anlegen</button>
+    Anschaffungsdatum:<br>
+    <input type="text" name="anschaffungsdatum"><br><br>
 
-    </form>
+    Installationsdatum:<br>
+    <input type="text" name="installationsdatum"><br><br>
+
+    Assettyp:<br>
+    <input type="text" name="assettyp"><br><br>
+
+    Verwendungsart:<br>
+    <input type="text" name="verwendungsart"><br><br>
+
+    Status:<br>
+    <input type="text" name="status"><br><br>
+
+    Hersteller:<br>
+    <input type="text" name="hersteller"><br><br>
+
+    Modell:<br>
+    <input type="text" name="modell"><br><br>
+
+    MAC-Adresse:<br>
+    <input type="text" name="mac_adresse"><br><br>
+
+    Garantie:<br>
+    <input type="text" name="garantie"><br><br>
+
+    Verwaltungsart:<br>
+    <input type="text" name="verwaltungsart"><br><br>
+
+    Prozessor:<br>
+    <input type="text" name="prozessor"><br><br>
+
+    Kerne/Threads:<br>
+    <input type="text" name="kerne_threads"><br><br>
+
+    RAM:<br>
+    <input type="text" name="ram"><br><br>
+
+    Festplatte:<br>
+    <input type="text" name="festplatte"><br><br>
+
+    Betriebssystem:<br>
+    <input type="text" name="betriebssystem"><br><br>
+
+    Displaygröße:<br>
+    <input type="text" name="displaygroesse"><br><br>
+
+    Dockingstation:<br>
+    <input type="text" name="dockingstation"><br><br>
+
+    Anlagenummer:<br>
+    <input type="text" name="anlagenummer"><br><br>
+
+    Bemerkung:<br>
+    <textarea name="bemerkung"></textarea><br><br>
+
+    <button>Anlegen</button>
+
+</form>
 
     <p><a href="/assets">Zurück zu Assets</a></p>
     """
+
+
 
 @app.route("/asset/bearbeiten")
 def assets_bearbeiten():
@@ -926,26 +1055,26 @@ def suche_assets_mitarbeiter():
 
 #Historie
 
-# @app.route("/historie")
-# def historie():
-#
-#     verbindung = sqlite3.connect("asset_management.db")
-#     cursor = verbindung.cursor()
-#
-#     cursor.execute("""
-#         SELECT datum, typ, aktion
-#         FROM historie
-#         ORDER BY id DESC
-#     """)
-#
-#     eintraege = cursor.fetchall()
-#
-#     verbindung.close()
-#
-#     return render_template(
-#         "historie.html",
-#         eintraege=eintraege
-#     )
+@app.route("/historie")
+def historie():
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT datum, typ, aktion
+        FROM historie
+        ORDER BY id DESC
+    """)
+
+    eintraege = cursor.fetchall()
+
+    verbindung.close()
+
+    return render_template(
+        "historie.html",
+        eintraege=eintraege
+    )
 
 
 #Asset_neu
@@ -991,7 +1120,7 @@ def laptops():
             standort,
             status
         FROM assets
-        WHERE geraetetyp = 'Laptop'
+        WHERE assettyp = 'Laptop'
         ORDER BY inventarnummer
     """)
 
@@ -1019,7 +1148,7 @@ def standpcs():
             standort,
             status
         FROM assets
-        WHERE geraetetyp = 'Stand-PC'
+        WHERE assettyp = 'Stand-PC'
         ORDER BY inventarnummer
     """)
 
@@ -1503,6 +1632,9 @@ def asset_zuweisen():
 
 
 
-
+print(app.url_map)
 if __name__ == "__main__":
+    mitarbeiter_tabelle_anlegen()
+    assets_tabelle_anlegen()
+    historie_tabelle_anlegen()
     app.run(debug=True)
