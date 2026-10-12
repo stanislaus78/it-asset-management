@@ -9,36 +9,78 @@
 <body>
 
 <h1>Alle Assets</h1>
-
+<div style="overflow-x: auto;">
 <table border="1">
 
     <tr>
-        <th>Inventarnummer</th>
-        <th>Hersteller</th>
-        <th>Status</th>
-        <th>Gerätetyp</th>
-        <th>Standort</th>
-        <th>Zimmer</th>
-        <th>Organisationseinheit</th>
-        <th>Mitarbeiter</th>
+        <tr>
+    <th>Inventarnummer</th>
+    <th>Rechnername</th>
+    <th>Seriennummer</th>
+    <th>Kostenstelle</th>
+    <th>Organisationseinheit</th>
+    <th>Standort</th>
+    <th>Zimmer</th>
+    <th>Anschaffungsdatum</th>
+    <th>Installationsdatum</th>
+    <th>Assettyp</th>
+    <th>Verwendungsart</th>
+    <th>Status</th>
+    <th>Hersteller</th>
+    <th>Modell</th>
+    <th>MAC-Adresse</th>
+    <th>Garantie</th>
+    <th>Verwaltungsart</th>
+    <th>Prozessor</th>
+    <th>Kerne/Threads</th>
+    <th>RAM</th>
+    <th>Festplatte</th>
+    <th>Betriebssystem</th>
+    <th>Displaygröße</th>
+    <th>Dockingstation</th>
+    <th>Anlagenummer</th>
+    <th>Bemerkung</th>
+    <th>Mitarbeiter</th>
+</tr>
     </tr>
 
     {% for a in assets %}
 
     <tr>
-        <td>{{ a[0] }}</td>
-        <td>{{ a[1] }}</td>
+       <td>{{ a[1] }}</td>
         <td>{{ a[2] }}</td>
         <td>{{ a[3] }}</td>
         <td>{{ a[4] }}</td>
         <td>{{ a[5] }}</td>
         <td>{{ a[6] }}</td>
         <td>{{ a[7] }}</td>
+        <td>{{ a[8] }}</td>
+        <td>{{ a[9] }}</td>
+        <td>{{ a[10] }}</td>
+        <td>{{ a[11] }}</td>
+        <td>{{ a[12] }}</td>
+        <td>{{ a[13] }}</td>
+        <td>{{ a[14] }}</td>
+        <td>{{ a[15] }}</td>
+        <td>{{ a[16] }}</td>
+        <td>{{ a[17] }}</td>
+        <td>{{ a[18] }}</td>
+        <td>{{ a[19] }}</td>
+        <td>{{ a[20] }}</td>
+        <td>{{ a[21] }}</td>
+        <td>{{ a[22] }}</td>
+        <td>{{ a[23] }}</td>
+        <td>{{ a[24] }}</td>
+        <td>{{ a[25] }}</td>
+        <td>{{ a[26] }}</td>
+        <td>{{ a[27] }}</td>
+
     </tr>
 
     {% endfor %}
 
 </table>
+</div>
 
 <p><a href="/assets">Zurück zu Assets</a></p>
 

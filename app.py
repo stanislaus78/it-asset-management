@@ -449,6 +449,7 @@ def assets_anzeigen():
     """)
 
     assets = cursor.fetchall()
+    print(assets)
 
     verbindung.close()
 
@@ -923,31 +924,57 @@ def suche_asset():
             <table border="1">
 
                 <tr>
-                    <th>Inventarnummer</th>
-                    <th>Hersteller</th>
-                    <th>Status</th>
-                    <th>Gerätetyp</th>
-                    <th>Standort</th>
-                    <th>Zimmer</th>
-                    <th>Organisationseinheit</th>
-                    <th>Mitarbeiter</th>
-                </tr>
-
-                <tr>
-                    <td>{ergebnis[0]}</td>
-                    <td>{ergebnis[1]}</td>
-                    <td>{ergebnis[2]}</td>
-                    <td>{ergebnis[3]}</td>
-                    <td>{ergebnis[4]}</td>
-                    <td>{ergebnis[5]}</td>
-                    <td>{ergebnis[6]}</td>
-                    <td>{ergebnis[7]}</td>
-                </tr>
+            <th>Inventarnummer</th>
+            <th>Rechnername</th>
+            <th>Seriennummer</th>
+            <th>Kostenstelle</th>
+            <th>Organisationseinheit</th>
+            <th>Standort</th>
+            <th>Zimmer</th>
+            <th>Assettyp</th>
+            <th>Verwendungsart</th>
+            <th>Status</th>
+            <th>Hersteller</th>
+            <th>Modell</th>
+            <th>Verwaltungsart</th>
+            <th>Prozessor</th>
+            <th>RAM</th>
+            <th>Betriebssystem</th>
+            <th>Mitarbeiter</th>
+        </tr>
+        
+        <tr>
+            <td>{ergebnis[1]}</td>
+            <td>{ergebnis[2]}</td>
+            <td>{ergebnis[3]}</td>
+            <td>{ergebnis[4]}</td>
+            <td>{ergebnis[5]}</td>
+            <td>{ergebnis[6]}</td>
+            <td>{ergebnis[7]}</td>
+            <td>{ergebnis[10]}</td>
+            <td>{ergebnis[11]}</td>
+            <td>{ergebnis[12]}</td>
+            <td>{ergebnis[13]}</td>
+            <td>{ergebnis[14]}</td>
+            <td>{ergebnis[17]}</td>
+            <td>{ergebnis[18]}</td>
+            <td>{ergebnis[20]}</td>
+            <td>{ergebnis[22]}</td>
+            <td>{ergebnis[26]}</td>
+        </tr>
 
             </table>
 
+            <br>
+
+            <p>
+                <a href="/assets/details/{ergebnis[1]}">
+                    Assetdetails anzeigen
+                </a>
+            </p>
+
             <p><a href="/suche">Neue Suche</a></p>
-            <p><a href="/suche">Zurück zur Suche</a></p>  
+            <p><a href="/suche">Zurück zur Suche</a></p>
             """
 
         return f"""
@@ -972,7 +999,6 @@ def suche_asset():
 
     <p><a href="/suche">Zurück zur Suche</a></p>
     """
-
 @app.route("/suche/mitarbeiter")
 def suche_mitarbeiter():
 
@@ -1137,19 +1163,70 @@ def laptops():
 @app.route("/assets/standpc")
 def standpcs():
 
-    verbindung = sqlite3.connect("asset_management.db")
+    sortierung = request.args.get("sort", "rechnername")
+    richtung = request.args.get("richtung", "ASC")
 
+    erlaubte_spalten = [
+
+        "inventarnummer",
+        "rechnername",
+        "seriennummer",
+
+        "kostenstelle",
+        "organisationseinheit",
+
+        "standort",
+        "zimmer",
+
+        "anschaffungsdatum",
+        "installationsdatum",
+
+        "assettyp",
+        "verwendungsart",
+
+        "status",
+
+        "hersteller",
+        "modell",
+
+        "mac_adresse",
+        "garantie",
+
+        "verwaltungsart",
+
+        "prozessor",
+        "kerne_threads",
+
+        "ram",
+        "festplatte",
+
+        "betriebssystem",
+
+        "displaygroesse",
+        "dockingstation",
+
+        "anlagenummer",
+
+        "mitarbeiter",
+
+        "bemerkung"
+
+    ]
+
+    if sortierung not in erlaubte_spalten:
+        sortierung = "rechnername"
+
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
+
+    verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
 
-    cursor.execute("""
-        SELECT
-            inventarnummer,
-            mitarbeiter,
-            standort,
-            status
+    cursor.execute(f"""
+        SELECT *
         FROM assets
-        WHERE assettyp = 'Stand-PC'
-        ORDER BY inventarnummer
+        WHERE LOWER(assettyp) = 'stand-pc'
+        ORDER BY {sortierung} {richtung}
     """)
 
     standpcs = cursor.fetchall()
@@ -1631,8 +1708,8 @@ def asset_zuweisen():
 
 
 
-
-print(app.url_map)
+#Debugggging
+#print(app.url_map)
 if __name__ == "__main__":
     mitarbeiter_tabelle_anlegen()
     assets_tabelle_anlegen()
