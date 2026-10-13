@@ -3,37 +3,661 @@
 
 <head>
 
-    <title>Laptops</title>
+    <title>Laptop</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='dropdowns.css') }}">
 
 </head>
 
 <body>
 
-    <div class="container">
+<div class="container">
+
+    <h1>💻 Laptops</h1>
+
+    <div class="toolbar">
+
+        <a href="/asset/anlegen">
+            <button>➕ Laptop anlegen</button>
+        </a>
+
+        <button disabled>👁 Details</button>
+
+        <button disabled>✏️ Bearbeiten</button>
+
+        <button disabled>🗑️ Löschen</button>
+
+    </div>
+
+    <br>
+
+    <div style="overflow-x:auto;">
 
         <table>
 
             <tr>
-                <th>Inventarnummer</th>
-                <th>Benutzer</th>
-                <th>Standort</th>
-                <th>Status</th>
-            </tr>
 
-            {% for laptop in laptops %}
+                <th></th>
+
+                <th class="dropdown-column">
+
+                Rechnername
+
+                <span class="dropdown-button">▼</span>
+
+                <div class="dropdown-menu">
+
+<!--                    <a href="#">🔎 Filtern nach Spalte</a>-->
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                    <a href="?sort=rechnername&richtung=ASC">
+                        ↑ Nach Spalte sortieren A-Z
+                    </a>
+
+                    <a href="?sort=rechnername&richtung=DESC">
+                        ↓ Nach Spalte sortieren Z-A
+                    </a>
+
+                </div>
+
+             </th>
+
+
+                <th class="dropdown-column">
+
+                    Inventarnummer
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=inventarnummer&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=inventarnummer&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Seriennummer
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=seriennummer&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=seriennummer&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Benutzer
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=mitarbeiter&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=mitarbeiter&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+               <th class="dropdown-column">
+
+                    Standort
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=standort&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=standort&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Zimmer
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=zimmer&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=zimmer&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Kostenstelle
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=kostenstelle&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=kostenstelle&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Organisationseinheit
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=organisationseinheit&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=organisationseinheit&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Hersteller
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=hersteller&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=hersteller&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Modell
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=modell&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=modell&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Prozessor
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=prozessor&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=prozessor&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Kerne/Threads
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=kerne_threads&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=kerne_threads&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    RAM
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=ram&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=ram&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Festplatte
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=festplatte&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=festplatte&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Betriebssystem
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=betriebssystem&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=betriebssystem&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+
+                <th class="dropdown-column">
+
+                    Verwaltungsart
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=verwaltungsart&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=verwaltungsart&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+
+                <th class="dropdown-column">
+
+                    Status
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=status&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=status&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    MAC-Adresse
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=mac_adresse&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=mac_adresse&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Garantie
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=garantie&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=garantie&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Anschaffungsdatum
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=anschaffungsdatum&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=anschaffungsdatum&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Installationsdatum
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=installationsdatum&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=installationsdatum&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Anlagenummer
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=anlagenummer&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=anlagenummer&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+            </tr>
+            <tr id="filter-row" class="filter-row" style="display:none;">
+
+            <td></td>
+
+            <td><input type="text" placeholder="Rechnername"></td>
+            <td><input type="text" placeholder="Inventarnummer"></td>
+            <td><input type="text" placeholder="Seriennummer"></td>
+            <td><input type="text" placeholder="Benutzer"></td>
+            <td><input type="text" placeholder="Standort"></td>
+            <td><input type="text" placeholder="Zimmer"></td>
+            <td><input type="text" placeholder="Kostenstelle"></td>
+            <td><input type="text" placeholder="Organisationseinheit"></td>
+            <td><input type="text" placeholder="Hersteller"></td>
+            <td><input type="text" placeholder="Modell"></td>
+            <td><input type="text" placeholder="Displaygröße"></td>
+            <td><input type="text" placeholder="Prozessor"></td>
+            <td><input type="text" placeholder="Kerne/Threads"></td>
+            <td><input type="text" placeholder="RAM"></td>
+            <td><input type="text" placeholder="Festplatte"></td>
+            <td><input type="text" placeholder="Betriebssystem"></td>
+            <td><input type="text" placeholder="Verwaltungsart"></td>
+            <td><input type="text" placeholder="Status"></td>
+            <td><input type="text" placeholder="MAC-Adresse"></td>
+            <td><input type="text" placeholder="Garantie"></td>
+            <td><input type="text" placeholder="Anschaffungsdatum"></td>
+            <td><input type="text" placeholder="Installationsdatum"></td>
+            <td><input type="text" placeholder="Dockingstation"></td>
+            <td><input type="text" placeholder="Anlagenummer"></td>
+
+        </tr>
+            {% for pc in laptops %}
 
             <tr>
 
                 <td>
-                    <a href="/assets/details/{{ laptop[0] }}">{{ laptop[0] }}</a>
+                    <input type="checkbox">
                 </td>
 
-                <td>{{ laptop[1] }}</td>
-                <td>{{ laptop[2] }}</td>
-                <td>{{ laptop[3] }}</td>
+                <td>
+                    <a href="/assets/details/{{ pc[1] }}">
+                        {{ pc[2] }}
+                    </a>
+                </td>
+
+                <td>{{ pc[1] }}</td>
+                <td>{{ pc[3] }}</td>
+
+                <td>{{ pc[26] }}</td>
+
+                <td>{{ pc[6] }}</td>
+                <td>{{ pc[7] }}</td>
+
+                <td>{{ pc[4] }}</td>
+                <td>{{ pc[5] }}</td>
+
+                <td>{{ pc[13] }}</td>
+                <td>{{ pc[14] }}</td>
+
+                <td>{{ pc[18] }}</td>
+                <td>{{ pc[19] }}</td>
+
+                <td>{{ pc[20] }}</td>
+                <td>{{ pc[21] }}</td>
+
+                <td>{{ pc[22] }}</td>
+
+                <td>{{ pc[17] }}</td>
+                <td>{{ pc[12] }}</td>
+
+                <td>{{ pc[15] }}</td>
+
+                <td>{{ pc[16] }}</td>
+
+                <td>{{ pc[8] }}</td>
+                <td>{{ pc[9] }}</td>
+
+                <td>{{ pc[25] }}</td>
 
             </tr>
 
@@ -41,16 +665,70 @@
 
         </table>
 
-        <br><br>
-
-        <p><a href="/assets/rechner">💻 Rechner</a></p>
-
-        <p><a href="/assets"> 📦 Assets</a></p>
-
-        <p><a href="/">🏠 Dashboard</a></p>
     </div>
 
+    <br><br>
+
+    <p><a href="javascript:history.back()">⬅️ Zurück</a></p>
+
+    <p><a href="/assets">📦 Assets</a></p>
+
+</div>
+<script>
+
+document.querySelectorAll(".dropdown-column").forEach(column => {
+
+    const button = column.querySelector(".dropdown-button");
+    const menu = column.querySelector(".dropdown-menu");
+
+    button.addEventListener("click", function(event) {
+
+        event.stopPropagation();
+
+        document.querySelectorAll(".dropdown-menu").forEach(m => {
+
+            if (m !== menu) {
+                m.style.display = "none";
+            }
+
+        });
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        }
+        else {
+            menu.style.display = "block";
+        }
+
+    });
+
+});
+
+document.addEventListener("click", function() {
+
+    document.querySelectorAll(".dropdown-menu").forEach(menu => {
+
+        menu.style.display = "none";
+
+    });
+
+});
+
+</script>
+<script>
+
+document.querySelectorAll(".show-filters").forEach(filterLink => {
+
+    filterLink.addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        document.getElementById("filter-row").style.display = "table-row";
+
+    });
+
+});
+
+</script>
 </body>
-
 </html>
-

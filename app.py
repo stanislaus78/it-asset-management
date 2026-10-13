@@ -1140,17 +1140,15 @@ def laptops():
     cursor = verbindung.cursor()
 
     cursor.execute("""
-        SELECT
-            inventarnummer,
-            mitarbeiter,
-            standort,
-            status
+        SELECT *
         FROM assets
-        WHERE assettyp = 'Laptop'
+        WHERE LOWER(assettyp) = 'laptop'
         ORDER BY inventarnummer
     """)
 
     laptops = cursor.fetchall()
+
+    print(laptops[:1])
 
     verbindung.close()
 
@@ -1158,7 +1156,6 @@ def laptops():
         "laptops.html",
         laptops=laptops
     )
-
 
 @app.route("/assets/standpc")
 def standpcs():

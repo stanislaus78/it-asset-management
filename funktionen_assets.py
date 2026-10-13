@@ -297,6 +297,8 @@ def neues_asset_erstellen_sqlite(
 
     anlagenummer,
 
+    mitarbeiter,
+
     bemerkung
 
 ):
@@ -307,39 +309,60 @@ def neues_asset_erstellen_sqlite(
     cursor.execute("""
         INSERT INTO assets (
             inventarnummer,
+            rechnername,
             seriennummer,
+            kostenstelle,
+            organisationseinheit,
+            standort,
+            zimmer,
+            anschaffungsdatum,
+            installationsdatum,
             assettyp,
+            verwendungsart,
+            status,
             hersteller,
             modell,
-            rechnername,
+            mac_adresse,
+            garantie,
+            verwaltungsart,
             prozessor,
+            kerne_threads,
             ram,
             festplatte,
             betriebssystem,
-            status,
-            standort,
-            zimmer,
-            organisationseinheit,
+            displaygroesse,
+            dockingstation,
+            anlagenummer,
             mitarbeiter,
             bemerkung
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         inventarnummer,
+        rechnername,
         seriennummer,
+        kostenstelle,
+        organisationseinheit,
+        standort,
+        zimmer,
+        anschaffungsdatum,
+        installationsdatum,
         assettyp,
+        verwendungsart,
+        status,
         hersteller,
         modell,
-        rechnername,
+        mac_adresse,
+        garantie,
+        verwaltungsart,
         prozessor,
+        kerne_threads,
         ram,
         festplatte,
         betriebssystem,
-        status,
-        standort,
-        zimmer,
-        organisationseinheit,
-        None,
+        displaygroesse,
+        dockingstation,
+        anlagenummer,
         bemerkung
     ))
 
@@ -351,8 +374,9 @@ def neues_asset_erstellen_sqlite(
     )
 
     verbindung.close()
-
     print("Asset erfolgreich angelegt")
+
+
 def assets_loeschen_sqlite(inventarnummer):
     verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
