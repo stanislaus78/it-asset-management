@@ -4,7 +4,12 @@ from mitarbeiter import Mitarbeiter
 from datenbank import verbinden
 from funktionen_historie import historie_schreiben
 
+
+
+
 def asset_suchen_sqlite(inventarnummer):
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
 
     cursor.execute("""
         SELECT *
@@ -386,12 +391,6 @@ def assets_loeschen_sqlite(inventarnummer):
     if asset is None:
         print("Asset nicht gefunden")
         return
-
-    bestaetigung = input(
-        f"Asset {inventarnummer} wirklich löschen? (j/n): "
-    )
-
-    if bestaetigung.lower() == "j":
 
         cursor.execute("""
             DELETE FROM assets
