@@ -616,14 +616,20 @@
             <tr>
 
                 <td>
-                    <input type="checkbox">
+                    <input
+                    type="checkbox"
+                    class="asset-checkbox"
+                    data-inventarnummer="{{ pc[1] }}"
+                    data-rechnername="{{ pc[2] }}"
+                    data-seriennummer="{{ pc[3] }}"
+                    data-standort="{{ pc[6] }}"
+                    data-zimmer="{{ pc[7] }}"
+                    data-hersteller="{{ pc[13] }}"
+                    data-modell="{{ pc[14] }}"
+>
                 </td>
 
-                <td>
-                    <a href="/assets/details/{{ pc[1] }}">
-                        {{ pc[2] }}
-                    </a>
-                </td>
+                <td>{{ pc[2] }}</td>
 
                 <td>{{ pc[1] }}</td>
                 <td>{{ pc[3] }}</td>

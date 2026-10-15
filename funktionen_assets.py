@@ -6,13 +6,20 @@ from funktionen_historie import historie_schreiben
 
 def asset_suchen_sqlite(inventarnummer):
 
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
     cursor.execute("""
         SELECT *
         FROM assets
         WHERE inventarnummer = ?
     """, (inventarnummer,))
 
-    return cursor.fetchone()
+    asset = cursor.fetchone()
+
+    verbindung.close()
+
+    return asset
 
 
 
@@ -378,6 +385,7 @@ def neues_asset_erstellen_sqlite(
 
 
 def assets_loeschen_sqlite(inventarnummer):
+
     verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
 
@@ -385,31 +393,24 @@ def assets_loeschen_sqlite(inventarnummer):
 
     if asset is None:
         print("Asset nicht gefunden")
+        verbindung.close()
         return
 
-    bestaetigung = input(
-        f"Asset {inventarnummer} wirklich löschen? (j/n): "
+    cursor.execute("""
+        DELETE FROM assets
+        WHERE inventarnummer = ?
+    """, (inventarnummer,))
+
+    verbindung.commit()
+
+    historie_schreiben(
+        "Asset",
+        f"Asset {inventarnummer} gelöscht"
     )
 
-    if bestaetigung.lower() == "j":
+    verbindung.close()
 
-        cursor.execute("""
-            DELETE FROM assets
-            WHERE inventarnummer = ?
-        """, (inventarnummer,))
-
-        verbindung.commit()
-        historie_schreiben(
-            "Asset",
-            f"Asset {inventarnummer} gelöscht"
-        )
-        verbindung.close()
-
-        print("Asset erfolgreich gelöscht")
-
-    else:
-        print("Löschen abgebrochen")
-
+    print("Asset erfolgreich gelöscht")
 
 def asset_feld_aktualisieren(
         inventarnummer,
@@ -546,6 +547,96 @@ def assets_bearbeiten_sqlite(inventarnummer):
 
     else:
         print("Ungültige Eingabe")
+
+def asset_speichern_popup_sqlite(
+        inventarnummer,
+        rechnername,
+        seriennummer,
+        benutzer,
+        standort,
+        zimmer,
+        kostenstelle,
+        organisationseinheit,
+        hersteller,
+        modell,
+        prozessor,
+        kerne_threads,
+        ram,
+        festplatte,
+        betriebssystem,
+        verwaltungsart,
+        status,
+        mac_adresse,
+        garantie,
+        anschaffungsdatum,
+        installationsdatum,
+        anlagenummer):
+
+    verbindung = sqlite3.connect(
+        "asset_management.db"
+    )
+
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        UPDATE assets
+        SET
+            rechnername = ?,
+            seriennummer = ?,
+            mitarbeiter = ?,
+            standort = ?,
+            zimmer = ?,
+            kostenstelle = ?,
+            organisationseinheit = ?,
+            hersteller = ?,
+            modell = ?,
+            prozessor = ?,
+            kerne_threads = ?,
+            ram = ?,
+            festplatte = ?,
+            betriebssystem = ?,
+            verwaltungsart = ?,
+            status = ?,
+            mac_adresse = ?,
+            garantie = ?,
+            anschaffungsdatum = ?,
+            installationsdatum = ?,
+            anlagenummer = ?
+        WHERE inventarnummer = ?
+    """, (
+        rechnername,
+        seriennummer,
+        benutzer,
+        standort,
+        zimmer,
+        kostenstelle,
+        organisationseinheit,
+        hersteller,
+        modell,
+        prozessor,
+        kerne_threads,
+        ram,
+        festplatte,
+        betriebssystem,
+        verwaltungsart,
+        status,
+        mac_adresse,
+        garantie,
+        anschaffungsdatum,
+        installationsdatum,
+        anlagenummer,
+        inventarnummer
+    ))
+
+    verbindung.commit()
+
+    historie_schreiben(
+        "Asset",
+        f"Asset {inventarnummer} bearbeitet"
+    )
+
+    verbindung.close()
+
 
 def asset_zuweisen_sqlite(inventarnummer, name):
 

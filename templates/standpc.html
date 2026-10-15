@@ -28,11 +28,23 @@
             <button>➕ Stand-PC anlegen</button>
         </a>
 
-        <button disabled>👁 Details</button>
+           <button id="detailsBtn"
+                disabled
+                onclick="detailsAnzeigen()">
+                👁 Details
+            </button>
 
-        <button disabled>✏️ Bearbeiten</button>
+            <button id="bearbeitenBtn"
+                disabled
+                onclick="assetBearbeiten()">
+            ✏️ Bearbeiten
+            </button>
 
-        <button disabled>🗑️ Löschen</button>
+            <button id="loeschenBtn"
+                disabled
+                onclick="popupOeffnen(ausgewaehlteInventarnummer)">
+                🗑️ Löschen
+            </button>
 
     </div>
 
@@ -614,14 +626,14 @@
             <tr>
 
                 <td>
-                    <input type="checkbox">
+                   <input
+                    type="checkbox"
+                    class="asset-checkbox"
+                    data-inventarnummer="{{ pc[1] }}"
+>
                 </td>
 
-                <td>
-                    <a href="/assets/details/{{ pc[1] }}">
-                        {{ pc[2] }}
-                    </a>
-                </td>
+                <td>{{ pc[2] }}</td>
 
                 <td>{{ pc[1] }}</td>
                 <td>{{ pc[3] }}</td>
@@ -726,6 +738,605 @@ document.querySelectorAll(".show-filters").forEach(filterLink => {
     });
 
 });
+
+</script>
+
+<div id="loeschPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        border:1px solid #ccc;
+        box-shadow:0 0 15px rgba(0,0,0,0.3);
+        z-index:9999;
+     ">
+
+    <h2>⚠️ Asset löschen</h2>
+
+    <p id="popupText">
+        Asset wirklich löschen?
+    </p>
+
+    <button onclick="assetLoeschen()">
+        Ja, löschen
+    </button>
+    <button onclick="popupSchliessen()">
+        Abbrechen
+    </button>
+
+</div>
+
+<div id="detailsPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        border:1px solid #ccc;
+        box-shadow:0 0 15px rgba(0,0,0,0.3);
+        z-index:9999;
+     ">
+
+    <h2>👁 Details</h2>
+
+        <p id="detailsText">
+        Asset ausgewählt
+        </p>
+
+    <button onclick="detailsSchliessen()">
+        Schließen
+    </button>
+
+</div>
+
+<div id="bearbeitenPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        z-index:9999;
+     ">
+
+    <h2>✏️ Asset bearbeiten</h2>
+
+    <div id="bearbeitenInhalt"></div>
+
+    <br>
+
+    <button onclick="bearbeitenSchliessen()">
+        ✖ Schließen
+    </button>
+
+</div>
+<script>
+
+let ausgewaehlteInventarnummer = "";
+let inventarnummerZumLoeschen = "";
+
+function popupOeffnen(inventarnummer) {
+
+    inventarnummerZumLoeschen = inventarnummer;
+
+    document.getElementById("popupText").innerText =
+        "Asset " + inventarnummer + " wirklich löschen?";
+
+    document.getElementById("loeschPopup").style.display =
+        "block";
+}
+
+function popupSchliessen() {
+
+    document.getElementById("loeschPopup").style.display =
+        "none";
+}
+
+function assetLoeschen() {
+
+    window.location.href =
+        "/asset/loeschen?inventarnummer=" +
+        inventarnummerZumLoeschen;
+}
+function detailsAnzeigen() {
+
+    fetch(
+        "/asset/details_json/" +
+        ausgewaehlteInventarnummer
+    )
+    .then(response => response.json())
+    .then(data => {
+
+    document.getElementById("detailsText").innerHTML = `
+<div class="details-container">
+<div class="details-section">
+
+    <h3>Allgemein</h3>
+
+    <div class="details-grid">
+        <div>Rechnername</div>
+        <div>${data.rechnername || "-"}</div>
+
+        <div>Inventarnummer</div>
+        <div>${data.inventarnummer || "-"}</div>
+
+        <div>Seriennummer</div>
+        <div>${data.seriennummer || "-"}</div>
+
+        <div>Benutzer</div>
+        <div>${data.benutzer || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Standort</h3>
+
+    <div class="details-grid">
+        <div>Standort</div>
+        <div>${data.standort || "-"}</div>
+
+        <div>Zimmer</div>
+        <div>${data.zimmer || "-"}</div>
+
+        <div>Kostenstelle</div>
+        <div>${data.kostenstelle || "-"}</div>
+
+        <div>Organisationseinheit</div>
+        <div>${data.organisationseinheit || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Hardware</h3>
+
+    <div class="details-grid">
+        <div>Hersteller</div>
+        <div>${data.hersteller || "-"}</div>
+
+        <div>Modell</div>
+        <div>${data.modell || "-"}</div>
+
+        <div>Prozessor</div>
+        <div>${data.prozessor || "-"}</div>
+
+        <div>Kerne/Threads</div>
+        <div>${data.kerne_threads || "-"}</div>
+
+        <div>RAM</div>
+        <div>${data.ram || "-"}</div>
+
+        <div>Festplatte</div>
+        <div>${data.festplatte || "-"}</div>
+
+        <div>Betriebssystem</div>
+        <div>${data.betriebssystem || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Verwaltung</h3>
+
+    <div class="details-grid">
+        <div>Status</div>
+        <div>${data.status || "-"}</div>
+
+        <div>Verwaltungsart</div>
+        <div>${data.verwaltungsart || "-"}</div>
+
+        <div>MAC-Adresse</div>
+        <div>${data.mac_adresse || "-"}</div>
+
+        <div>Garantie</div>
+        <div>${data.garantie || "-"}</div>
+
+        <div>Anschaffungsdatum</div>
+        <div>${data.anschaffungsdatum || "-"}</div>
+
+        <div>Installationsdatum</div>
+        <div>${data.installationsdatum || "-"}</div>
+
+        <div>Anlagenummer</div>
+        <div>${data.anlagenummer || "-"}</div>
+    </div>
+
+</div>
+</div>
+`;
+        document.getElementById(
+            "detailsPopup"
+        ).style.display = "block";
+
+    });
+
+}
+
+
+
+function assetBearbeiten() {
+
+    fetch(
+        "/asset/details_json/" +
+        ausgewaehlteInventarnummer
+    )
+    .then(response => response.json())
+    .then(data => {
+
+        document.getElementById(
+    "bearbeitenInhalt"
+).innerHTML = `
+
+<input
+    id="edit_inventarnummer"
+    type="hidden"
+    value="${data.inventarnummer || ""}"
+>
+
+<table class="bearbeiten-table">
+
+<tr>
+    <td>Rechnername</td>
+    <td><input id="edit_rechnername" value="${data.rechnername || ""}"></td>
+</tr>
+
+<tr>
+    <td>Seriennummer</td>
+    <td><input id="edit_seriennummer" value="${data.seriennummer || ""}"></td>
+</tr>
+
+<tr>
+    <td>Benutzer</td>
+    <td><input id="edit_benutzer" value="${data.benutzer || ""}"></td>
+</tr>
+
+<tr>
+    <td>Standort</td>
+    <td><input id="edit_standort" value="${data.standort || ""}"></td>
+</tr>
+
+<tr>
+    <td>Zimmer</td>
+    <td><input id="edit_zimmer" value="${data.zimmer || ""}"></td>
+</tr>
+
+<tr>
+    <td>Kostenstelle</td>
+    <td><input id="edit_kostenstelle" value="${data.kostenstelle || ""}"></td>
+</tr>
+
+<tr>
+    <td>Organisationseinheit</td>
+    <td><input id="edit_organisationseinheit" value="${data.organisationseinheit || ""}"></td>
+</tr>
+
+<tr>
+    <td>Hersteller</td>
+    <td><input id="edit_hersteller" value="${data.hersteller || ""}"></td>
+</tr>
+
+<tr>
+    <td>Modell</td>
+    <td><input id="edit_modell" value="${data.modell || ""}"></td>
+</tr>
+
+<tr>
+    <td>Prozessor</td>
+    <td><input id="edit_prozessor" value="${data.prozessor || ""}"></td>
+</tr>
+
+<tr>
+    <td>Kerne/Threads</td>
+    <td><input id="edit_kerne_threads" value="${data.kerne_threads || ""}"></td>
+</tr>
+
+<tr>
+    <td>RAM</td>
+    <td><input id="edit_ram" value="${data.ram || ""}"></td>
+</tr>
+
+<tr>
+    <td>Festplatte</td>
+    <td><input id="edit_festplatte" value="${data.festplatte || ""}"></td>
+</tr>
+
+<tr>
+    <td>Betriebssystem</td>
+    <td><input id="edit_betriebssystem" value="${data.betriebssystem || ""}"></td>
+</tr>
+
+<tr>
+    <td>Verwaltungsart</td>
+    <td><input id="edit_verwaltungsart" value="${data.verwaltungsart || ""}"></td>
+</tr>
+
+<tr>
+    <td>Status</td>
+    <td><input id="edit_status" value="${data.status || ""}"></td>
+</tr>
+
+<tr>
+    <td>MAC-Adresse</td>
+    <td><input id="edit_mac_adresse" value="${data.mac_adresse || ""}"></td>
+</tr>
+
+<tr>
+    <td>Garantie</td>
+    <td><input id="edit_garantie" value="${data.garantie || ""}"></td>
+</tr>
+
+<tr>
+    <td>Anschaffungsdatum</td>
+    <td><input id="edit_anschaffungsdatum" value="${data.anschaffungsdatum || ""}"></td>
+</tr>
+
+<tr>
+    <td>Installationsdatum</td>
+    <td><input id="edit_installationsdatum" value="${data.installationsdatum || ""}"></td>
+</tr>
+
+<tr>
+    <td>Anlagenummer</td>
+    <td><input id="edit_anlagenummer" value="${data.anlagenummer || ""}"></td>
+</tr>
+
+</table>
+
+<br>
+
+<button onclick="assetSpeichern()">
+    💾 Speichern
+</button>
+
+`;
+
+        document.getElementById(
+            "bearbeitenPopup"
+        ).style.display = "block";
+
+    });
+
+}
+
+
+function detailsSchliessen() {
+
+    document.getElementById(
+        "detailsPopup"
+    ).style.display = "none";
+
+}
+
+
+   function assetSpeichern() {
+
+    const daten = new FormData();
+
+    daten.append(
+        "inventarnummer",
+        document.getElementById(
+            "edit_inventarnummer"
+        ).value
+    );
+
+    daten.append(
+        "rechnername",
+        document.getElementById(
+            "edit_rechnername"
+        ).value
+    );
+
+    daten.append(
+        "seriennummer",
+        document.getElementById(
+            "edit_seriennummer"
+        ).value
+    );
+
+    daten.append(
+        "benutzer",
+        document.getElementById(
+            "edit_benutzer"
+        ).value
+    );
+
+    daten.append(
+        "standort",
+        document.getElementById(
+            "edit_standort"
+        ).value
+    );
+
+    daten.append(
+        "zimmer",
+        document.getElementById(
+            "edit_zimmer"
+        ).value
+    );
+
+    daten.append(
+        "kostenstelle",
+        document.getElementById(
+            "edit_kostenstelle"
+        ).value
+    );
+
+    daten.append(
+        "organisationseinheit",
+        document.getElementById(
+            "edit_organisationseinheit"
+        ).value
+    );
+
+    daten.append(
+        "hersteller",
+        document.getElementById(
+            "edit_hersteller"
+        ).value
+    );
+
+    daten.append(
+        "modell",
+        document.getElementById(
+            "edit_modell"
+        ).value
+    );
+
+    daten.append(
+        "prozessor",
+        document.getElementById(
+            "edit_prozessor"
+        ).value
+    );
+
+    daten.append(
+        "kerne_threads",
+        document.getElementById(
+            "edit_kerne_threads"
+        ).value
+    );
+
+    daten.append(
+        "ram",
+        document.getElementById(
+            "edit_ram"
+        ).value
+    );
+
+    daten.append(
+        "festplatte",
+        document.getElementById(
+            "edit_festplatte"
+        ).value
+    );
+
+    daten.append(
+        "betriebssystem",
+        document.getElementById(
+            "edit_betriebssystem"
+        ).value
+    );
+
+    daten.append(
+        "verwaltungsart",
+        document.getElementById(
+            "edit_verwaltungsart"
+        ).value
+    );
+
+    daten.append(
+        "status",
+        document.getElementById(
+            "edit_status"
+        ).value
+    );
+
+    daten.append(
+        "mac_adresse",
+        document.getElementById(
+            "edit_mac_adresse"
+        ).value
+    );
+
+    daten.append(
+        "garantie",
+        document.getElementById(
+            "edit_garantie"
+        ).value
+    );
+
+    daten.append(
+        "anschaffungsdatum",
+        document.getElementById(
+            "edit_anschaffungsdatum"
+        ).value
+    );
+
+    daten.append(
+        "installationsdatum",
+        document.getElementById(
+            "edit_installationsdatum"
+        ).value
+    );
+
+    daten.append(
+        "anlagenummer",
+        document.getElementById(
+            "edit_anlagenummer"
+        ).value
+    );
+
+    fetch("/asset/speichern", {
+        method: "POST",
+        body: daten
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        bearbeitenSchliessen();
+
+        location.reload();
+
+    });
+
+}
+function bearbeitenSchliessen() {
+
+    document.getElementById(
+        "bearbeitenPopup"
+    ).style.display = "none";
+
+}
+</script>
+
+<script>
+
+document.querySelectorAll(".asset-checkbox").forEach(cb => {
+
+    cb.addEventListener("change", pruefeAuswahl);
+
+});
+
+function pruefeAuswahl() {
+
+    const anzahl =
+        document.querySelectorAll(
+            ".asset-checkbox:checked"
+        ).length;
+    const ausgewaehlt =
+    document.querySelector(
+        ".asset-checkbox:checked"
+    );
+
+if (ausgewaehlt) {
+
+    ausgewaehlteInventarnummer =
+        ausgewaehlt.dataset.inventarnummer;
+
+}
+    document.getElementById("detailsBtn").disabled =
+        anzahl !== 1;
+
+    document.getElementById("bearbeitenBtn").disabled =
+        anzahl !== 1;
+
+    document.getElementById("loeschenBtn").disabled =
+        anzahl !== 1;
+
+}
 
 </script>
 </body>

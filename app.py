@@ -14,6 +14,10 @@ from funktionen_assets import neues_asset_erstellen_sqlite
 from datenbank import assets_tabelle_anlegen
 from datenbank import mitarbeiter_tabelle_anlegen
 from datenbank import historie_tabelle_anlegen
+from funktionen_assets import asset_suchen_sqlite
+from funktionen_assets import asset_speichern_popup_sqlite
+from flask import request
+
 
 app = Flask(__name__)
 app.secret_key = "fratelowsky_geheim"
@@ -305,78 +309,60 @@ def assets_anlegen():
 
 
 
-@app.route("/asset/bearbeiten")
-def assets_bearbeiten():
+@app.route("/asset/bearbeiten/<inventarnummer>")
+def asset_bearbeiten(inventarnummer):
 
-    inventarnummer = request.args.get("inventarnummer")
-    hersteller = request.args.get("hersteller")
+    asset = asset_suchen_sqlite(inventarnummer)
 
-    if inventarnummer and hersteller:
+    return render_template(
+        "asset_bearbeiten.html",
+        asset=asset
+    )
 
-        assets_bearbeiten_sqlite(
-            inventarnummer,
-            hersteller
-        )
+@app.route("/asset/speichern", methods=["POST"])
+def asset_speichern():
 
-        return f"""
-        <h1>Asset bearbeitet</h1>
+    asset_speichern_popup_sqlite(
 
-        Asset {inventarnummer} wurde geändert.
+        request.form["inventarnummer"],
+        request.form["rechnername"],
+        request.form["seriennummer"],
+        request.form["benutzer"],
+        request.form["standort"],
+        request.form["zimmer"],
+        request.form["kostenstelle"],
+        request.form["organisationseinheit"],
+        request.form["hersteller"],
+        request.form["modell"],
+        request.form["prozessor"],
+        request.form["kerne_threads"],
+        request.form["ram"],
+        request.form["festplatte"],
+        request.form["betriebssystem"],
+        request.form["verwaltungsart"],
+        request.form["status"],
+        request.form["mac_adresse"],
+        request.form["garantie"],
+        request.form["anschaffungsdatum"],
+        request.form["installationsdatum"],
+        request.form["anlagenummer"]
 
-        <p><a href"/assets/bearbeiten">Weiteres Asset bearbeiten</a></p>
-        <p><a href="/assets">Zurück zu Assets</a></p>
-        """
+    )
 
-    return """
-    <h1>Asset bearbeiten</h1>
-
-    <form>
-
-        Inventarnummer:<br>
-        <input type="text" name="inventarnummer"><br><br>
-
-        Neuer Hersteller:<br>
-        <input type="text" name="hersteller"><br><br>
-
-        <button>Speichern</button>
-
-    </form>
-
-    <p><a href="/assets">Zurück zu Assets</a></p>
-    """
-
+    return {"status": "ok"}
 @app.route("/asset/loeschen")
 def assets_loeschen():
 
     inventarnummer = request.args.get("inventarnummer")
 
     if inventarnummer:
-
         assets_loeschen_sqlite(inventarnummer)
 
-        return f"""
-        <h1>Asset gelöscht</h1>
+    return redirect("/assets/standpc")
 
-        Asset {inventarnummer} wurde gelöscht.<br><br>
 
-        <p><a href="/assets/loeschen">Weiteres Asset löschen</a></p>
-        <p><a href="/assets">Zurück zu Assets</a></p>
-        """
 
-    return """
-    <h1>Asset löschen</h1>
 
-    <form>
-
-        Inventarnummer:<br>
-        <input type="text" name="inventarnummer"><br><br>
-
-        <button>Löschen</button>
-
-    </form>
-
-    <p><a href="/assets">Zurück zu Assets</a></p>
-    """
 
 @app.route("/asset/zuweisen")
 def assets_zuweisen():
@@ -458,7 +444,34 @@ def assets_anzeigen():
         assets=assets
     )
 
+@app.route("/asset/details_json/<inventarnummer>")
+def asset_details_json(inventarnummer):
 
+    asset = asset_suchen_sqlite(inventarnummer)
+
+    return {
+        "inventarnummer": asset[1],
+        "rechnername": asset[2],
+        "seriennummer": asset[3],
+        "kostenstelle": asset[4],
+        "organisationseinheit": asset[5],
+        "standort": asset[6],
+        "zimmer": asset[7],
+        "anschaffungsdatum": asset[8],
+        "installationsdatum": asset[9],
+        "hersteller": asset[13],
+        "modell": asset[14],
+        "mac_adresse": asset[15],
+        "garantie": asset[16],
+        "verwaltungsart": asset[17],
+        "prozessor": asset[18],
+        "kerne_threads": asset[19],
+        "ram": asset[20],
+        "festplatte": asset[21],
+        "betriebssystem": asset[22],
+        "anlagenummer": asset[25],
+        "benutzer": asset[26]
+    }
 
 #Mitarbeiter
 @app.route("/mitarbeiter/anzeigen")
@@ -967,10 +980,8 @@ def suche_asset():
 
             <br>
 
-            <p>
-                <a href="/assets/details/{ergebnis[1]}">
-                    Assetdetails anzeigen
-                </a>
+            <p> 
+                Details über die Asset-Liste aufrufen.
             </p>
 
             <p><a href="/suche">Neue Suche</a></p>
@@ -1633,27 +1644,6 @@ def aufnahmegeraete():
 #Liste
 
 
-@app.route("/assets/details/<inventarnummer>")
-def asset_details(inventarnummer):
-
-    verbindung = sqlite3.connect("asset_management.db")
-
-    cursor = verbindung.cursor()
-
-    cursor.execute("""
-        SELECT *
-        FROM assets
-        WHERE inventarnummer = ?
-    """, (inventarnummer,))
-
-    asset = cursor.fetchone()
-
-    verbindung.close()
-
-    return render_template(
-        "asset_details.html",
-        asset=asset
-    )
 
 
 @app.route("/update-db")
