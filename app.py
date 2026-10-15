@@ -358,10 +358,25 @@ def assets_loeschen():
     if inventarnummer:
         assets_loeschen_sqlite(inventarnummer)
 
-    return redirect("/assets/standpc")
+        return {"status": "ok"}
 
 
 
+
+
+
+@app.route("/asset/loeschen/bestaetigen")
+def asset_loeschen_bestaetigen():
+
+    inventarnummer = request.args.get("inventarnummer")
+
+    assets_loeschen_sqlite(inventarnummer)
+
+    return f"""
+    <h1>Asset gelöscht</h1>
+
+    Asset {inventarnummer} wurde gelöscht.
+    """
 
 
 @app.route("/asset/zuweisen")

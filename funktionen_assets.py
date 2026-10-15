@@ -4,7 +4,12 @@ from mitarbeiter import Mitarbeiter
 from datenbank import verbinden
 from funktionen_historie import historie_schreiben
 
+
+
+
 def asset_suchen_sqlite(inventarnummer):
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
 
     verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
@@ -396,6 +401,7 @@ def assets_loeschen_sqlite(inventarnummer):
         verbindung.close()
         return
 
+<<<<<<< HEAD
     cursor.execute("""
         DELETE FROM assets
         WHERE inventarnummer = ?
@@ -409,6 +415,24 @@ def assets_loeschen_sqlite(inventarnummer):
     )
 
     verbindung.close()
+=======
+        cursor.execute("""
+            DELETE FROM assets
+            WHERE inventarnummer = ?
+        """, (inventarnummer,))
+
+        verbindung.commit()
+        historie_schreiben(
+            "Asset",
+            f"Asset {inventarnummer} gelöscht"
+        )
+        verbindung.close()
+
+        print("Asset erfolgreich gelöscht")
+
+    else:
+        print("Löschen abgebrochen")
+>>>>>>> e6c1d9e47de77d83e1970da36ed05875971fdea5
 
     print("Asset erfolgreich gelöscht")
 

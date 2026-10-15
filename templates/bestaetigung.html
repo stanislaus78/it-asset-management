@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Bestätigung</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+
+<div class="container">
+
+    <h1>⚠️ Bestätigung</h1>
+
+    <p>{{ text }}</p>
+
+    <button onclick="bestaetigen()">
+        ✅ Ja
+    </button>
+
+    <button onclick="history.back()">
+        ❌ Nein
+    </button>
+
+</div>
+
+<script>
+
+function bestaetigen() {
+    window.location.href = "{{ ziel_url }}";
+}
+
+</script>
+
+</body>
+</html>
