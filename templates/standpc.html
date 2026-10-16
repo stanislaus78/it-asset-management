@@ -24,9 +24,9 @@
 
     <div class="toolbar">
 
-        <a href="/asset/anlegen">
-            <button>➕ Stand-PC anlegen</button>
-        </a>
+        <button onclick="assetAnlegen()">
+            ➕ Stand-PC anlegen
+        </button>
 
            <button id="detailsBtn"
                 disabled
@@ -48,7 +48,31 @@
 
     </div>
 
-    <br>
+<div
+    style="
+         margin-top:10px;
+        margin-bottom:0px;
+        text-align:left;
+    "
+>
+    <input
+        type="text"
+        id="globalFilter"
+        placeholder="🔍 In allen Spalten suchen..."
+        style="
+            width:400px;
+            padding:8px;
+            font-size:14px;
+            border:1px solid #ccc;
+            border-radius:5px;
+        "
+>
+
+</div>
+
+
+
+</div>
 
     <div style="overflow-x:auto;">
 
@@ -819,6 +843,28 @@ document.querySelectorAll(".show-filters").forEach(filterLink => {
     </button>
 
 </div>
+
+<div id="anlegenPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        width:1000px;
+        max-width:95vw;
+        max-height:85vh;
+        overflow-y:auto;
+        z-index:9999;
+     ">
+
+    <h2>➕ Stand-PC anlegen</h2>
+
+    <div id="anlegenInhalt"></div>
+
+</div>
 <script>
 
 let ausgewaehlteInventarnummer = "";
@@ -1300,6 +1346,236 @@ function bearbeitenSchliessen() {
     ).style.display = "none";
 
 }
+
+function assetAnlegen() {
+
+    document.getElementById(
+        "anlegenInhalt"
+    ).innerHTML = `
+
+    <table class="bearbeiten-table">
+
+        <tr>
+            <td>Rechnername</td>
+            <td><input id="neu_rechnername"></td>
+        </tr>
+
+        <tr>
+            <td>Inventarnummer</td>
+            <td><input id="neu_inventarnummer"></td>
+        </tr>
+
+        <tr>
+            <td>Seriennummer</td>
+            <td><input id="neu_seriennummer"></td>
+        </tr>
+
+        <tr>
+            <td>Benutzer</td>
+            <td><input id="neu_benutzer"></td>
+        </tr>
+
+        <tr>
+            <td>Standort</td>
+            <td><input id="neu_standort"></td>
+        </tr>
+
+        <tr>
+            <td>Zimmer</td>
+            <td><input id="neu_zimmer"></td>
+        </tr>
+
+        <tr>
+            <td>Kostenstelle</td>
+            <td><input id="neu_kostenstelle"></td>
+        </tr>
+
+        <tr>
+            <td>Organisationseinheit</td>
+            <td><input id="neu_organisationseinheit"></td>
+        </tr>
+
+        <tr>
+            <td>Hersteller</td>
+            <td><input id="neu_hersteller"></td>
+        </tr>
+
+        <tr>
+            <td>Modell</td>
+            <td><input id="neu_modell"></td>
+        </tr>
+
+        <tr>
+            <td>Prozessor</td>
+            <td><input id="neu_prozessor"></td>
+        </tr>
+
+        <tr>
+            <td>Kerne/Threads</td>
+            <td><input id="neu_kerne_threads"></td>
+        </tr>
+
+        <tr>
+            <td>RAM</td>
+            <td><input id="neu_ram"></td>
+        </tr>
+
+        <tr>
+            <td>Festplatte</td>
+            <td><input id="neu_festplatte"></td>
+        </tr>
+
+        <tr>
+            <td>Betriebssystem</td>
+            <td><input id="neu_betriebssystem"></td>
+        </tr>
+
+        <tr>
+            <td>Verwaltungsart</td>
+            <td><input id="neu_verwaltungsart"></td>
+        </tr>
+
+        <tr>
+            <td>Status</td>
+            <td><input id="neu_status"></td>
+        </tr>
+
+        <tr>
+            <td>MAC-Adresse</td>
+            <td><input id="neu_mac_adresse"></td>
+        </tr>
+
+        <tr>
+            <td>Garantie</td>
+            <td><input id="neu_garantie"></td>
+        </tr>
+
+        <tr>
+            <td>Anschaffungsdatum</td>
+            <td><input id="neu_anschaffungsdatum"></td>
+        </tr>
+
+        <tr>
+            <td>Installationsdatum</td>
+            <td><input id="neu_installationsdatum"></td>
+        </tr>
+
+        <tr>
+            <td>Anlagenummer</td>
+            <td><input id="neu_anlagenummer"></td>
+        </tr>
+
+    </table>
+
+    <br>
+
+    <button onclick="assetNeuSpeichern()">
+        💾 Anlegen
+    </button>
+
+    <button onclick="anlegenSchliessen()">
+        ✖ Schließen
+    </button>
+
+    `;
+
+    document.getElementById(
+        "anlegenPopup"
+    ).style.display = "block";
+}
+
+function anlegenSchliessen() {
+
+    document.getElementById(
+        "anlegenPopup"
+    ).style.display = "none";
+}
+function assetNeuSpeichern() {
+
+    const daten = new FormData();
+
+    daten.append("rechnername",
+        document.getElementById("neu_rechnername").value);
+
+    daten.append("inventarnummer",
+        document.getElementById("neu_inventarnummer").value);
+
+    daten.append("seriennummer",
+        document.getElementById("neu_seriennummer").value);
+
+    daten.append("benutzer",
+        document.getElementById("neu_benutzer").value);
+
+    daten.append("standort",
+        document.getElementById("neu_standort").value);
+
+    daten.append("zimmer",
+        document.getElementById("neu_zimmer").value);
+
+    daten.append("kostenstelle",
+        document.getElementById("neu_kostenstelle").value);
+
+    daten.append("organisationseinheit",
+        document.getElementById("neu_organisationseinheit").value);
+
+    daten.append("hersteller",
+        document.getElementById("neu_hersteller").value);
+
+    daten.append("modell",
+        document.getElementById("neu_modell").value);
+
+    daten.append("prozessor",
+        document.getElementById("neu_prozessor").value);
+
+    daten.append("kerne_threads",
+        document.getElementById("neu_kerne_threads").value);
+
+    daten.append("ram",
+        document.getElementById("neu_ram").value);
+
+    daten.append("festplatte",
+        document.getElementById("neu_festplatte").value);
+
+    daten.append("betriebssystem",
+        document.getElementById("neu_betriebssystem").value);
+
+    daten.append("verwaltungsart",
+        document.getElementById("neu_verwaltungsart").value);
+
+    daten.append("status",
+        document.getElementById("neu_status").value);
+
+    daten.append("mac_adresse",
+        document.getElementById("neu_mac_adresse").value);
+
+    daten.append("garantie",
+        document.getElementById("neu_garantie").value);
+
+    daten.append("anschaffungsdatum",
+        document.getElementById("neu_anschaffungsdatum").value);
+
+    daten.append("installationsdatum",
+        document.getElementById("neu_installationsdatum").value);
+
+    daten.append("anlagenummer",
+        document.getElementById("neu_anlagenummer").value);
+
+    fetch("/asset/anlegen_popup", {
+        method: "POST",
+        body: daten
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        alert("✅ Asset angelegt");
+
+        anlegenSchliessen();
+
+        location.reload();
+
+    });
+
+}
 </script>
 
 <script>
@@ -1338,6 +1614,101 @@ if (ausgewaehlt) {
 
 }
 
+
+document.querySelectorAll(".filter-row input").forEach(input => {
+
+    input.addEventListener("keyup", filterTabelle);
+
+});
+
+function filterTabelle() {
+
+    const filter = [];
+
+    document
+        .querySelectorAll(".filter-row input")
+        .forEach(input => {
+
+            filter.push(
+                input.value.toLowerCase()
+            );
+
+        });
+
+    const zeilen =
+        document.querySelectorAll("table tr");
+
+    zeilen.forEach((zeile, index) => {
+
+        if (index < 2) return;
+
+        const zellen =
+            zeile.querySelectorAll("td");
+
+        let anzeigen = true;
+
+        filter.forEach((wert, i) => {
+
+            if (!wert) return;
+
+            const text =
+                zellen[i + 1]
+                    .innerText
+                    .toLowerCase();
+
+            if (!text.includes(wert)) {
+                anzeigen = false;
+            }
+
+        });
+
+        zeile.style.display =
+            anzeigen ? "" : "none";
+
+    });
+
+}
+
+
+document.getElementById(
+    "globalFilter"
+).addEventListener(
+    "keyup",
+    globaleSuche
+);
+
+document.getElementById("globalFilter")
+    .addEventListener(
+        "keyup",
+        globaleSuche
+    );
+
+function globaleSuche() {
+
+    const suchtext =
+        document.getElementById(
+            "globalFilter"
+        ).value.toLowerCase();
+
+    const zeilen =
+        document.querySelectorAll("table tr");
+
+    for (let i = 2; i < zeilen.length; i++) {
+
+        const text =
+            zeilen[i].textContent.toLowerCase();
+
+        if (text.includes(suchtext)) {
+            zeilen[i].style.display = "";
+        } else {
+            zeilen[i].style.display = "none";
+        }
+
+    }
+
+}
 </script>
+
+
 </body>
 </html>

@@ -106,3 +106,16 @@ h2 {
 .details-grid div:nth-child(odd) {
     font-weight: bold;
 }
+
+
+/* =========================
+   In alle Spalten suchen
+   ========================= */
+
+style="
+    width:400px;
+    padding:5px;
+    font-size:15px;
+    border:2px solid #ddd;
+    border-radius:8px;
+"

@@ -270,6 +270,45 @@ def anzahl_assets_nach_OA(assets, organisationseinheit):
 
 def neues_asset_erstellen_sqlite(
 
+    rechnername,
+    inventarnummer,
+    seriennummer,
+    benutzer,
+
+    standort,
+    zimmer,
+    kostenstelle,
+    organisationseinheit,
+
+    hersteller,
+    modell,
+
+    prozessor,
+    kerne_threads,
+
+    ram,
+    festplatte,
+
+    betriebssystem,
+
+    verwaltungsart,
+    status,
+
+    mac_adresse,
+    garantie,
+
+    anschaffungsdatum,
+    installationsdatum,
+
+    anlagenummer
+
+):
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        INSERT INTO assets (
     inventarnummer,
     rechnername,
     seriennummer,
@@ -309,75 +348,55 @@ def neues_asset_erstellen_sqlite(
 
     anlagenummer,
 
-    mitarbeiter,
-
-    bemerkung
-
-):
-
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
-
-    cursor.execute("""
-        INSERT INTO assets (
-            inventarnummer,
-            rechnername,
-            seriennummer,
-            kostenstelle,
-            organisationseinheit,
-            standort,
-            zimmer,
-            anschaffungsdatum,
-            installationsdatum,
-            assettyp,
-            verwendungsart,
-            status,
-            hersteller,
-            modell,
-            mac_adresse,
-            garantie,
-            verwaltungsart,
-            prozessor,
-            kerne_threads,
-            ram,
-            festplatte,
-            betriebssystem,
-            displaygroesse,
-            dockingstation,
-            anlagenummer,
-            mitarbeiter,
-            bemerkung
+    mitarbeiter
+)
+        VALUES (
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-        inventarnummer,
-        rechnername,
-        seriennummer,
-        kostenstelle,
-        organisationseinheit,
-        standort,
-        zimmer,
-        anschaffungsdatum,
-        installationsdatum,
-        assettyp,
-        verwendungsart,
-        status,
-        hersteller,
-        modell,
-        mac_adresse,
-        garantie,
-        verwaltungsart,
-        prozessor,
-        kerne_threads,
-        ram,
-        festplatte,
-        betriebssystem,
-        displaygroesse,
-        dockingstation,
-        anlagenummer,
-        bemerkung
-    ))
+    inventarnummer,
+    rechnername,
+    seriennummer,
 
+    kostenstelle,
+    organisationseinheit,
+
+    standort,
+    zimmer,
+
+    anschaffungsdatum,
+    installationsdatum,
+
+    "Stand-PC",
+    "Produktiv",
+
+    status,
+
+    hersteller,
+    modell,
+
+    mac_adresse,
+    garantie,
+
+    verwaltungsart,
+
+    prozessor,
+    kerne_threads,
+
+    ram,
+    festplatte,
+
+    betriebssystem,
+
+    "",
+
+    "",
+
+    anlagenummer,
+
+    benutzer
+))
     verbindung.commit()
 
     historie_schreiben(
@@ -386,6 +405,7 @@ def neues_asset_erstellen_sqlite(
     )
 
     verbindung.close()
+
     print("Asset erfolgreich angelegt")
 
 
@@ -400,39 +420,6 @@ def assets_loeschen_sqlite(inventarnummer):
         print("Asset nicht gefunden")
         verbindung.close()
         return
-
-<<<<<<< HEAD
-    cursor.execute("""
-        DELETE FROM assets
-        WHERE inventarnummer = ?
-    """, (inventarnummer,))
-
-    verbindung.commit()
-
-    historie_schreiben(
-        "Asset",
-        f"Asset {inventarnummer} gelöscht"
-    )
-
-    verbindung.close()
-=======
-        cursor.execute("""
-            DELETE FROM assets
-            WHERE inventarnummer = ?
-        """, (inventarnummer,))
-
-        verbindung.commit()
-        historie_schreiben(
-            "Asset",
-            f"Asset {inventarnummer} gelöscht"
-        )
-        verbindung.close()
-
-        print("Asset erfolgreich gelöscht")
-
-    else:
-        print("Löschen abgebrochen")
->>>>>>> e6c1d9e47de77d83e1970da36ed05875971fdea5
 
     print("Asset erfolgreich gelöscht")
 
