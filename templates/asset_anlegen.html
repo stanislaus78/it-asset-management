@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Stand-PC anlegen</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+<style>
+
+body {
+    background: #e9ecef;
+}
+
+.popup-container {
+
+    width: 600px;
+
+    margin: 30px auto;
+
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 10px;
+
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+
+<div class="popup-container">
+    <h1>➕ Stand-PC anlegen V2</h1>
+    <table class="bearbeiten-table">
+
+        <tr>
+            <td>Rechnername</td>
+            <td><input id="neu_rechnername"></td>
+        </tr>
+
+        <tr>
+            <td>Inventarnummer</td>
+            <td><input id="neu_inventarnummer"></td>
+        </tr>
+
+        <tr>
+            <td>Seriennummer</td>
+            <td><input id="neu_seriennummer"></td>
+        </tr>
+
+        <tr>
+            <td>Benutzer</td>
+            <td><input id="neu_benutzer"></td>
+        </tr>
+
+        <tr>
+            <td>Standort</td>
+            <td><input id="neu_standort"></td>
+        </tr>
+
+        <tr>
+            <td>Zimmer</td>
+            <td><input id="neu_zimmer"></td>
+        </tr>
+
+        <tr>
+            <td>Kostenstelle</td>
+            <td><input id="neu_kostenstelle"></td>
+        </tr>
+
+        <tr>
+            <td>Organisationseinheit</td>
+            <td><input id="neu_organisationseinheit"></td>
+        </tr>
+
+        <tr>
+            <td>Hersteller</td>
+            <td><input id="neu_hersteller"></td>
+        </tr>
+
+        <tr>
+            <td>Modell</td>
+            <td><input id="neu_modell"></td>
+        </tr>
+
+        <tr>
+            <td>Prozessor</td>
+            <td><input id="neu_prozessor"></td>
+        </tr>
+
+        <tr>
+            <td>Kerne/Threads</td>
+            <td><input id="neu_kerne_threads"></td>
+        </tr>
+
+        <tr>
+            <td>RAM</td>
+            <td><input id="neu_ram"></td>
+        </tr>
+
+        <tr>
+            <td>Festplatte</td>
+            <td><input id="neu_festplatte"></td>
+        </tr>
+
+        <tr>
+            <td>Betriebssystem</td>
+            <td><input id="neu_betriebssystem"></td>
+        </tr>
+
+        <tr>
+            <td>Verwaltungsart</td>
+            <td><input id="neu_verwaltungsart"></td>
+        </tr>
+
+        <tr>
+            <td>Status</td>
+            <td><input id="neu_status"></td>
+        </tr>
+
+        <tr>
+            <td>MAC-Adresse</td>
+            <td><input id="neu_mac_adresse"></td>
+        </tr>
+
+        <tr>
+            <td>Garantie</td>
+            <td><input id="neu_garantie"></td>
+        </tr>
+
+        <tr>
+            <td>Anschaffungsdatum</td>
+            <td><input id="neu_anschaffungsdatum"></td>
+        </tr>
+
+        <tr>
+            <td>Installationsdatum</td>
+            <td><input id="neu_installationsdatum"></td>
+        </tr>
+
+        <tr>
+            <td>Anlagenummer</td>
+            <td><input id="neu_anlagenummer"></td>
+        </tr>
+
+        <tr>
+            <td>Verwendungsart</td>
+            <td>
+                <select id="neu_verwendungsart">
+                    <option>Arbeits-PC</option>
+                    <option>Hörsaal-PC</option>
+                    <option>Labor-PC</option>
+                </select>
+            </td>
+        </tr>
+
+    </table>
+    <br>
+
+<button onclick="assetNeuSpeichern()">
+    💾 Anlegen
+</button>
+
+<button onclick="history.back()">
+    ↩ Zurück
+</button>
+</div>
+    <br>
+
+
+
+</div>
+
+</body>
+</html>

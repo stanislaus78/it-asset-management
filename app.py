@@ -16,6 +16,7 @@ from datenbank import mitarbeiter_tabelle_anlegen
 from datenbank import historie_tabelle_anlegen
 from funktionen_assets import asset_suchen_sqlite
 from funktionen_assets import asset_speichern_popup_sqlite
+from funktionen_assets import asset_existiert_sqlite
 from flask import request
 
 
@@ -120,11 +121,26 @@ def infos():
 @app.route("/asset/anlegen")
 def asset_anlegen():
 
-    return {"status": "ok"}
+    return render_template(
+        "asset_anlegen.html"
+    )
 
 @app.route("/asset/anlegen_popup", methods=["POST"])
 def asset_anlegen_popup():
+    vorhanden = asset_existiert_sqlite(
 
+        request.form["inventarnummer"],
+        request.form["rechnername"],
+        request.form["mac_adresse"]
+
+    )
+
+    if vorhanden:
+        return {
+            "status": "fehler",
+            "meldung": f"{vorhanden} existiert bereits."
+
+        }
     neues_asset_erstellen_sqlite(
 
         request.form["rechnername"],
@@ -148,7 +164,8 @@ def asset_anlegen_popup():
         request.form["garantie"],
         request.form["anschaffungsdatum"],
         request.form["installationsdatum"],
-        request.form["anlagenummer"]
+        request.form["anlagenummer"],
+        request.form["verwendungsart"]
 
     )
 
@@ -190,7 +207,8 @@ def asset_speichern():
         request.form["garantie"],
         request.form["anschaffungsdatum"],
         request.form["installationsdatum"],
-        request.form["anlagenummer"]
+        request.form["anlagenummer"],
+        request.form["verwendungsart"]
 
     )
 
@@ -319,6 +337,9 @@ def asset_details_json(inventarnummer):
         "zimmer": asset[7],
         "anschaffungsdatum": asset[8],
         "installationsdatum": asset[9],
+        "assettyp": asset[10],
+        "verwendungsart": asset[11],
+        "status": asset[12],
         "hersteller": asset[13],
         "modell": asset[14],
         "mac_adresse": asset[15],
@@ -331,7 +352,20 @@ def asset_details_json(inventarnummer):
         "betriebssystem": asset[22],
         "anlagenummer": asset[25],
         "benutzer": asset[26]
+
     }
+
+
+@app.route("/asset/details/<inventarnummer>")
+def asset_details(inventarnummer):
+
+    asset = asset_suchen_sqlite(inventarnummer)
+
+    return render_template(
+        "asset_details.html",
+        asset=asset
+    )
+
 
 #Mitarbeiter
 @app.route("/mitarbeiter/anzeigen")
@@ -1098,9 +1132,9 @@ def standpcs():
     """)
 
     standpcs = cursor.fetchall()
-
+    print(standpcs)
     verbindung.close()
-
+    print("TEMPLATE-DATEI:", app.jinja_env.get_or_select_template("standpc.html").filename)
     return render_template(
         "standpc.html",
         standpcs=standpcs

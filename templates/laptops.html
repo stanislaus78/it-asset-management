@@ -860,7 +860,11 @@ document.querySelectorAll(".show-filters").forEach(filterLink => {
         z-index:9999;
      ">
 
-    <h2>➕ Stand-PC anlegen</h2>
+    <h2 id="anlegenTitel"
+    style="cursor:move;">
+    ➕ Stand-PC anlegen
+</h2>
+
 
     <div id="anlegenInhalt"></div>
 
@@ -894,122 +898,17 @@ function assetLoeschen() {
         inventarnummerZumLoeschen;
 }
 function detailsAnzeigen() {
-
-    fetch(
-        "/asset/details_json/" +
-        ausgewaehlteInventarnummer
-    )
-    .then(response => response.json())
-    .then(data => {
-
-    document.getElementById("detailsText").innerHTML = `
-<div class="details-container">
-<div class="details-section">
-
-    <h3>Allgemein</h3>
-
-    <div class="details-grid">
-        <div>Rechnername</div>
-        <div>${data.rechnername || "-"}</div>
-
-        <div>Inventarnummer</div>
-        <div>${data.inventarnummer || "-"}</div>
-
-        <div>Seriennummer</div>
-        <div>${data.seriennummer || "-"}</div>
-
-        <div>Benutzer</div>
-        <div>${data.benutzer || "-"}</div>
-    </div>
-
-</div>
-
-<div class="details-section">
-
-    <h3>Standort</h3>
-
-    <div class="details-grid">
-        <div>Standort</div>
-        <div>${data.standort || "-"}</div>
-
-        <div>Zimmer</div>
-        <div>${data.zimmer || "-"}</div>
-
-        <div>Kostenstelle</div>
-        <div>${data.kostenstelle || "-"}</div>
-
-        <div>Organisationseinheit</div>
-        <div>${data.organisationseinheit || "-"}</div>
-    </div>
-
-</div>
-
-<div class="details-section">
-
-    <h3>Hardware</h3>
-
-    <div class="details-grid">
-        <div>Hersteller</div>
-        <div>${data.hersteller || "-"}</div>
-
-        <div>Modell</div>
-        <div>${data.modell || "-"}</div>
-
-        <div>Prozessor</div>
-        <div>${data.prozessor || "-"}</div>
-
-        <div>Kerne/Threads</div>
-        <div>${data.kerne_threads || "-"}</div>
-
-        <div>RAM</div>
-        <div>${data.ram || "-"}</div>
-
-        <div>Festplatte</div>
-        <div>${data.festplatte || "-"}</div>
-
-        <div>Betriebssystem</div>
-        <div>${data.betriebssystem || "-"}</div>
-    </div>
-
-</div>
-
-<div class="details-section">
-
-    <h3>Verwaltung</h3>
-
-    <div class="details-grid">
-        <div>Status</div>
-        <div>${data.status || "-"}</div>
-
-        <div>Verwaltungsart</div>
-        <div>${data.verwaltungsart || "-"}</div>
-
-        <div>MAC-Adresse</div>
-        <div>${data.mac_adresse || "-"}</div>
-
-        <div>Garantie</div>
-        <div>${data.garantie || "-"}</div>
-
-        <div>Anschaffungsdatum</div>
-        <div>${data.anschaffungsdatum || "-"}</div>
-
-        <div>Installationsdatum</div>
-        <div>${data.installationsdatum || "-"}</div>
-
-        <div>Anlagenummer</div>
-        <div>${data.anlagenummer || "-"}</div>
-    </div>
-
-</div>
-</div>
-`;
-        document.getElementById(
-            "detailsPopup"
-        ).style.display = "block";
-
-    });
-
+     window.open(
+        "/asset/details/" +
+        ausgewaehlteInventarnummer,
+        "_blank",
+        "width=1200,height=900"
+    );
 }
+
+
+
+
 
 
 
@@ -1108,6 +1007,26 @@ function assetBearbeiten() {
     <td>Verwaltungsart</td>
     <td><input id="edit_verwaltungsart" value="${data.verwaltungsart || ""}"></td>
 </tr>
+
+<tr>
+    <td>Verwendungsart</td>
+    <td>
+        <select id="edit_verwendungsart">
+            <option ${data.verwendungsart==="Arbeits-PC" ? "selected" : ""}>
+                Arbeits-PC
+            </option>
+
+            <option ${data.verwendungsart==="Hörsaal-PC" ? "selected" : ""}>
+                Hörsaal-PC
+            </option>
+
+            <option ${data.verwendungsart==="Labor-PC" ? "selected" : ""}>
+                Labor-PC
+            </option>
+        </select>
+    </td>
+</tr>
+
 
 <tr>
     <td>Status</td>
@@ -1283,6 +1202,14 @@ function detailsSchliessen() {
         ).value
     );
 
+daten.append(
+    "verwendungsart",
+    document.getElementById(
+        "edit_verwendungsart"
+    ).value
+);
+
+
     daten.append(
         "status",
         document.getElementById(
@@ -1347,126 +1274,134 @@ function bearbeitenSchliessen() {
 
 }
 
+console.log("VOR assetAnlegen");
 function assetAnlegen() {
+console.log("assetAnlegen wurde aufgerufen");
 
     document.getElementById(
         "anlegenInhalt"
     ).innerHTML = `
+    <div class="anlegen-grid">
 
-    <table class="bearbeiten-table">
+    <div class="anlegen-feld">
+        <label>Rechnername</label>
+        <input id="neu_rechnername">
+    </div>
 
-        <tr>
-            <td>Rechnername</td>
-            <td><input id="neu_rechnername"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Prozessor</label>
+        <input id="neu_prozessor">
+    </div>
 
-        <tr>
-            <td>Inventarnummer</td>
-            <td><input id="neu_inventarnummer"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Inventarnummer</label>
+        <input id="neu_inventarnummer">
+    </div>
 
-        <tr>
-            <td>Seriennummer</td>
-            <td><input id="neu_seriennummer"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Kerne / Threads</label>
+        <input id="neu_kerne_threads">
+    </div>
 
-        <tr>
-            <td>Benutzer</td>
-            <td><input id="neu_benutzer"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Seriennummer</label>
+        <input id="neu_seriennummer">
+    </div>
 
-        <tr>
-            <td>Standort</td>
-            <td><input id="neu_standort"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>RAM</label>
+        <input id="neu_ram">
+    </div>
 
-        <tr>
-            <td>Zimmer</td>
-            <td><input id="neu_zimmer"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Benutzer</label>
+        <input id="neu_benutzer">
+    </div>
 
-        <tr>
-            <td>Kostenstelle</td>
-            <td><input id="neu_kostenstelle"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Festplatte</label>
+        <input id="neu_festplatte">
+    </div>
 
-        <tr>
-            <td>Organisationseinheit</td>
-            <td><input id="neu_organisationseinheit"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Standort</label>
+        <input id="neu_standort">
+    </div>
 
-        <tr>
-            <td>Hersteller</td>
-            <td><input id="neu_hersteller"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Betriebssystem</label>
+        <input id="neu_betriebssystem">
+    </div>
 
-        <tr>
-            <td>Modell</td>
-            <td><input id="neu_modell"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Zimmer</label>
+        <input id="neu_zimmer">
+    </div>
 
-        <tr>
-            <td>Prozessor</td>
-            <td><input id="neu_prozessor"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Verwaltungsart</label>
+        <input id="neu_verwaltungsart">
+    </div>
 
-        <tr>
-            <td>Kerne/Threads</td>
-            <td><input id="neu_kerne_threads"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Kostenstelle</label>
+        <input id="neu_kostenstelle">
+    </div>
 
-        <tr>
-            <td>RAM</td>
-            <td><input id="neu_ram"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Status</label>
+        <input id="neu_status">
+    </div>
 
-        <tr>
-            <td>Festplatte</td>
-            <td><input id="neu_festplatte"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Organisationseinheit</label>
+        <input id="neu_organisationseinheit">
+    </div>
 
-        <tr>
-            <td>Betriebssystem</td>
-            <td><input id="neu_betriebssystem"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>MAC-Adresse</label>
+        <input id="neu_mac_adresse">
+    </div>
 
-        <tr>
-            <td>Verwaltungsart</td>
-            <td><input id="neu_verwaltungsart"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Hersteller</label>
+        <input id="neu_hersteller">
+    </div>
 
-        <tr>
-            <td>Status</td>
-            <td><input id="neu_status"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Garantie</label>
+        <input id="neu_garantie">
+    </div>
 
-        <tr>
-            <td>MAC-Adresse</td>
-            <td><input id="neu_mac_adresse"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Modell</label>
+        <input id="neu_modell">
+    </div>
 
-        <tr>
-            <td>Garantie</td>
-            <td><input id="neu_garantie"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Anschaffungsdatum</label>
+        <input id="neu_anschaffungsdatum">
+    </div>
 
-        <tr>
-            <td>Anschaffungsdatum</td>
-            <td><input id="neu_anschaffungsdatum"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Installationsdatum</label>
+        <input id="neu_installationsdatum">
+    </div>
 
-        <tr>
-            <td>Installationsdatum</td>
-            <td><input id="neu_installationsdatum"></td>
-        </tr>
+    <div class="anlegen-feld">
+        <label>Anlagenummer</label>
+        <input id="neu_anlagenummer">
+    </div>
 
-        <tr>
-            <td>Anlagenummer</td>
-            <td><input id="neu_anlagenummer"></td>
-        </tr>
-
-    </table>
-
+    <div class="anlegen-feld">
+        <label>Verwendungsart</label>
+        <select id="neu_verwendungsart">
+            <option>Arbeits-PC</option>
+            <option>Hörsaal-PC</option>
+            <option>Labor-PC</option>
+        </select>
+    </div>
+    </div>
     <br>
 
     <button onclick="assetNeuSpeichern()">
@@ -1476,6 +1411,10 @@ function assetAnlegen() {
     <button onclick="anlegenSchliessen()">
         ✖ Schließen
     </button>
+
+
+    <br>
+
 
     `;
 
@@ -1560,12 +1499,22 @@ function assetNeuSpeichern() {
     daten.append("anlagenummer",
         document.getElementById("neu_anlagenummer").value);
 
+    daten.append("verwendungsart",
+        document.getElementById("neu_verwendungsart").value);
+
     fetch("/asset/anlegen_popup", {
-        method: "POST",
-        body: daten
-    })
+    method: "POST",
+    body: daten
+})
     .then(response => response.json())
     .then(data => {
+
+        if (data.status === "fehler") {
+
+            alert("⚠️ " + data.meldung);
+
+            return;
+        }
 
         alert("✅ Asset angelegt");
 
@@ -1573,7 +1522,7 @@ function assetNeuSpeichern() {
 
         location.reload();
 
-    });
+});
 
 }
 </script>

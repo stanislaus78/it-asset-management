@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Stand-PCs</title>
+    <title>Stand-PCs V2</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
@@ -20,7 +20,7 @@
 
 <div class="container">
 
-    <h1>🖥️ Stand-PCs</h1>
+    <h1>🖥️ Stand-PCs V2</h1>
 
     <div class="toolbar">
 
@@ -860,7 +860,10 @@ document.querySelectorAll(".show-filters").forEach(filterLink => {
         z-index:9999;
      ">
 
-    <h2>➕ Stand-PC anlegen</h2>
+    <h2 id="anlegenTitel"
+    style="cursor:move; margin-top:0;">
+    ➕ Stand-PC anlegen
+    </h2>
 
     <div id="anlegenInhalt"></div>
 
@@ -893,6 +896,7 @@ function assetLoeschen() {
         "/asset/loeschen?inventarnummer=" +
         inventarnummerZumLoeschen;
 }
+
 function detailsAnzeigen() {
 
     fetch(
@@ -1139,6 +1143,16 @@ function assetBearbeiten() {
     <td><input id="edit_anlagenummer" value="${data.anlagenummer || ""}"></td>
 </tr>
 
+<tr>
+    <td>Verwendungsart</td>
+    <td>
+        <select id="edit_verwendungsart">
+            <option ${data.verwendungsart==="Arbeits-PC" ? "selected" : ""}>Arbeits-PC</option>
+            <option ${data.verwendungsart==="Hörsaal-PC" ? "selected" : ""}>Hörsaal-PC</option>
+            <option ${data.verwendungsart==="Labor-PC" ? "selected" : ""}>Labor-PC</option>
+        </select>
+    </td>
+</tr>
 </table>
 
 <br>
@@ -1325,6 +1339,13 @@ function detailsSchliessen() {
         ).value
     );
 
+    daten.append(
+    "verwendungsart",
+    document.getElementById(
+        "edit_verwendungsart"
+    ).value
+    );
+
     fetch("/asset/speichern", {
         method: "POST",
         body: daten
@@ -1349,139 +1370,56 @@ function bearbeitenSchliessen() {
 
 function assetAnlegen() {
 
-    document.getElementById(
-        "anlegenInhalt"
-    ).innerHTML = `
+    const felder = [
+        ["rechnername", "Rechnername"],
+        ["prozessor", "Prozessor"],
+        ["inventarnummer", "Inventarnummer"],
+        ["kerne_threads", "Kerne / Threads"],
+        ["seriennummer", "Seriennummer"],
+        ["ram", "RAM"],
+        ["benutzer", "Benutzer"],
+        ["festplatte", "Festplatte"],
+        ["standort", "Standort"],
+        ["betriebssystem", "Betriebssystem"],
+        ["zimmer", "Zimmer"],
+        ["verwaltungsart", "Verwaltungsart"],
+        ["kostenstelle", "Kostenstelle"],
+        ["status", "Status"],
+        ["organisationseinheit", "Organisationseinheit"],
+        ["mac_adresse", "MAC-Adresse"],
+        ["hersteller", "Hersteller"],
+        ["garantie", "Garantie"],
+        ["modell", "Modell"],
+        ["anschaffungsdatum", "Anschaffungsdatum"],
+        ["installationsdatum", "Installationsdatum"],
+        ["anlagenummer", "Anlagenummer"]
+    ];
 
-    <table class="bearbeiten-table">
+    const felderHtml = felder.map(([id, label]) => `
+        <div class="anlegen-feld">
+            <label>${label}</label>
+            <input id="neu_${id}">
+        </div>
+    `).join("");
 
-        <tr>
-            <td>Rechnername</td>
-            <td><input id="neu_rechnername"></td>
-        </tr>
-
-        <tr>
-            <td>Inventarnummer</td>
-            <td><input id="neu_inventarnummer"></td>
-        </tr>
-
-        <tr>
-            <td>Seriennummer</td>
-            <td><input id="neu_seriennummer"></td>
-        </tr>
-
-        <tr>
-            <td>Benutzer</td>
-            <td><input id="neu_benutzer"></td>
-        </tr>
-
-        <tr>
-            <td>Standort</td>
-            <td><input id="neu_standort"></td>
-        </tr>
-
-        <tr>
-            <td>Zimmer</td>
-            <td><input id="neu_zimmer"></td>
-        </tr>
-
-        <tr>
-            <td>Kostenstelle</td>
-            <td><input id="neu_kostenstelle"></td>
-        </tr>
-
-        <tr>
-            <td>Organisationseinheit</td>
-            <td><input id="neu_organisationseinheit"></td>
-        </tr>
-
-        <tr>
-            <td>Hersteller</td>
-            <td><input id="neu_hersteller"></td>
-        </tr>
-
-        <tr>
-            <td>Modell</td>
-            <td><input id="neu_modell"></td>
-        </tr>
-
-        <tr>
-            <td>Prozessor</td>
-            <td><input id="neu_prozessor"></td>
-        </tr>
-
-        <tr>
-            <td>Kerne/Threads</td>
-            <td><input id="neu_kerne_threads"></td>
-        </tr>
-
-        <tr>
-            <td>RAM</td>
-            <td><input id="neu_ram"></td>
-        </tr>
-
-        <tr>
-            <td>Festplatte</td>
-            <td><input id="neu_festplatte"></td>
-        </tr>
-
-        <tr>
-            <td>Betriebssystem</td>
-            <td><input id="neu_betriebssystem"></td>
-        </tr>
-
-        <tr>
-            <td>Verwaltungsart</td>
-            <td><input id="neu_verwaltungsart"></td>
-        </tr>
-
-        <tr>
-            <td>Status</td>
-            <td><input id="neu_status"></td>
-        </tr>
-
-        <tr>
-            <td>MAC-Adresse</td>
-            <td><input id="neu_mac_adresse"></td>
-        </tr>
-
-        <tr>
-            <td>Garantie</td>
-            <td><input id="neu_garantie"></td>
-        </tr>
-
-        <tr>
-            <td>Anschaffungsdatum</td>
-            <td><input id="neu_anschaffungsdatum"></td>
-        </tr>
-
-        <tr>
-            <td>Installationsdatum</td>
-            <td><input id="neu_installationsdatum"></td>
-        </tr>
-
-        <tr>
-            <td>Anlagenummer</td>
-            <td><input id="neu_anlagenummer"></td>
-        </tr>
-
-    </table>
-
-    <br>
-
-    <button onclick="assetNeuSpeichern()">
-        💾 Anlegen
-    </button>
-
-    <button onclick="anlegenSchliessen()">
-        ✖ Schließen
-    </button>
-
+    document.getElementById("anlegenInhalt").innerHTML = `
+        <div class="anlegen-grid">
+            ${felderHtml}
+            <div class="anlegen-feld">
+                <label>Verwendungsart</label>
+                <select id="neu_verwendungsart">
+                    <option>Arbeits-PC</option>
+                    <option>Hörsaal-PC</option>
+                    <option>Labor-PC</option>
+                </select>
+            </div>
+        </div>
+        <br>
+        <button onclick="assetNeuSpeichern()">💾 Anlegen</button>
+        <button onclick="anlegenSchliessen()">✖ Schließen</button>
     `;
 
-    document.getElementById(
-        "anlegenPopup"
-    ).style.display = "block";
+    document.getElementById("anlegenPopup").style.display = "block";
 }
 
 function anlegenSchliessen() {
@@ -1493,6 +1431,7 @@ function anlegenSchliessen() {
 function assetNeuSpeichern() {
 
     const daten = new FormData();
+
 
     daten.append("rechnername",
         document.getElementById("neu_rechnername").value);
@@ -1560,6 +1499,10 @@ function assetNeuSpeichern() {
     daten.append("anlagenummer",
         document.getElementById("neu_anlagenummer").value);
 
+    daten.append("verwendungsart",
+        document.getElementById("neu_verwendungsart").value);
+
+
     fetch("/asset/anlegen_popup", {
         method: "POST",
         body: daten
@@ -1567,13 +1510,20 @@ function assetNeuSpeichern() {
     .then(response => response.json())
     .then(data => {
 
+        if (data.status === "fehler") {
+
+            alert("⚠️ " + data.meldung);
+
+            return;
+        }
+
         alert("✅ Asset angelegt");
 
         anlegenSchliessen();
 
         location.reload();
 
-    });
+});
 
 }
 </script>
@@ -1708,7 +1658,57 @@ function globaleSuche() {
 
 }
 </script>
+<script>
+dragElement(
+    document.getElementById("anlegenPopup"),
+    document.getElementById("anlegenTitel")
+);
 
+function dragElement(element, griff) {
 
+    let pos1 = 0;
+    let pos2 = 0;
+    let pos3 = 0;
+    let pos4 = 0;
+
+    griff.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+
+        e.preventDefault();
+
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+
+        e.preventDefault();
+
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        element.style.top =
+            (element.offsetTop - pos2) + "px";
+
+        element.style.left =
+            (element.offsetLeft - pos1) + "px";
+
+        element.style.transform = "none";
+    }
+
+    function closeDragElement() {
+
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
+</script>
 </body>
 </html>

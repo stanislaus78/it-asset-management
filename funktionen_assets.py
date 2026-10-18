@@ -300,7 +300,8 @@ def neues_asset_erstellen_sqlite(
     anschaffungsdatum,
     installationsdatum,
 
-    anlagenummer
+    anlagenummer,
+    verwendungsart
 
 ):
 
@@ -347,6 +348,7 @@ def neues_asset_erstellen_sqlite(
     dockingstation,
 
     anlagenummer,
+    
 
     mitarbeiter
 )
@@ -369,7 +371,7 @@ def neues_asset_erstellen_sqlite(
     installationsdatum,
 
     "Stand-PC",
-    "Produktiv",
+    verwendungsart,
 
     status,
 
@@ -409,6 +411,48 @@ def neues_asset_erstellen_sqlite(
     print("Asset erfolgreich angelegt")
 
 
+
+def asset_existiert_sqlite(
+        inventarnummer,
+        rechnername,
+        mac_adresse):
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute("""
+        SELECT rechnername
+        FROM assets
+        WHERE LOWER(rechnername) = LOWER(?)
+    """, (rechnername,))
+
+    if cursor.fetchone():
+        verbindung.close()
+        return "Rechnername"
+
+    cursor.execute("""
+        SELECT inventarnummer
+        FROM assets
+        WHERE LOWER(inventarnummer) = LOWER(?)
+    """, (inventarnummer,))
+
+    if cursor.fetchone():
+        verbindung.close()
+        return "Inventarnummer"
+
+    cursor.execute("""
+        SELECT mac_adresse
+        FROM assets
+        WHERE LOWER(mac_adresse) = LOWER(?)
+    """, (mac_adresse,))
+
+    if mac_adresse and cursor.fetchone():
+        verbindung.close()
+        return "MAC-Adresse"
+
+    verbindung.close()
+
+    return None
 def assets_loeschen_sqlite(inventarnummer):
 
     verbindung = sqlite3.connect("asset_management.db")
@@ -581,7 +625,8 @@ def asset_speichern_popup_sqlite(
         garantie,
         anschaffungsdatum,
         installationsdatum,
-        anlagenummer):
+        anlagenummer,
+        verwendungsart):
 
     verbindung = sqlite3.connect(
         "asset_management.db"
@@ -612,7 +657,8 @@ def asset_speichern_popup_sqlite(
             garantie = ?,
             anschaffungsdatum = ?,
             installationsdatum = ?,
-            anlagenummer = ?
+            anlagenummer = ?,
+            verwendungsart = ?
         WHERE inventarnummer = ?
     """, (
         rechnername,
@@ -636,6 +682,7 @@ def asset_speichern_popup_sqlite(
         anschaffungsdatum,
         installationsdatum,
         anlagenummer,
+        verwendungsart,
         inventarnummer
     ))
 
