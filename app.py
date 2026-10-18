@@ -213,15 +213,33 @@ def asset_speichern():
     )
 
     return {"status": "ok"}
+
+from flask import redirect
+
 @app.route("/asset/loeschen")
 def assets_loeschen():
 
-    inventarnummer = request.args.get("inventarnummer")
+    id = request.args.get("id")
 
-    if inventarnummer:
-        assets_loeschen_sqlite(inventarnummer)
+    assets_loeschen_sqlite(id)
 
-        return {"status": "ok"}
+    return """
+    <html>
+    <head>
+        <meta http-equiv="refresh" content="2;url=/assets/standpc">
+    </head>
+    <body style="font-family:Arial;text-align:center;padding-top:50px;">
+        <h2 style="color:green;">
+            ✅ Asset wurde erfolgreich gelöscht
+        </h2>
+
+        <p>Weiterleitung zur Assetliste...</p>
+    </body>
+    </html>
+    """
+
+
+
 
 
 
@@ -231,14 +249,14 @@ def assets_loeschen():
 @app.route("/asset/loeschen/bestaetigen")
 def asset_loeschen_bestaetigen():
 
-    inventarnummer = request.args.get("inventarnummer")
+    id = request.args.get("id")
 
-    assets_loeschen_sqlite(inventarnummer)
+    assets_loeschen_sqlite(id)
 
     return f"""
-    <h1>Asset gelöscht</h1>
+    <h1>✅ Asset gelöscht</h1>
 
-    Asset {inventarnummer} wurde gelöscht.
+    Asset {id} wurde gelöscht.
     """
 
 
@@ -1132,6 +1150,7 @@ def standpcs():
     """)
 
     standpcs = cursor.fetchall()
+
     print(standpcs)
     verbindung.close()
     print("TEMPLATE-DATEI:", app.jinja_env.get_or_select_template("standpc.html").filename)

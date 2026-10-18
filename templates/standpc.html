@@ -42,7 +42,7 @@
 
             <button id="loeschenBtn"
                 disabled
-                onclick="popupOeffnen(ausgewaehlteInventarnummer)">
+                onclick="popupOeffnen(ausgewaehlteId)">
                 🗑️ Löschen
             </button>
 
@@ -472,6 +472,36 @@
                 </th>
 
 
+                <th class="dropdown-column">
+                        Verwaltungsart
+                        ...
+                    </th>
+
+                    <th class="dropdown-column">
+                        Verwendungsart
+                        <span class="dropdown-button">▼</span>
+
+                        <div class="dropdown-menu">
+
+                            <a href="#" class="show-filters">
+                                🔎 Filtern nach Spalte
+                            </a>
+
+                            <a href="?sort=verwendungsart&richtung=ASC">
+                                ↑ Nach Spalte sortieren A-Z
+                            </a>
+
+                            <a href="?sort=verwendungsart&richtung=DESC">
+                                ↓ Nach Spalte sortieren Z-A
+                            </a>
+
+                        </div>
+                    </th>
+
+                    <th class="dropdown-column">
+                        Status
+                        ...
+                    </th>
 
                 <th class="dropdown-column">
 
@@ -653,7 +683,7 @@
                    <input
                     type="checkbox"
                     class="asset-checkbox"
-                    data-inventarnummer="{{ pc[1] }}"
+                    data-id="{{ pc[0] }}"
 >
                 </td>
 
@@ -682,6 +712,7 @@
                 <td>{{ pc[22] }}</td>
 
                 <td>{{ pc[17] }}</td>
+                <td>{{ pc[11] }}</td>
                 <td>{{ pc[12] }}</td>
 
                 <td>{{ pc[15] }}</td>
@@ -870,15 +901,15 @@ document.querySelectorAll(".show-filters").forEach(filterLink => {
 </div>
 <script>
 
-let ausgewaehlteInventarnummer = "";
-let inventarnummerZumLoeschen = "";
+let ausgewaehlteId = "";
+let idZumLoeschen = "";
 
-function popupOeffnen(inventarnummer) {
+function popupOeffnen(id) {
 
-    inventarnummerZumLoeschen = inventarnummer;
+    idZumLoeschen = id;
 
     document.getElementById("popupText").innerText =
-        "Asset " + inventarnummer + " wirklich löschen?";
+        "Asset " + id + " wirklich löschen?";
 
     document.getElementById("loeschPopup").style.display =
         "block";
@@ -893,15 +924,15 @@ function popupSchliessen() {
 function assetLoeschen() {
 
     window.location.href =
-        "/asset/loeschen?inventarnummer=" +
-        inventarnummerZumLoeschen;
+        "/asset/loeschen?id=" +
+        idZumLoeschen;
 }
 
 function detailsAnzeigen() {
 
     fetch(
         "/asset/details_json/" +
-        ausgewaehlteInventarnummer
+        ausgewaehlteId
     )
     .then(response => response.json())
     .then(data => {
@@ -1021,7 +1052,7 @@ function assetBearbeiten() {
 
     fetch(
         "/asset/details_json/" +
-        ausgewaehlteInventarnummer
+        ausgewaehlteId
     )
     .then(response => response.json())
     .then(data => {
@@ -1031,9 +1062,9 @@ function assetBearbeiten() {
 ).innerHTML = `
 
 <input
-    id="edit_inventarnummer"
+    id="edit_id"
     type="hidden"
-    value="${data.inventarnummer || ""}"
+    value="${data.id || ""}"
 >
 
 <table class="bearbeiten-table">
@@ -1549,9 +1580,8 @@ function pruefeAuswahl() {
 
 if (ausgewaehlt) {
 
-    ausgewaehlteInventarnummer =
-        ausgewaehlt.dataset.inventarnummer;
-
+    ausgewaehlteId =
+        ausgewaehlt.dataset.id;
 }
     document.getElementById("detailsBtn").disabled =
         anzahl !== 1;
@@ -1677,6 +1707,12 @@ function dragElement(element, griff) {
 
         e.preventDefault();
 
+        // aktuelle Position festschreiben, bevor transform entfällt
+        const rect = element.getBoundingClientRect();
+        element.style.top = rect.top + "px";
+        element.style.left = rect.left + "px";
+        element.style.transform = "none";
+
         pos3 = e.clientX;
         pos4 = e.clientY;
 
@@ -1710,5 +1746,10 @@ function dragElement(element, griff) {
     }
 }
 </script>
+
+<div id="meldung" class="toast">
+    ✅ Asset wurde gelöscht
+</div>
+
 </body>
 </html>

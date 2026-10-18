@@ -42,7 +42,7 @@
 
             <button id="loeschenBtn"
                 disabled
-                onclick="popupOeffnen(ausgewaehlteInventarnummer)">
+                onclick="popupOeffnen(ausgewaehlteId)">
                 🗑️ Löschen
             </button>
 
@@ -653,7 +653,7 @@
                    <input
                     type="checkbox"
                     class="asset-checkbox"
-                    data-inventarnummer="{{ pc[1] }}"
+                    data-inventarnummer="{{ pc[0] }}"
 >
                 </td>
 
@@ -871,12 +871,12 @@ document.querySelectorAll(".show-filters").forEach(filterLink => {
 </div>
 <script>
 
-let ausgewaehlteInventarnummer = "";
-let inventarnummerZumLoeschen = "";
+let ausgewaehlteId = "";
+let idZumLoeschen = "";
 
-function popupOeffnen(inventarnummer) {
+function popupOeffnen(id) {
 
-    inventarnummerZumLoeschen = inventarnummer;
+    idZumLoeschen = id;
 
     document.getElementById("popupText").innerText =
         "Asset " + inventarnummer + " wirklich löschen?";
@@ -894,13 +894,13 @@ function popupSchliessen() {
 function assetLoeschen() {
 
     window.location.href =
-        "/asset/loeschen?inventarnummer=" +
-        inventarnummerZumLoeschen;
+        "/asset/loeschen?id=" +
+        idZumLoeschen;
 }
 function detailsAnzeigen() {
      window.open(
         "/asset/details/" +
-        ausgewaehlteInventarnummer,
+        ausgewaehlteId,
         "_blank",
         "width=1200,height=900"
     );
@@ -916,7 +916,7 @@ function assetBearbeiten() {
 
     fetch(
         "/asset/details_json/" +
-        ausgewaehlteInventarnummer
+        ausgewaehlteId
     )
     .then(response => response.json())
     .then(data => {
@@ -926,9 +926,9 @@ function assetBearbeiten() {
 ).innerHTML = `
 
 <input
-    id="edit_inventarnummer"
+    id="edit_id"
     type="hidden"
-    value="${data.inventarnummer || ""}"
+    value="${data.id || ""}"
 >
 
 <table class="bearbeiten-table">
@@ -1274,7 +1274,7 @@ function bearbeitenSchliessen() {
 
 }
 
-console.log("VOR assetAnlegen");
+
 function assetAnlegen() {
 console.log("assetAnlegen wurde aufgerufen");
 
@@ -1420,6 +1420,11 @@ console.log("assetAnlegen wurde aufgerufen");
 
     document.getElementById(
         "anlegenPopup"
+        const popup = document.getElementById("anlegenPopup");
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.display = "block";
     ).style.display = "block";
 }
 
@@ -1548,8 +1553,8 @@ function pruefeAuswahl() {
 
 if (ausgewaehlt) {
 
-    ausgewaehlteInventarnummer =
-        ausgewaehlt.dataset.inventarnummer;
+    ausgewaehlteId =
+        ausgewaehlt.dataset.id;
 
 }
     document.getElementById("detailsBtn").disabled =

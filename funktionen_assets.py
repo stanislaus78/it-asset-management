@@ -451,21 +451,47 @@ def asset_existiert_sqlite(
         return "MAC-Adresse"
 
     verbindung.close()
-
     return None
-def assets_loeschen_sqlite(inventarnummer):
+
+# def assets_loeschen_sqlite(id):
+#
+#     verbindung = sqlite3.connect("asset_management.db")
+#     cursor = verbindung.cursor()
+#
+#     asset = asset_suchen_sqlite(id)
+#
+#     if asset is None:
+#         print("Asset nicht gefunden")
+#         verbindung.close()
+#         return
+#
+#     cursor.execute("""
+#         DELETE FROM assets
+#         WHERE id = ?
+#     """, (id,))
+#
+#     verbindung.commit()
+#
+#     print("Asset erfolgreich gelöscht")
+#
+#     verbindung.close()
+
+
+def assets_loeschen_sqlite(id):
 
     verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
 
-    asset = asset_suchen_sqlite(inventarnummer)
+    cursor.execute("""
+        DELETE FROM assets
+        WHERE id = ?
+    """, (id,))
 
-    if asset is None:
-        print("Asset nicht gefunden")
-        verbindung.close()
-        return
+    print("Gelöschte Zeilen:", cursor.rowcount)
 
-    print("Asset erfolgreich gelöscht")
+    verbindung.commit()
+
+    verbindung.close()
 
 def asset_feld_aktualisieren(
         inventarnummer,
