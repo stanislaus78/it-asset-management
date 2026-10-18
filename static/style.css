@@ -188,3 +188,26 @@ style="
     .anlegen-grid { grid-template-columns: 1fr; }
 }
 
+/* =========================
+   Asset löschen Bestätigung
+   ========================= */
+.toast {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d3436;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 10000;
+}
+
+.toast.sichtbar {
+    display: block;
+}
+
+.toast { display: none; ... }
+.toast.sichtbar { display: block; }

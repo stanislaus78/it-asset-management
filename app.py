@@ -196,6 +196,8 @@ from flask import redirect
 
 
 
+from urllib.parse import urlparse
+
 @app.route("/asset/loeschen")
 def assets_loeschen():
 
@@ -203,11 +205,9 @@ def assets_loeschen():
 
     assets_loeschen_sqlite(id)
 
-    return redirect(
-        request.referrer or "/assets"
-    )
+    ziel = urlparse(request.referrer or "/assets").path
 
-
+    return redirect(ziel + "?geloescht=1")
 
 @app.route("/asset/loeschen/bestaetigen")
 def asset_loeschen_bestaetigen():

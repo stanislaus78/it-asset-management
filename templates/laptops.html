@@ -1672,6 +1672,22 @@ function dragElement(element, griff) {
         document.onmousemove = null;
     }
 }
+
+window.addEventListener("DOMContentLoaded", function () {
+
+    if (new URLSearchParams(window.location.search).get("geloescht") === "1") {
+
+        const meldung = document.getElementById("meldung");
+
+        if (meldung) {
+            meldung.classList.add("sichtbar");
+            setTimeout(() => meldung.classList.remove("sichtbar"), 3000);
+        }
+
+        history.replaceState(null, "", window.location.pathname);
+    }
+
+});
 </script>
 
 <div id="meldung" class="toast">
