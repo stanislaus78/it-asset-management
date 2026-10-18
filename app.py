@@ -165,16 +165,17 @@ def asset_anlegen_popup():
         request.form["anschaffungsdatum"],
         request.form["installationsdatum"],
         request.form["anlagenummer"],
-        request.form["verwendungsart"]
+        request.form["verwendungsart"],
+        request.form["assettyp"]
 
     )
 
     return {"status": "ok"}
 
-@app.route("/asset/bearbeiten/<inventarnummer>")
-def asset_bearbeiten(inventarnummer):
+@app.route("/asset/bearbeiten/<id>")
+def asset_bearbeiten(id):
 
-    asset = asset_suchen_sqlite(inventarnummer)
+    asset = asset_suchen_sqlite(id)
 
     return render_template(
         "asset_bearbeiten.html",
@@ -184,37 +185,16 @@ def asset_bearbeiten(inventarnummer):
 @app.route("/asset/speichern", methods=["POST"])
 def asset_speichern():
 
-    asset_speichern_popup_sqlite(
+    ok = asset_speichern_popup_sqlite(request.form["id"], request.form)
 
-        request.form["inventarnummer"],
-        request.form["rechnername"],
-        request.form["seriennummer"],
-        request.form["benutzer"],
-        request.form["standort"],
-        request.form["zimmer"],
-        request.form["kostenstelle"],
-        request.form["organisationseinheit"],
-        request.form["hersteller"],
-        request.form["modell"],
-        request.form["prozessor"],
-        request.form["kerne_threads"],
-        request.form["ram"],
-        request.form["festplatte"],
-        request.form["betriebssystem"],
-        request.form["verwaltungsart"],
-        request.form["status"],
-        request.form["mac_adresse"],
-        request.form["garantie"],
-        request.form["anschaffungsdatum"],
-        request.form["installationsdatum"],
-        request.form["anlagenummer"],
-        request.form["verwendungsart"]
-
-    )
+    if not ok:
+        return {"status": "fehler", "meldung": "Asset nicht gefunden (ID ungültig)"}
 
     return {"status": "ok"}
 
 from flask import redirect
+
+
 
 @app.route("/asset/loeschen")
 def assets_loeschen():
@@ -223,26 +203,9 @@ def assets_loeschen():
 
     assets_loeschen_sqlite(id)
 
-    return """
-    <html>
-    <head>
-        <meta http-equiv="refresh" content="2;url=/assets/standpc">
-    </head>
-    <body style="font-family:Arial;text-align:center;padding-top:50px;">
-        <h2 style="color:green;">
-            ✅ Asset wurde erfolgreich gelöscht
-        </h2>
-
-        <p>Weiterleitung zur Assetliste...</p>
-    </body>
-    </html>
-    """
-
-
-
-
-
-
+    return redirect(
+        request.referrer or "/assets"
+    )
 
 
 
@@ -340,12 +303,16 @@ def assets_anzeigen():
         assets=assets
     )
 
-@app.route("/asset/details_json/<inventarnummer>")
-def asset_details_json(inventarnummer):
+@app.route("/asset/details_json/<id>")
+def asset_details_json(id):
 
-    asset = asset_suchen_sqlite(inventarnummer)
+    asset = asset_suchen_sqlite(id)
+
+    if asset is None:
+        return {"status": "fehler", "meldung": "Asset nicht gefunden"}, 404
 
     return {
+        "id": asset[0],
         "inventarnummer": asset[1],
         "rechnername": asset[2],
         "seriennummer": asset[3],
@@ -368,10 +335,13 @@ def asset_details_json(inventarnummer):
         "ram": asset[20],
         "festplatte": asset[21],
         "betriebssystem": asset[22],
+        "displaygroesse": asset[23],
+        "dockingstation": asset[24],
         "anlagenummer": asset[25],
-        "benutzer": asset[26]
-
+        "benutzer": asset[26],
+        "bemerkung": asset[27]
     }
+
 
 
 @app.route("/asset/details/<inventarnummer>")
@@ -1057,28 +1027,81 @@ def zubehoer():
 #Rechner
 @app.route("/assets/laptop")
 def laptops():
+    sortierung = request.args.get("sort", "rechnername")
+    richtung = request.args.get("richtung", "ASC")
+
+    erlaubte_spalten = [
+
+        "inventarnummer",
+        "rechnername",
+        "seriennummer",
+
+        "kostenstelle",
+        "organisationseinheit",
+
+        "standort",
+        "zimmer",
+
+        "anschaffungsdatum",
+        "installationsdatum",
+
+        "assettyp",
+        "verwendungsart",
+
+        "status",
+
+        "hersteller",
+        "modell",
+
+        "mac_adresse",
+        "garantie",
+
+        "verwaltungsart",
+
+        "prozessor",
+        "kerne_threads",
+
+        "ram",
+        "festplatte",
+
+        "betriebssystem",
+
+        "displaygroesse",
+        "dockingstation",
+
+        "anlagenummer",
+
+        "mitarbeiter",
+
+        "bemerkung"
+
+    ]
+
+    if sortierung not in erlaubte_spalten:
+        sortierung = "rechnername"
+
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
 
     verbindung = sqlite3.connect("asset_management.db")
-
     cursor = verbindung.cursor()
 
-    cursor.execute("""
-        SELECT *
-        FROM assets
-        WHERE LOWER(assettyp) = 'laptop'
-        ORDER BY inventarnummer
-    """)
+    cursor.execute(f"""
+           SELECT *
+           FROM assets
+           WHERE LOWER(assettyp) = 'laptop'
+           ORDER BY {sortierung} {richtung}
+       """)
 
     laptops = cursor.fetchall()
 
-    print(laptops[:1])
-
+    print(laptops)
     verbindung.close()
-
     return render_template(
         "laptops.html",
         laptops=laptops
     )
+
 
 @app.route("/assets/standpc")
 def standpcs():
@@ -1153,7 +1176,6 @@ def standpcs():
 
     print(standpcs)
     verbindung.close()
-    print("TEMPLATE-DATEI:", app.jinja_env.get_or_select_template("standpc.html").filename)
     return render_template(
         "standpc.html",
         standpcs=standpcs

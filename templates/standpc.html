@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Stand-PCs V2</title>
+    <title>Stand-PCs</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
@@ -20,7 +20,7 @@
 
 <div class="container">
 
-    <h1>🖥️ Stand-PCs V2</h1>
+    <h1>🖥️ Stand-PCs </h1>
 
     <div class="toolbar">
 
@@ -474,7 +474,6 @@
 
                 <th class="dropdown-column">
                         Verwaltungsart
-                        ...
                     </th>
 
                     <th class="dropdown-column">
@@ -500,7 +499,6 @@
 
                     <th class="dropdown-column">
                         Status
-                        ...
                     </th>
 
                 <th class="dropdown-column">
@@ -924,8 +922,8 @@ function popupSchliessen() {
 function assetLoeschen() {
 
     window.location.href =
-        "/asset/loeschen?id=" +
-        idZumLoeschen;
+        "/asset/loeschen?id=" + idZumLoeschen;
+
 }
 
 function detailsAnzeigen() {
@@ -1212,170 +1210,23 @@ function detailsSchliessen() {
 }
 
 
-   function assetSpeichern() {
+ function assetSpeichern() {
 
     const daten = new FormData();
 
-    daten.append(
-        "inventarnummer",
-        document.getElementById(
-            "edit_inventarnummer"
-        ).value
-    );
+    daten.append("id", ausgewaehlteId);
 
-    daten.append(
-        "rechnername",
-        document.getElementById(
-            "edit_rechnername"
-        ).value
-    );
+    const felder = [
+        "rechnername", "seriennummer", "benutzer", "standort", "zimmer",
+        "kostenstelle", "organisationseinheit", "hersteller", "modell",
+        "prozessor", "kerne_threads", "ram", "festplatte", "betriebssystem",
+        "verwaltungsart", "verwendungsart", "status", "mac_adresse",
+        "garantie", "anschaffungsdatum", "installationsdatum", "anlagenummer",
+    ];
 
-    daten.append(
-        "seriennummer",
-        document.getElementById(
-            "edit_seriennummer"
-        ).value
-    );
-
-    daten.append(
-        "benutzer",
-        document.getElementById(
-            "edit_benutzer"
-        ).value
-    );
-
-    daten.append(
-        "standort",
-        document.getElementById(
-            "edit_standort"
-        ).value
-    );
-
-    daten.append(
-        "zimmer",
-        document.getElementById(
-            "edit_zimmer"
-        ).value
-    );
-
-    daten.append(
-        "kostenstelle",
-        document.getElementById(
-            "edit_kostenstelle"
-        ).value
-    );
-
-    daten.append(
-        "organisationseinheit",
-        document.getElementById(
-            "edit_organisationseinheit"
-        ).value
-    );
-
-    daten.append(
-        "hersteller",
-        document.getElementById(
-            "edit_hersteller"
-        ).value
-    );
-
-    daten.append(
-        "modell",
-        document.getElementById(
-            "edit_modell"
-        ).value
-    );
-
-    daten.append(
-        "prozessor",
-        document.getElementById(
-            "edit_prozessor"
-        ).value
-    );
-
-    daten.append(
-        "kerne_threads",
-        document.getElementById(
-            "edit_kerne_threads"
-        ).value
-    );
-
-    daten.append(
-        "ram",
-        document.getElementById(
-            "edit_ram"
-        ).value
-    );
-
-    daten.append(
-        "festplatte",
-        document.getElementById(
-            "edit_festplatte"
-        ).value
-    );
-
-    daten.append(
-        "betriebssystem",
-        document.getElementById(
-            "edit_betriebssystem"
-        ).value
-    );
-
-    daten.append(
-        "verwaltungsart",
-        document.getElementById(
-            "edit_verwaltungsart"
-        ).value
-    );
-
-    daten.append(
-        "status",
-        document.getElementById(
-            "edit_status"
-        ).value
-    );
-
-    daten.append(
-        "mac_adresse",
-        document.getElementById(
-            "edit_mac_adresse"
-        ).value
-    );
-
-    daten.append(
-        "garantie",
-        document.getElementById(
-            "edit_garantie"
-        ).value
-    );
-
-    daten.append(
-        "anschaffungsdatum",
-        document.getElementById(
-            "edit_anschaffungsdatum"
-        ).value
-    );
-
-    daten.append(
-        "installationsdatum",
-        document.getElementById(
-            "edit_installationsdatum"
-        ).value
-    );
-
-    daten.append(
-        "anlagenummer",
-        document.getElementById(
-            "edit_anlagenummer"
-        ).value
-    );
-
-    daten.append(
-    "verwendungsart",
-    document.getElementById(
-        "edit_verwendungsart"
-    ).value
-    );
+    felder.forEach(feld => {
+        daten.append(feld, document.getElementById("edit_" + feld).value);
+    });
 
     fetch("/asset/speichern", {
         method: "POST",
@@ -1383,13 +1234,17 @@ function detailsSchliessen() {
     })
     .then(response => response.json())
     .then(data => {
-
+        if (data.status === "fehler") {
+            alert("⚠️ " + data.meldung);
+            return;
+        }
         bearbeitenSchliessen();
-
         location.reload();
-
+    })
+    .catch(fehler => {
+        console.error(fehler);
+        alert("⚠️ Speichern fehlgeschlagen, siehe Konsole");
     });
-
 }
 function bearbeitenSchliessen() {
 
@@ -1533,7 +1388,7 @@ function assetNeuSpeichern() {
     daten.append("verwendungsart",
         document.getElementById("neu_verwendungsart").value);
 
-
+    daten.append("assettyp", "Stand-PC");
     fetch("/asset/anlegen_popup", {
         method: "POST",
         body: daten

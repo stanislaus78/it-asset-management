@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Stand-PCs</title>
+    <title>Laptops</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
@@ -20,12 +20,12 @@
 
 <div class="container">
 
-    <h1>🖥️ Stand-PCs</h1>
+    <h1>💻 Laptops</h1>
 
     <div class="toolbar">
 
         <button onclick="assetAnlegen()">
-            ➕ Stand-PC anlegen
+            ➕ Laptop anlegen
         </button>
 
            <button id="detailsBtn"
@@ -472,6 +472,52 @@
                 </th>
 
 
+                <th class="dropdown-column">
+                    Displaygröße
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort=displaygroesse&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort=displaygroesse&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
+
+
+                <th class="dropdown-column">
+                    Dockingstation
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort=dockingstation&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort=dockingstation&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
+
+
+
+
+
+                    <th class="dropdown-column">
+                        Verwendungsart
+                        <span class="dropdown-button">▼</span>
+
+                        <div class="dropdown-menu">
+
+                            <a href="#" class="show-filters">
+                                🔎 Filtern nach Spalte
+                            </a>
+
+                            <a href="?sort=verwendungsart&richtung=ASC">
+                                ↑ Nach Spalte sortieren A-Z
+                            </a>
+
+                            <a href="?sort=verwendungsart&richtung=DESC">
+                                ↓ Nach Spalte sortieren Z-A
+                            </a>
+
+                        </div>
+                    </th>
+
 
                 <th class="dropdown-column">
 
@@ -616,6 +662,15 @@
                     </div>
 
                 </th>
+                <th class="dropdown-column">
+                    Bemerkung
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort=bemerkung&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort=bemerkung&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
             </tr>
             <tr id="filter-row" class="filter-row" style="display:none;">
 
@@ -635,17 +690,22 @@
             <td><input type="text" placeholder="Kerne/Threads"></td>
             <td><input type="text" placeholder="RAM"></td>
             <td><input type="text" placeholder="Festplatte"></td>
+            <td><input type="text" placeholder="Displaygröße"></td>
             <td><input type="text" placeholder="Betriebssystem"></td>
             <td><input type="text" placeholder="Verwaltungsart"></td>
+            <td><input type="text" placeholder="Displaygröße"></td>
+            <td><input type="text" placeholder="Dockingstation"></td>
+            <td><input type="text" placeholder="Verwendungsart"></td>
             <td><input type="text" placeholder="Status"></td>
             <td><input type="text" placeholder="MAC-Adresse"></td>
             <td><input type="text" placeholder="Garantie"></td>
             <td><input type="text" placeholder="Anschaffungsdatum"></td>
             <td><input type="text" placeholder="Installationsdatum"></td>
             <td><input type="text" placeholder="Anlagenummer"></td>
+            <td><input type="text" placeholder="Bemerkung"></td>
 
         </tr>
-            {% for pc in standpcs %}
+            {% for laptop in laptops %}
 
             <tr>
 
@@ -653,45 +713,45 @@
                    <input
                     type="checkbox"
                     class="asset-checkbox"
-                    data-inventarnummer="{{ pc[0] }}"
+                    data-id="{{ laptop[0] }}"
 >
                 </td>
 
-                <td>{{ pc[2] }}</td>
+                <td>{{ laptop[2] }}</td>
 
-                <td>{{ pc[1] }}</td>
-                <td>{{ pc[3] }}</td>
+                <td>{{ laptop[1] }}</td>
+                <td>{{ laptop[3] }}</td>
 
-                <td>{{ pc[26] }}</td>
+                <td>{{ laptop[26] }}</td>
 
-                <td>{{ pc[6] }}</td>
-                <td>{{ pc[7] }}</td>
+                <td>{{ laptop[6] }}</td>
+                <td>{{ laptop[7] }}</td>
 
-                <td>{{ pc[4] }}</td>
-                <td>{{ pc[5] }}</td>
+                <td>{{ laptop[4] }}</td>
+                <td>{{ laptop[5] }}</td>
 
-                <td>{{ pc[13] }}</td>
-                <td>{{ pc[14] }}</td>
+                <td>{{ laptop[13] }}</td>
+                <td>{{ laptop[14] }}</td>
 
-                <td>{{ pc[18] }}</td>
-                <td>{{ pc[19] }}</td>
+                <td>{{ laptop[18] }}</td>
+                <td>{{ laptop[19] }}</td>
 
-                <td>{{ pc[20] }}</td>
-                <td>{{ pc[21] }}</td>
+                <td>{{ laptop[20] }}</td>
+                <td>{{ laptop[21] }}</td>
 
-                <td>{{ pc[22] }}</td>
+                <td>{{ laptop[22] }}</td>  <!-- Betriebssystem -->
+                <td>{{ laptop[17] }}</td>  <!-- Verwaltungsart -->
+                <td>{{ laptop[23] }}</td>  <!-- Displaygröße -->
+                <td>{{ laptop[24] }}</td>  <!-- Dockingstation -->
+                <td>{{ laptop[11] }}</td>  <!-- Verwendungsart -->
+                <td>{{ laptop[12] }}</td>  <!-- Status -->
+                <td>{{ laptop[15] }}</td>  <!-- MAC-Adresse -->
+                <td>{{ laptop[16] }}</td>  <!-- Garantie -->
+                <td>{{ laptop[8] }}</td>   <!-- Anschaffungsdatum -->
+                <td>{{ laptop[9] }}</td>   <!-- Installationsdatum -->
+                <td>{{ laptop[25] }}</td>  <!-- Anlagenummer -->
+                <td>{{ laptop[27] }}</td>  <!-- Bemerkung -->
 
-                <td>{{ pc[17] }}</td>
-                <td>{{ pc[12] }}</td>
-
-                <td>{{ pc[15] }}</td>
-
-                <td>{{ pc[16] }}</td>
-
-                <td>{{ pc[8] }}</td>
-                <td>{{ pc[9] }}</td>
-
-                <td>{{ pc[25] }}</td>
 
             </tr>
 
@@ -861,10 +921,9 @@ document.querySelectorAll(".show-filters").forEach(filterLink => {
      ">
 
     <h2 id="anlegenTitel"
-    style="cursor:move;">
-    ➕ Stand-PC anlegen
-</h2>
-
+    style="cursor:move; margin-top:0;">
+    ➕ Laptop anlegen
+    </h2>
 
     <div id="anlegenInhalt"></div>
 
@@ -879,7 +938,7 @@ function popupOeffnen(id) {
     idZumLoeschen = id;
 
     document.getElementById("popupText").innerText =
-        "Asset " + inventarnummer + " wirklich löschen?";
+        "Asset " + id + " wirklich löschen?";
 
     document.getElementById("loeschPopup").style.display =
         "block";
@@ -897,20 +956,139 @@ function assetLoeschen() {
         "/asset/loeschen?id=" +
         idZumLoeschen;
 }
+
 function detailsAnzeigen() {
-     window.open(
-        "/asset/details/" +
-        ausgewaehlteId,
-        "_blank",
-        "width=1200,height=900"
-    );
+
+    fetch("/asset/details_json/" + ausgewaehlteId)
+    .then(response => response.json())
+    .then(data => {
+
+    document.getElementById("detailsText").innerHTML = `
+<div class="details-container">
+<div class="details-section">
+
+    <h3>Allgemein</h3>
+
+    <div class="details-grid">
+        <div>Rechnername</div>
+        <div>${data.rechnername || "-"}</div>
+
+        <div>Inventarnummer</div>
+        <div>${data.inventarnummer || "-"}</div>
+
+        <div>Seriennummer</div>
+        <div>${data.seriennummer || "-"}</div>
+
+        <div>Benutzer</div>
+        <div>${data.benutzer || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Standort</h3>
+
+    <div class="details-grid">
+        <div>Standort</div>
+        <div>${data.standort || "-"}</div>
+
+        <div>Zimmer</div>
+        <div>${data.zimmer || "-"}</div>
+
+        <div>Kostenstelle</div>
+        <div>${data.kostenstelle || "-"}</div>
+
+        <div>Organisationseinheit</div>
+        <div>${data.organisationseinheit || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Hardware</h3>
+
+    <div class="details-grid">
+        <div>Hersteller</div>
+        <div>${data.hersteller || "-"}</div>
+
+        <div>Modell</div>
+        <div>${data.modell || "-"}</div>
+
+        <div>Prozessor</div>
+        <div>${data.prozessor || "-"}</div>
+
+        <div>Kerne/Threads</div>
+        <div>${data.kerne_threads || "-"}</div>
+
+        <div>RAM</div>
+        <div>${data.ram || "-"}</div>
+
+        <div>Festplatte</div>
+        <div>${data.festplatte || "-"}</div>
+
+        <div>Betriebssystem</div>
+        <div>${data.betriebssystem || "-"}</div>
+
+        <div>Displaygröße</div>
+        <div>${data.displaygroesse || "-"}</div>
+
+        <div>Dockingstation</div>
+        <div>${data.dockingstation || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Verwaltung</h3>
+
+    <div class="details-grid">
+        <div>Status</div>
+        <div>${data.status || "-"}</div>
+
+        <div>Verwaltungsart</div>
+        <div>${data.verwaltungsart || "-"}</div>
+
+        <div>Verwendungsart</div>
+        <div>${data.verwendungsart || "-"}</div>
+
+        <div>MAC-Adresse</div>
+        <div>${data.mac_adresse || "-"}</div>
+
+        <div>Garantie</div>
+        <div>${data.garantie || "-"}</div>
+
+        <div>Anschaffungsdatum</div>
+        <div>${data.anschaffungsdatum || "-"}</div>
+
+        <div>Installationsdatum</div>
+        <div>${data.installationsdatum || "-"}</div>
+
+        <div>Anlagenummer</div>
+        <div>${data.anlagenummer || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Bemerkung</h3>
+
+    <div class="details-grid">
+        <div>Bemerkung</div>
+        <div>${data.bemerkung || "-"}</div>
+    </div>
+
+</div>
+</div>
+`;
+        document.getElementById("detailsPopup").style.display = "block";
+
+    });
+
 }
-
-
-
-
-
-
 
 function assetBearbeiten() {
 
@@ -1004,29 +1182,19 @@ function assetBearbeiten() {
 </tr>
 
 <tr>
-    <td>Verwaltungsart</td>
-    <td><input id="edit_verwaltungsart" value="${data.verwaltungsart || ""}"></td>
+    <td>Displaygröße</td>
+    <td><input id="edit_displaygroesse" value="${data.displaygroesse || ""}"></td>
 </tr>
 
 <tr>
-    <td>Verwendungsart</td>
-    <td>
-        <select id="edit_verwendungsart">
-            <option ${data.verwendungsart==="Arbeits-PC" ? "selected" : ""}>
-                Arbeits-PC
-            </option>
-
-            <option ${data.verwendungsart==="Hörsaal-PC" ? "selected" : ""}>
-                Hörsaal-PC
-            </option>
-
-            <option ${data.verwendungsart==="Labor-PC" ? "selected" : ""}>
-                Labor-PC
-            </option>
-        </select>
-    </td>
+    <td>Dockingstation</td>
+    <td><input id="edit_dockingstation" value="${data.dockingstation || ""}"></td>
 </tr>
 
+<tr>
+    <td>Verwaltungsart</td>
+    <td><input id="edit_verwaltungsart" value="${data.verwaltungsart || ""}"></td>
+</tr>
 
 <tr>
     <td>Status</td>
@@ -1058,6 +1226,22 @@ function assetBearbeiten() {
     <td><input id="edit_anlagenummer" value="${data.anlagenummer || ""}"></td>
 </tr>
 
+<tr>
+    <td>Verwendungsart</td>
+    <td>
+        <select id="edit_verwendungsart">
+            <option ${data.verwendungsart==="Dienstlaptop" ? "selected" : ""}>Dienstlaptop</option>
+            <option ${data.verwendungsart==="Teamslaptop" ? "selected" : ""}>Teamslaptop</option>
+            <option ${data.verwendungsart==="Laborlaptop" ? "selected" : ""}>Laborlaptop</option>
+        </select>
+    </td>
+</tr>
+
+<tr>
+  <td>Bemerkung</td>
+  <td><input id="edit_bemerkung" value="${data.bemerkung || ""}"></td>
+</tr>
+
 </table>
 
 <br>
@@ -1086,185 +1270,41 @@ function detailsSchliessen() {
 }
 
 
-   function assetSpeichern() {
+function assetSpeichern() {
 
     const daten = new FormData();
+    daten.append("id", ausgewaehlteId);
 
-    daten.append(
-        "inventarnummer",
-        document.getElementById(
-            "edit_inventarnummer"
-        ).value
-    );
+    const felder = [
+        "rechnername", "seriennummer", "benutzer", "standort", "zimmer",
+        "kostenstelle", "organisationseinheit", "hersteller", "modell",
+        "prozessor", "kerne_threads", "ram", "festplatte", "betriebssystem",
+        "verwaltungsart", "verwendungsart", "status", "mac_adresse",
+        "garantie", "anschaffungsdatum", "installationsdatum", "anlagenummer",
+        "displaygroesse", "dockingstation", "bemerkung"
+    ];
 
-    daten.append(
-        "rechnername",
-        document.getElementById(
-            "edit_rechnername"
-        ).value
-    );
-
-    daten.append(
-        "seriennummer",
-        document.getElementById(
-            "edit_seriennummer"
-        ).value
-    );
-
-    daten.append(
-        "benutzer",
-        document.getElementById(
-            "edit_benutzer"
-        ).value
-    );
-
-    daten.append(
-        "standort",
-        document.getElementById(
-            "edit_standort"
-        ).value
-    );
-
-    daten.append(
-        "zimmer",
-        document.getElementById(
-            "edit_zimmer"
-        ).value
-    );
-
-    daten.append(
-        "kostenstelle",
-        document.getElementById(
-            "edit_kostenstelle"
-        ).value
-    );
-
-    daten.append(
-        "organisationseinheit",
-        document.getElementById(
-            "edit_organisationseinheit"
-        ).value
-    );
-
-    daten.append(
-        "hersteller",
-        document.getElementById(
-            "edit_hersteller"
-        ).value
-    );
-
-    daten.append(
-        "modell",
-        document.getElementById(
-            "edit_modell"
-        ).value
-    );
-
-    daten.append(
-        "prozessor",
-        document.getElementById(
-            "edit_prozessor"
-        ).value
-    );
-
-    daten.append(
-        "kerne_threads",
-        document.getElementById(
-            "edit_kerne_threads"
-        ).value
-    );
-
-    daten.append(
-        "ram",
-        document.getElementById(
-            "edit_ram"
-        ).value
-    );
-
-    daten.append(
-        "festplatte",
-        document.getElementById(
-            "edit_festplatte"
-        ).value
-    );
-
-    daten.append(
-        "betriebssystem",
-        document.getElementById(
-            "edit_betriebssystem"
-        ).value
-    );
-
-    daten.append(
-        "verwaltungsart",
-        document.getElementById(
-            "edit_verwaltungsart"
-        ).value
-    );
-
-daten.append(
-    "verwendungsart",
-    document.getElementById(
-        "edit_verwendungsart"
-    ).value
-);
-
-
-    daten.append(
-        "status",
-        document.getElementById(
-            "edit_status"
-        ).value
-    );
-
-    daten.append(
-        "mac_adresse",
-        document.getElementById(
-            "edit_mac_adresse"
-        ).value
-    );
-
-    daten.append(
-        "garantie",
-        document.getElementById(
-            "edit_garantie"
-        ).value
-    );
-
-    daten.append(
-        "anschaffungsdatum",
-        document.getElementById(
-            "edit_anschaffungsdatum"
-        ).value
-    );
-
-    daten.append(
-        "installationsdatum",
-        document.getElementById(
-            "edit_installationsdatum"
-        ).value
-    );
-
-    daten.append(
-        "anlagenummer",
-        document.getElementById(
-            "edit_anlagenummer"
-        ).value
-    );
-
-    fetch("/asset/speichern", {
-        method: "POST",
-        body: daten
-    })
-    .then(response => response.json())
-    .then(data => {
-
-        bearbeitenSchliessen();
-
-        location.reload();
-
+    felder.forEach(feld => {
+        const element = document.getElementById("edit_" + feld);
+        if (element) {
+            daten.append(feld, element.value);
+        }
     });
 
+    fetch("/asset/speichern", { method: "POST", body: daten })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "fehler") {
+            alert("⚠️ " + data.meldung);
+            return;
+        }
+        bearbeitenSchliessen();
+        location.reload();
+    })
+    .catch(fehler => {
+        console.error(fehler);
+        alert("⚠️ Speichern fehlgeschlagen, siehe Konsole");
+    });
 }
 function bearbeitenSchliessen() {
 
@@ -1274,158 +1314,62 @@ function bearbeitenSchliessen() {
 
 }
 
-
 function assetAnlegen() {
-console.log("assetAnlegen wurde aufgerufen");
 
-    document.getElementById(
-        "anlegenInhalt"
-    ).innerHTML = `
-    <div class="anlegen-grid">
+    const felder = [
+        ["rechnername", "Rechnername"],
+        ["prozessor", "Prozessor"],
+        ["inventarnummer", "Inventarnummer"],
+        ["kerne_threads", "Kerne / Threads"],
+        ["seriennummer", "Seriennummer"],
+        ["ram", "RAM"],
+        ["benutzer", "Benutzer"],
+        ["festplatte", "Festplatte"],
+        ["standort", "Standort"],
+        ["betriebssystem", "Betriebssystem"],
+        ["zimmer", "Zimmer"],
+        ["verwaltungsart", "Verwaltungsart"],
+        ["kostenstelle", "Kostenstelle"],
+        ["status", "Status"],
+        ["organisationseinheit", "Organisationseinheit"],
+        ["mac_adresse", "MAC-Adresse"],
+        ["hersteller", "Hersteller"],
+        ["garantie", "Garantie"],
+        ["modell", "Modell"],
+        ["anschaffungsdatum", "Anschaffungsdatum"],
+        ["installationsdatum", "Installationsdatum"],
+        ["anlagenummer", "Anlagenummer"],
+        ["anlagenummer", "Anlagenummer"],
+        ["displaygroesse", "Displaygröße"],
+        ["dockingstation", "Dockingstation"],
+        ["bemerkung", "Bemerkung"]
+    ];
 
-    <div class="anlegen-feld">
-        <label>Rechnername</label>
-        <input id="neu_rechnername">
-    </div>
+    const felderHtml = felder.map(([id, label]) => `
+        <div class="anlegen-feld">
+            <label>${label}</label>
+            <input id="neu_${id}">
+        </div>
+    `).join("");
 
-    <div class="anlegen-feld">
-        <label>Prozessor</label>
-        <input id="neu_prozessor">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Inventarnummer</label>
-        <input id="neu_inventarnummer">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Kerne / Threads</label>
-        <input id="neu_kerne_threads">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Seriennummer</label>
-        <input id="neu_seriennummer">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>RAM</label>
-        <input id="neu_ram">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Benutzer</label>
-        <input id="neu_benutzer">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Festplatte</label>
-        <input id="neu_festplatte">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Standort</label>
-        <input id="neu_standort">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Betriebssystem</label>
-        <input id="neu_betriebssystem">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Zimmer</label>
-        <input id="neu_zimmer">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Verwaltungsart</label>
-        <input id="neu_verwaltungsart">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Kostenstelle</label>
-        <input id="neu_kostenstelle">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Status</label>
-        <input id="neu_status">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Organisationseinheit</label>
-        <input id="neu_organisationseinheit">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>MAC-Adresse</label>
-        <input id="neu_mac_adresse">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Hersteller</label>
-        <input id="neu_hersteller">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Garantie</label>
-        <input id="neu_garantie">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Modell</label>
-        <input id="neu_modell">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Anschaffungsdatum</label>
-        <input id="neu_anschaffungsdatum">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Installationsdatum</label>
-        <input id="neu_installationsdatum">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Anlagenummer</label>
-        <input id="neu_anlagenummer">
-    </div>
-
-    <div class="anlegen-feld">
-        <label>Verwendungsart</label>
-        <select id="neu_verwendungsart">
-            <option>Arbeits-PC</option>
-            <option>Hörsaal-PC</option>
-            <option>Labor-PC</option>
-        </select>
-    </div>
-    </div>
-    <br>
-
-    <button onclick="assetNeuSpeichern()">
-        💾 Anlegen
-    </button>
-
-    <button onclick="anlegenSchliessen()">
-        ✖ Schließen
-    </button>
-
-
-    <br>
-
-
+    document.getElementById("anlegenInhalt").innerHTML = `
+        <div class="anlegen-grid">
+            ${felderHtml}
+            <div class="anlegen-feld">
+                <label>Verwendungsart</label>
+                <select id="neu_verwendungsart">
+                    <option>Dienstlaptop</option>
+                    <option>Teamslaptop</option>
+                    <option>Laborlaptop</option>
+                </select>
+            </div>
+        </div>
+        <br>
+        <button onclick="assetNeuSpeichern()">💾 Anlegen</button>
+        <button onclick="anlegenSchliessen()">✖ Schließen</button>
     `;
 
-    document.getElementById(
-        "anlegenPopup"
-        const popup = document.getElementById("anlegenPopup");
-    popup.style.top = "50%";
-    popup.style.left = "50%";
-    popup.style.transform = "translate(-50%, -50%)";
-    popup.style.display = "block";
-    ).style.display = "block";
+    document.getElementById("anlegenPopup").style.display = "block";
 }
 
 function anlegenSchliessen() {
@@ -1437,6 +1381,7 @@ function anlegenSchliessen() {
 function assetNeuSpeichern() {
 
     const daten = new FormData();
+
 
     daten.append("rechnername",
         document.getElementById("neu_rechnername").value);
@@ -1506,11 +1451,20 @@ function assetNeuSpeichern() {
 
     daten.append("verwendungsart",
         document.getElementById("neu_verwendungsart").value);
+        daten.append("displaygroesse",
+        document.getElementById("neu_displaygroesse").value);
 
+    daten.append("dockingstation",
+        document.getElementById("neu_dockingstation").value);
+
+    daten.append("bemerkung",
+        document.getElementById("neu_bemerkung").value);
+
+    daten.append("assettyp", "Laptop");
     fetch("/asset/anlegen_popup", {
-    method: "POST",
-    body: daten
-})
+        method: "POST",
+        body: daten
+    })
     .then(response => response.json())
     .then(data => {
 
@@ -1555,7 +1509,6 @@ if (ausgewaehlt) {
 
     ausgewaehlteId =
         ausgewaehlt.dataset.id;
-
 }
     document.getElementById("detailsBtn").disabled =
         anzahl !== 1;
@@ -1662,7 +1615,68 @@ function globaleSuche() {
 
 }
 </script>
+<script>
+dragElement(
+    document.getElementById("anlegenPopup"),
+    document.getElementById("anlegenTitel")
+);
 
+function dragElement(element, griff) {
+
+    let pos1 = 0;
+    let pos2 = 0;
+    let pos3 = 0;
+    let pos4 = 0;
+
+    griff.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+
+        e.preventDefault();
+
+        // aktuelle Position festschreiben, bevor transform entfällt
+        const rect = element.getBoundingClientRect();
+        element.style.top = rect.top + "px";
+        element.style.left = rect.left + "px";
+        element.style.transform = "none";
+
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+
+        e.preventDefault();
+
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        element.style.top =
+            (element.offsetTop - pos2) + "px";
+
+        element.style.left =
+            (element.offsetLeft - pos1) + "px";
+
+        element.style.transform = "none";
+    }
+
+    function closeDragElement() {
+
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
+</script>
+
+<div id="meldung" class="toast">
+    ✅ Asset wurde gelöscht
+</div>
 
 </body>
 </html>
