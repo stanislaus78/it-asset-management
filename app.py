@@ -127,51 +127,24 @@ def asset_anlegen():
 
 @app.route("/asset/anlegen_popup", methods=["POST"])
 def asset_anlegen_popup():
+
+    inventarnummer = request.form.get("inventarnummer", "").strip()
+
+    if not inventarnummer:
+        return {"status": "fehler", "meldung": "Inventarnummer fehlt."}
+
     vorhanden = asset_existiert_sqlite(
-
-        request.form["inventarnummer"],
-        request.form["rechnername"],
-        request.form["mac_adresse"]
-
+        inventarnummer,
+        request.form.get("rechnername", "").strip(),
+        request.form.get("mac_adresse", "").strip()
     )
 
     if vorhanden:
-        return {
-            "status": "fehler",
-            "meldung": f"{vorhanden} existiert bereits."
+        return {"status": "fehler", "meldung": f"{vorhanden} existiert bereits."}
 
-        }
-    neues_asset_erstellen_sqlite(
-
-        request.form["rechnername"],
-        request.form["inventarnummer"],
-        request.form["seriennummer"],
-        request.form["benutzer"],
-        request.form["standort"],
-        request.form["zimmer"],
-        request.form["kostenstelle"],
-        request.form["organisationseinheit"],
-        request.form["hersteller"],
-        request.form["modell"],
-        request.form["prozessor"],
-        request.form["kerne_threads"],
-        request.form["ram"],
-        request.form["festplatte"],
-        request.form["betriebssystem"],
-        request.form["verwaltungsart"],
-        request.form["status"],
-        request.form["mac_adresse"],
-        request.form["garantie"],
-        request.form["anschaffungsdatum"],
-        request.form["installationsdatum"],
-        request.form["anlagenummer"],
-        request.form["verwendungsart"],
-        request.form["assettyp"]
-
-    )
+    neues_asset_erstellen_sqlite(request.form)
 
     return {"status": "ok"}
-
 @app.route("/asset/bearbeiten/<id>")
 def asset_bearbeiten(id):
 
@@ -1102,7 +1075,6 @@ def laptops():
         laptops=laptops
     )
 
-
 @app.route("/assets/standpc")
 def standpcs():
 
@@ -1240,30 +1212,50 @@ def diensthandys():
 @app.route("/assets/monitor")
 def monitore():
 
-    verbindung = sqlite3.connect("asset_management.db")
+    sortierung = request.args.get("sort", "inventarnummer")
+    richtung = request.args.get("richtung", "ASC")
 
+    erlaubte_spalten = [
+        "inventarnummer",
+        "seriennummer",
+        "kostenstelle",
+        "organisationseinheit",
+        "standort",
+        "zimmer",
+        "anschaffungsdatum",
+        "assettyp",
+        "status",
+        "hersteller",
+        "modell",
+        "displaygroesse",
+        "garantie",
+        "mitarbeiter",
+        "bemerkung"
+    ]
+
+    if sortierung not in erlaubte_spalten:
+        sortierung = "inventarnummer"
+
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
+
+    verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
 
-    cursor.execute("""
-        SELECT
-            inventarnummer,
-            mitarbeiter,
-            standort,
-            status
+    cursor.execute(f"""
+        SELECT *
         FROM assets
-        WHERE geraetetyp = 'Monitor'
-        ORDER BY inventarnummer
+        WHERE LOWER(assettyp) = 'monitor'
+        ORDER BY {sortierung} {richtung}
     """)
 
     monitore = cursor.fetchall()
-
     verbindung.close()
 
     return render_template(
         "monitore.html",
         monitore=monitore
     )
-
 
 @app.route("/assets/drucker")
 def drucker():
