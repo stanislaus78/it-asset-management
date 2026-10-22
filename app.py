@@ -158,12 +158,17 @@ def asset_bearbeiten(id):
 @app.route("/asset/speichern", methods=["POST"])
 def asset_speichern():
 
-    ok = asset_speichern_popup_sqlite(request.form["id"], request.form)
+    ergebnis = asset_speichern_popup_sqlite(request.form["id"], request.form)
 
-    if not ok:
+    if ergebnis == "doppelt":
+        return {"status": "fehler", "meldung": "Diese Inventarnummer existiert bereits."}
+    if ergebnis == "leer":
+        return {"status": "fehler", "meldung": "Inventarnummer darf nicht leer sein."}
+    if not ergebnis:
         return {"status": "fehler", "meldung": "Asset nicht gefunden (ID ungültig)"}
 
     return {"status": "ok"}
+
 
 from flask import redirect
 
@@ -283,6 +288,31 @@ def asset_details_json(id):
 
     if asset is None:
         return {"status": "fehler", "meldung": "Asset nicht gefunden"}, 404
+        # Laptop, der auf diese Dockingstation verweist
+        laptop = None
+        if (asset[10] or "").lower() == "dockingstation":
+            verbindung = sqlite3.connect("asset_management.db")
+            try:
+                cursor = verbindung.cursor()
+                cursor.execute(
+                    """
+                    SELECT inventarnummer
+                    FROM assets
+                    WHERE dockingstation = ?
+                      AND LOWER(assettyp) = 'laptop'
+                    """,
+                    (asset[1],)
+                )
+                laptop = ", ".join(z[0] for z in cursor.fetchall() if z[0])
+            finally:
+                verbindung.close()
+
+        return {
+            "id": asset[0],
+
+                "bemerkung": asset[27],
+        "laptop": laptop
+        }
 
     return {
         "id": asset[0],
@@ -1294,34 +1324,56 @@ def test():
 
     return str(cursor.fetchall())
 
+
+SORT_SPALTEN = {
+    "inventarnummer": "d.inventarnummer",
+    "seriennummer": "d.seriennummer",
+    "mitarbeiter": "d.mitarbeiter",
+    "standort": "d.standort",
+    "zimmer": "d.zimmer",
+    "kostenstelle": "d.kostenstelle",
+    "organisationseinheit": "d.organisationseinheit",
+    "hersteller": "d.hersteller",
+    "modell": "d.modell",
+    "laptop": "l.inventarnummer",
+    "status": "d.status",
+    "garantie": "d.garantie",
+    "anschaffungsdatum": "d.anschaffungsdatum",
+    "bemerkung": "d.bemerkung",
+}
+
+
 @app.route("/assets/dockingstation")
 def dockingstations():
 
-    verbindung = sqlite3.connect("asset_management.db")
+    sortierung = request.args.get("sort", "inventarnummer")
+    richtung = request.args.get("richtung", "ASC")
 
+    spalte = SORT_SPALTEN.get(sortierung, "d.inventarnummer")
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
+
+    verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
 
-    cursor.execute("""
-        SELECT
-            inventarnummer,
-            mitarbeiter,
-            standort,
-            status
-        FROM assets
-        WHERE geraetetyp = 'Dockingstation'
-        ORDER BY inventarnummer
+    cursor.execute(f"""
+        SELECT d.id, d.inventarnummer, d.seriennummer, d.mitarbeiter,
+               d.standort, d.zimmer, d.kostenstelle, d.organisationseinheit,
+               d.hersteller, d.modell, l.inventarnummer,
+               d.status, d.garantie, d.anschaffungsdatum, d.bemerkung
+        FROM assets d
+        LEFT JOIN assets l
+               ON l.dockingstation = d.inventarnummer
+              AND LOWER(l.assettyp) = 'laptop'
+        WHERE LOWER(d.assettyp) = 'dockingstation'
+        ORDER BY {spalte} COLLATE NOCASE {richtung}
     """)
 
     dockingstations = cursor.fetchall()
-
     verbindung.close()
 
-    return render_template(
-        "dockingstations.html",
-        dockingstations=dockingstations
-    )
-
-
+    return render_template("dockingstations.html",
+                           dockingstations=dockingstations)
 @app.route("/assets/scanner")
 def scanner():
 
@@ -1350,53 +1402,51 @@ def scanner():
     )
 
 
-@app.route("/assets/switch")
-def switches():
 
-    verbindung = sqlite3.connect("asset_management.db")
-
-    cursor = verbindung.cursor()
-
-    cursor.execute("""
-        SELECT
-            inventarnummer,
-            mitarbeiter,
-            standort,
-            status
-        FROM assets
-        WHERE geraetetyp = 'Switch'
-        ORDER BY inventarnummer
-    """)
-
-    switches = cursor.fetchall()
-
-    verbindung.close()
-
-    return render_template(
-        "switches.html",
-        switches=switches
-    )
 
 @app.route("/assets/maus")
 def maeuse():
 
-    verbindung = sqlite3.connect("asset_management.db")
+    sortierung = request.args.get("sort", "inventarnummer")
+    richtung = request.args.get("richtung", "ASC")
 
+    erlaubte_spalten = [
+        "inventarnummer",
+        "seriennummer",
+        "kostenstelle",
+        "organisationseinheit",
+        "standort",
+        "zimmer",
+        "anschaffungsdatum",
+        "assettyp",
+        "status",
+        "hersteller",
+        "modell",
+        "garantie",
+        "mitarbeiter",
+        "bemerkung"
+    ]
+
+    if sortierung not in erlaubte_spalten:
+        sortierung = "inventarnummer"
+
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
+
+    verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
 
-    cursor.execute("""
-        SELECT
-            inventarnummer,
-            mitarbeiter,
-            standort,
-            status
+    cursor.execute(f"""
+        SELECT id, inventarnummer, seriennummer, mitarbeiter,
+               standort, zimmer, kostenstelle, organisationseinheit,
+               hersteller, modell, status,
+               anschaffungsdatum, bemerkung
         FROM assets
-        WHERE geraetetyp = 'Maus'
-        ORDER BY inventarnummer
+        WHERE LOWER(assettyp) = 'maus'
+        ORDER BY {sortierung} COLLATE NOCASE {richtung}
     """)
 
     maeuse = cursor.fetchall()
-
     verbindung.close()
 
     return render_template(
@@ -1407,30 +1457,101 @@ def maeuse():
 @app.route("/assets/kopfhoerer")
 def kopfhoerer():
 
-    verbindung = sqlite3.connect("asset_management.db")
+    sortierung = request.args.get("sort", "inventarnummer")
+    richtung = request.args.get("richtung", "ASC")
 
+    erlaubte_spalten = [
+        "inventarnummer",
+        "seriennummer",
+        "kostenstelle",
+        "organisationseinheit",
+        "standort",
+        "zimmer",
+        "anschaffungsdatum",
+        "assettyp",
+        "status",
+        "hersteller",
+        "modell",
+        "garantie",
+        "mitarbeiter",
+        "bemerkung"
+    ]
+
+    if sortierung not in erlaubte_spalten:
+        sortierung = "inventarnummer"
+
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
+
+    verbindung = sqlite3.connect("asset_management.db")
     cursor = verbindung.cursor()
 
-    cursor.execute("""
-        SELECT
-            inventarnummer,
-            mitarbeiter,
-            standort,
-            status
+    cursor.execute(f"""
+        SELECT id, inventarnummer, seriennummer, mitarbeiter,
+               standort, zimmer, kostenstelle, organisationseinheit,
+               hersteller, modell, status,
+               anschaffungsdatum, bemerkung
         FROM assets
-        WHERE geraetetyp = 'Kopfhoerer'
-        ORDER BY inventarnummer
+        WHERE LOWER(assettyp) = 'kopfhoerer'
+        ORDER BY {sortierung} COLLATE NOCASE {richtung}
     """)
 
-    kopfhoerer = cursor.fetchall()
-
+    kopfhoerern = cursor.fetchall()
     verbindung.close()
 
     return render_template(
         "kopfhoerer.html",
-        kopfhoerer=kopfhoerer
+        kopfhoerern=kopfhoerern
     )
 
+@app.route("/assets/switch")
+def switches():
+
+    sortierung = request.args.get("sort", "inventarnummer")
+    richtung = request.args.get("richtung", "ASC")
+
+    erlaubte_spalten = [
+        "inventarnummer",
+        "seriennummer",
+        "kostenstelle",
+        "organisationseinheit",
+        "standort",
+        "zimmer",
+        "anschaffungsdatum",
+        "assettyp",
+        "status",
+        "hersteller",
+        "modell",
+        "garantie",
+        "bemerkung"
+    ]
+
+    if sortierung not in erlaubte_spalten:
+        sortierung = "inventarnummer"
+
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
+
+    verbindung = sqlite3.connect("asset_management.db")
+    cursor = verbindung.cursor()
+
+    cursor.execute(f"""
+        SELECT id, inventarnummer, seriennummer,
+               standort, zimmer, kostenstelle, organisationseinheit,
+               hersteller, modell, verwendungsart, status,
+               anschaffungsdatum, bemerkung
+        FROM assets
+        WHERE LOWER(assettyp) = 'switch'
+        ORDER BY {sortierung} COLLATE NOCASE {richtung}
+    """)
+
+    switches = cursor.fetchall()
+    verbindung.close()
+
+    return render_template(
+        "switch.html",
+        switches=switches
+    )
 
 @app.route("/assets/webcams")
 def webcams():

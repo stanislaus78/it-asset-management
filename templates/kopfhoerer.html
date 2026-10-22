@@ -5,41 +5,1114 @@
 
     <title>Kopfhörer</title>
 
-   <link rel="stylesheet"
+    <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='dropdowns.css') }}">
+
 </head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎧️ Kopfhörer</h1>
+
+    <div class="toolbar">
+
+        <button onclick="assetAnlegen()">
+            ➕ Kopfhörer anlegen
+        </button>
+
+           <button id="detailsBtn"
+                disabled
+                onclick="detailsAnzeigen()">
+                👁 Details
+            </button>
+
+            <button id="bearbeitenBtn"
+                disabled
+                onclick="assetBearbeiten()">
+            ✏️ Bearbeiten
+            </button>
+
+            <button id="loeschenBtn"
+                disabled
+                onclick="popupOeffnen(ausgewaehlteId)">
+                🗑️ Löschen
+            </button>
+
+    </div>
+
+<div
+    style="
+         margin-top:10px;
+        margin-bottom:0px;
+        text-align:left;
+    "
+>
+    <input
+        type="text"
+        id="globalFilter"
+        placeholder="🔍 In allen Spalten suchen..."
+        style="
+            width:400px;
+            padding:8px;
+            font-size:14px;
+            border:1px solid #ccc;
+            border-radius:5px;
+        "
+>
+
+</div>
+
+
+
+    <div style="overflow-x:auto;">
+
         <table>
 
             <tr>
-                <th>Inventarnummer</th>
-                <th>Benutzer</th>
-                <th>Standort</th>
-                <th>Status</th>
-            </tr>
 
-            {% for kopfhoerer in kopfhoerer %}
+                <th></th>
+
+
+
+                <th class="dropdown-column">
+
+                    Inventarnummer
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=inventarnummer&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=inventarnummer&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Seriennummer
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=seriennummer&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=seriennummer&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Benutzer
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=mitarbeiter&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=mitarbeiter&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+               <th class="dropdown-column">
+
+                    Standort
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=standort&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=standort&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Zimmer
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=zimmer&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=zimmer&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Kostenstelle
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=kostenstelle&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=kostenstelle&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Organisationseinheit
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=organisationseinheit&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=organisationseinheit&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Hersteller
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=hersteller&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=hersteller&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+                    Modell
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+                        <a href="?sort=modell&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+                        <a href="?sort=modell&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+                    </div>
+                </th>
+
+
+                <th class="dropdown-column">
+
+                    Status
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=status&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=status&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+                <th class="dropdown-column">
+
+                    Anschaffungsdatum
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=anschaffungsdatum&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=anschaffungsdatum&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+                <th class="dropdown-column">
+                    Bemerkung
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort=bemerkung&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort=bemerkung&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
+            </tr>
+            <tr id="filter-row" class="filter-row" style="display:none;">
+
+            <td></td>
+            <td><input type="text" placeholder="Inventarnummer"></td>
+            <td><input type="text" placeholder="Seriennummer"></td>
+            <td><input type="text" placeholder="Benutzer"></td>
+            <td><input type="text" placeholder="Standort"></td>
+            <td><input type="text" placeholder="Zimmer"></td>
+            <td><input type="text" placeholder="Kostenstelle"></td>
+            <td><input type="text" placeholder="Organisationseinheit"></td>
+            <td><input type="text" placeholder="Hersteller"></td>
+            <td><input type="text" placeholder="Modell"></td>
+            <td><input type="text" placeholder="Status"></td>
+            <td><input type="text" placeholder="Anschaffungsdatum"></td>
+            <td><input type="text" placeholder="Bemerkung"></td>
+
+        </tr>
+            {% for kopfhoerer in kopfhoerern %}
 
             <tr>
-                <td>{{ kopfhoerer[0] }}</td>
-                <td>{{ kopfhoerer[1] }}</td>
-                <td>{{ kopfhoerer[2] }}</td>
-                <td>{{ kopfhoerer[3] }}</td>
+
+
+
+               <td><input type="checkbox" class="asset-checkbox" data-id="{{ kopfhoerer[0] }}"></td>
+                <td>{{ kopfhoerer[1] }}</td>   <!-- Inventarnummer -->
+                <td>{{ kopfhoerer[2] }}</td>   <!-- Seriennummer -->
+                <td>{{ kopfhoerer[3] }}</td>   <!-- Benutzer -->
+                <td>{{ kopfhoerer[4] }}</td>   <!-- Standort -->
+                <td>{{ kopfhoerer[5] }}</td>   <!-- Zimmer -->
+                <td>{{ kopfhoerer[6] }}</td>   <!-- Kostenstelle -->
+                <td>{{ kopfhoerer[7] }}</td>   <!-- Organisationseinheit -->
+                <td>{{ kopfhoerer[8] }}</td>   <!-- Hersteller -->
+                <td>{{ kopfhoerer[9] }}</td>   <!-- Modell -->
+                <td>{{ kopfhoerer[10] }}</td>  <!-- Status -->
+                <td>{{ kopfhoerer[11] }}</td>  <!-- Anschaffungsdatum -->
+                <td>{{ kopfhoerer[12] }}</td>  <!-- Bemerkung -->
+
             </tr>
 
             {% endfor %}
 
         </table>
 
-        <br><br>
+    </div>
 
-        <p><a href="/assets/peripherie">🖨️ Peripherie</a></p>
+    <br><br>
 
-        <p><a href="/assets">📦 Assets</a></p>
+    <p><a href="javascript:history.back()">⬅️ Zurück</a></p>
 
-        <p><a href="/">🏠 Dashboard</a></p>
+    <p><a href="/assets">📦 Assets</a></p>
+
+</div>
+<script>
+
+document.querySelectorAll(".dropdown-column").forEach(column => {
+
+    const button = column.querySelector(".dropdown-button");
+    const menu = column.querySelector(".dropdown-menu");
+
+    button.addEventListener("click", function(event) {
+
+        event.stopPropagation();
+
+        document.querySelectorAll(".dropdown-menu").forEach(m => {
+
+            if (m !== menu) {
+                m.style.display = "none";
+            }
+
+        });
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        }
+        else {
+            menu.style.display = "block";
+        }
+
+    });
+
+});
+
+document.addEventListener("click", function() {
+
+    document.querySelectorAll(".dropdown-menu").forEach(menu => {
+
+        menu.style.display = "none";
+
+    });
+
+});
+
+</script>
+<script>
+
+document.querySelectorAll(".show-filters").forEach(filterLink => {
+
+    filterLink.addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        document.getElementById("filter-row").style.display = "table-row";
+
+    });
+
+});
+
+</script>
+
+<div id="loeschPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        border:1px solid #ccc;
+        box-shadow:0 0 15px rgba(0,0,0,0.3);
+        z-index:9999;
+     ">
+
+    <h2>⚠️ Asset löschen</h2>
+
+    <p id="popupText">
+        Asset wirklich löschen?
+    </p>
+
+    <button onclick="assetLoeschen()">
+        Ja, löschen
+    </button>
+    <button onclick="popupSchliessen()">
+        Abbrechen
+    </button>
+
+</div>
+
+<div id="detailsPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        border:1px solid #ccc;
+        box-shadow:0 0 15px rgba(0,0,0,0.3);
+        z-index:9999;
+     ">
+
+    <h2>👁 Details</h2>
+
+        <p id="detailsText">
+        Asset ausgewählt
+        </p>
+
+    <button onclick="detailsSchliessen()">
+        Schließen
+    </button>
+
+</div>
+
+<div id="bearbeitenPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        z-index:9999;
+     ">
+
+    <h2>✏️ Asset bearbeiten</h2>
+
+    <div id="bearbeitenInhalt"></div>
+
+    <br>
+
+    <button onclick="bearbeitenSchliessen()">
+        ✖ Schließen
+    </button>
+
+</div>
+
+<div id="anlegenPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        width:1000px;
+        max-width:95vw;
+        max-height:85vh;
+        overflow-y:auto;
+        z-index:9999;
+     ">
+
+    <h2 id="anlegenTitel"
+    style="cursor:move; margin-top:0;">
+    ➕ Kopfhörer anlegen
+    </h2>
+
+    <div id="anlegenInhalt"></div>
+
+</div>
+<script>
+
+let ausgewaehlteId = "";
+let idZumLoeschen = "";
+
+function popupOeffnen(id) {
+
+    idZumLoeschen = id;
+
+    document.getElementById("popupText").innerText =
+        "Asset " + id + " wirklich löschen?";
+
+    document.getElementById("loeschPopup").style.display =
+        "block";
+}
+
+function popupSchliessen() {
+
+    document.getElementById("loeschPopup").style.display =
+        "none";
+}
+
+function assetLoeschen() {
+
+    window.location.href =
+        "/asset/loeschen?id=" +
+        idZumLoeschen;
+}
+
+function detailsAnzeigen() {
+
+    fetch("/asset/details_json/" + ausgewaehlteId)
+    .then(response => response.json())
+    .then(data => {
+
+    document.getElementById("detailsText").innerHTML = `
+<div class="details-container">
+<div class="details-section">
+
+    <h3>Allgemein</h3>
+
+    <div class="details-grid">
+
+        <div>Inventarnummer</div>
+        <div>${data.inventarnummer || "-"}</div>
+
+        <div>Seriennummer</div>
+        <div>${data.seriennummer || "-"}</div>
+
+        <div>Benutzer</div>
+        <div>${data.benutzer || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Standort</h3>
+
+    <div class="details-grid">
+        <div>Standort</div>
+        <div>${data.standort || "-"}</div>
+
+        <div>Zimmer</div>
+        <div>${data.zimmer || "-"}</div>
+
+        <div>Kostenstelle</div>
+        <div>${data.kostenstelle || "-"}</div>
+
+        <div>Organisationseinheit</div>
+        <div>${data.organisationseinheit || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Hardware</h3>
+
+    <div class="details-grid">
+        <div>Hersteller</div>
+        <div>${data.hersteller || "-"}</div>
+
+        <div>Modell</div>
+        <div>${data.modell || "-"}</div>
 
     </div>
 
-</body>
+</div>
 
+<div class="details-section">
+
+    <h3>Verwaltung</h3>
+
+    <div class="details-grid">
+        <div>Status</div>
+        <div>${data.status || "-"}</div>
+
+        <div>Anschaffungsdatum</div>
+        <div>${data.anschaffungsdatum || "-"}</div>
+
+
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Bemerkung</h3>
+
+    <div class="details-grid">
+        <div>Bemerkung</div>
+        <div>${data.bemerkung || "-"}</div>
+    </div>
+
+</div>
+</div>
+`;
+        document.getElementById("detailsPopup").style.display = "block";
+
+    });
+
+}
+
+function assetBearbeiten() {
+
+    fetch(
+        "/asset/details_json/" +
+        ausgewaehlteId
+    )
+    .then(response => response.json())
+    .then(data => {
+
+        document.getElementById(
+    "bearbeitenInhalt"
+).innerHTML = `
+
+<input
+    id="edit_id"
+    type="hidden"
+    value="${data.id || ""}"
+>
+
+<table class="bearbeiten-table">
+
+
+<tr>
+    <td>Inventarnummer</td>
+    <td><input id="edit_inventarnummer" value="${data.inventarnummer || ""}"></td>
+</tr>
+
+
+<tr>
+    <td>Seriennummer</td>
+    <td><input id="edit_seriennummer" value="${data.seriennummer || ""}"></td>
+</tr>
+
+<tr>
+    <td>Benutzer</td>
+    <td><input id="edit_benutzer" value="${data.benutzer || ""}"></td>
+</tr>
+
+<tr>
+    <td>Standort</td>
+    <td><input id="edit_standort" value="${data.standort || ""}"></td>
+</tr>
+
+<tr>
+    <td>Zimmer</td>
+    <td><input id="edit_zimmer" value="${data.zimmer || ""}"></td>
+</tr>
+
+<tr>
+    <td>Kostenstelle</td>
+    <td><input id="edit_kostenstelle" value="${data.kostenstelle || ""}"></td>
+</tr>
+
+<tr>
+    <td>Organisationseinheit</td>
+    <td><input id="edit_organisationseinheit" value="${data.organisationseinheit || ""}"></td>
+</tr>
+
+<tr>
+    <td>Hersteller</td>
+    <td><input id="edit_hersteller" value="${data.hersteller || ""}"></td>
+</tr>
+
+<tr>
+    <td>Modell</td>
+    <td><input id="edit_modell" value="${data.modell || ""}"></td>
+</tr>
+
+<tr>
+    <td>Status</td>
+    <td><input id="edit_status" value="${data.status || ""}"></td>
+</tr>
+
+
+<tr>
+    <td>Anschaffungsdatum</td>
+    <td><input id="edit_anschaffungsdatum" value="${data.anschaffungsdatum || ""}"></td>
+</tr>
+
+
+<tr>
+  <td>Bemerkung</td>
+  <td><input id="edit_bemerkung" value="${data.bemerkung || ""}"></td>
+</tr>
+
+</table>
+
+<br>
+
+<button onclick="assetSpeichern()">
+    💾 Speichern
+</button>
+
+`;
+
+        document.getElementById(
+            "bearbeitenPopup"
+        ).style.display = "block";
+
+    });
+
+}
+
+
+function detailsSchliessen() {
+
+    document.getElementById(
+        "detailsPopup"
+    ).style.display = "none";
+
+}
+
+
+function assetSpeichern() {
+
+    const daten = new FormData();
+    daten.append("id", ausgewaehlteId);
+
+   const felder = [
+    "inventarnummer", "seriennummer", "benutzer", "standort", "zimmer",
+    "kostenstelle", "organisationseinheit", "hersteller", "modell",
+    "status", "anschaffungsdatum", "bemerkung"
+];
+
+    felder.forEach(feld => {
+        const element = document.getElementById("edit_" + feld);
+        if (element) {
+            daten.append(feld, element.value);
+        }
+    });
+
+    fetch("/asset/speichern", { method: "POST", body: daten })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "fehler") {
+            alert("⚠️ " + data.meldung);
+            return;
+        }
+        bearbeitenSchliessen();
+        location.reload();
+    })
+    .catch(fehler => {
+        console.error(fehler);
+        alert("⚠️ Speichern fehlgeschlagen, siehe Konsole");
+    });
+}
+
+function bearbeitenSchliessen() {
+    document.getElementById("bearbeitenPopup").style.display = "none";
+}
+
+function assetAnlegen() {
+
+    const felder = [
+        ["inventarnummer", "Inventarnummer"],
+        ["seriennummer", "Seriennummer"],
+        ["benutzer", "Benutzer"],
+        ["standort", "Standort"],
+        ["zimmer", "Zimmer"],
+        ["kostenstelle", "Kostenstelle"],
+        ["organisationseinheit", "Organisationseinheit"],
+        ["hersteller", "Hersteller"],
+        ["modell", "Modell"],
+        ["status", "Status"],
+        ["anschaffungsdatum", "Anschaffungsdatum"],
+        ["bemerkung", "Bemerkung"]
+    ];
+
+    const felderHtml = felder.map(([id, label]) => `
+        <div class="anlegen-feld">
+            <label>${label}</label>
+            <input id="neu_${id}">
+        </div>
+    `).join("");
+
+    document.getElementById("anlegenInhalt").innerHTML = `
+        <div class="anlegen-grid">${felderHtml}</div>
+        <br>
+        <button onclick="assetNeuSpeichern()">💾 Anlegen</button>
+        <button onclick="anlegenSchliessen()">✖ Schließen</button>
+    `;
+
+    const popup = document.getElementById("anlegenPopup");
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.display = "block";
+}
+
+function anlegenSchliessen() {
+    document.getElementById("anlegenPopup").style.display = "none";
+}
+
+function assetNeuSpeichern() {
+
+    const daten = new FormData();
+
+    const felder = [
+        "inventarnummer", "seriennummer", "benutzer", "standort", "zimmer",
+        "kostenstelle", "organisationseinheit", "hersteller", "modell",
+        "status", "anschaffungsdatum", "bemerkung"
+    ];
+
+    felder.forEach(feld => {
+        daten.append(feld, document.getElementById("neu_" + feld).value);
+    });
+
+    daten.append("assettyp", "Kopfhoerer");
+
+    fetch("/asset/anlegen_popup", { method: "POST", body: daten })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "fehler") {
+            alert("⚠️ " + data.meldung);
+            return;
+        }
+        alert("✅ Asset angelegt");
+        anlegenSchliessen();
+        location.reload();
+    });
+}
+</script>
+
+
+
+<script>
+
+document.querySelectorAll(".asset-checkbox").forEach(cb => {
+
+    cb.addEventListener("change", pruefeAuswahl);
+
+});
+
+function pruefeAuswahl() {
+
+    const anzahl =
+        document.querySelectorAll(
+            ".asset-checkbox:checked"
+        ).length;
+    const ausgewaehlt =
+    document.querySelector(
+        ".asset-checkbox:checked"
+    );
+
+if (ausgewaehlt) {
+
+    ausgewaehlteId =
+        ausgewaehlt.dataset.id;
+}
+    document.getElementById("detailsBtn").disabled =
+        anzahl !== 1;
+
+    document.getElementById("bearbeitenBtn").disabled =
+        anzahl !== 1;
+
+    document.getElementById("loeschenBtn").disabled =
+        anzahl !== 1;
+
+}
+
+
+document.querySelectorAll(".filter-row input").forEach(input => {
+
+    input.addEventListener("keyup", filterTabelle);
+
+});
+
+function filterTabelle() {
+
+    const filter = [];
+
+    document
+        .querySelectorAll(".filter-row input")
+        .forEach(input => {
+
+            filter.push(
+                input.value.toLowerCase()
+            );
+
+        });
+
+    const zeilen =
+        document.querySelectorAll("table tr");
+
+    zeilen.forEach((zeile, index) => {
+
+        if (index < 2) return;
+
+        const zellen =
+            zeile.querySelectorAll("td");
+
+        let anzeigen = true;
+
+        filter.forEach((wert, i) => {
+
+            if (!wert) return;
+
+            const text =
+                zellen[i + 1]
+                    .innerText
+                    .toLowerCase();
+
+            if (!text.includes(wert)) {
+                anzeigen = false;
+            }
+
+        });
+
+        zeile.style.display =
+            anzeigen ? "" : "none";
+
+    });
+
+}
+
+
+document.getElementById("globalFilter")
+    .addEventListener(
+        "keyup",
+        globaleSuche
+    );
+
+function globaleSuche() {
+
+    const suchtext =
+        document.getElementById(
+            "globalFilter"
+        ).value.toLowerCase();
+
+    const zeilen =
+        document.querySelectorAll("table tr");
+
+    for (let i = 2; i < zeilen.length; i++) {
+
+        const text =
+            zeilen[i].textContent.toLowerCase();
+
+        if (text.includes(suchtext)) {
+            zeilen[i].style.display = "";
+        } else {
+            zeilen[i].style.display = "none";
+        }
+
+    }
+
+}
+</script>
+<script>
+dragElement(
+    document.getElementById("anlegenPopup"),
+    document.getElementById("anlegenTitel")
+);
+
+function dragElement(element, griff) {
+
+    let pos1 = 0;
+    let pos2 = 0;
+    let pos3 = 0;
+    let pos4 = 0;
+
+    griff.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+
+        e.preventDefault();
+
+        // aktuelle Position festschreiben, bevor transform entfällt
+        const rect = element.getBoundingClientRect();
+        element.style.top = rect.top + "px";
+        element.style.left = rect.left + "px";
+        element.style.transform = "none";
+
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+
+        e.preventDefault();
+
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        element.style.top =
+            (element.offsetTop - pos2) + "px";
+
+        element.style.left =
+            (element.offsetLeft - pos1) + "px";
+
+        element.style.transform = "none";
+    }
+
+    function closeDragElement() {
+
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+
+    if (new URLSearchParams(window.location.search).get("geloescht") === "1") {
+
+        const meldung = document.getElementById("meldung");
+
+        if (meldung) {
+            meldung.classList.add("sichtbar");
+            setTimeout(() => meldung.classList.remove("sichtbar"), 3000);
+        }
+
+        history.replaceState(null, "", window.location.pathname);
+    }
+
+});
+</script>
+
+<div id="meldung" class="toast">
+    ✅ Asset wurde gelöscht
+</div>
+
+</body>
 </html>

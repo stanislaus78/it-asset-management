@@ -307,21 +307,20 @@ def neues_asset_erstellen_sqlite(werte):
     parameter = [werte[f] for f in gesendet]
 
     verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
-
-    cursor.execute(
-        f"INSERT INTO assets ({spaltenliste}) VALUES ({platzhalter})",
-        parameter
-    )
-    verbindung.commit()
+    try:
+        cursor = verbindung.cursor()
+        cursor.execute(
+            f"INSERT INTO assets ({spaltenliste}) VALUES ({platzhalter})",
+            parameter
+        )
+        verbindung.commit()
+    finally:
+        verbindung.close()
 
     historie_schreiben(
         "Asset",
         f"Asset {werte.get('inventarnummer', '')} angelegt"
     )
-
-    verbindung.close()
-
 def asset_existiert_sqlite(inventarnummer, rechnername, mac_adresse):
 
     verbindung = sqlite3.connect("asset_management.db")
@@ -622,6 +621,7 @@ def asset_speichern_popup_sqlite(asset_id, werte):
 
     # Formularname -> Spaltenname in der DB
     spalten = {
+        "inventarnummer": "inventarnummer",
         "rechnername": "rechnername",
         "seriennummer": "seriennummer",
         "benutzer": "mitarbeiter",
@@ -659,25 +659,35 @@ def asset_speichern_popup_sqlite(asset_id, werte):
     parameter = [werte[feld] for feld in gesendet] + [asset_id]
 
     verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
+    try:
+        cursor = verbindung.cursor()
 
-    cursor.execute(f"UPDATE assets SET {setteil} WHERE id = ?", parameter)
+        if "inventarnummer" in gesendet:
+            neue_nr = werte["inventarnummer"].strip()
+            if not neue_nr:
+                return "leer"
+            cursor.execute(
+                "SELECT 1 FROM assets WHERE inventarnummer = ? AND id != ? LIMIT 1",
+                (neue_nr, asset_id)
+            )
+            if cursor.fetchone():
+                return "doppelt"
 
-    if cursor.rowcount == 0:
+        cursor.execute(f"UPDATE assets SET {setteil} WHERE id = ?", parameter)
+
+        if cursor.rowcount == 0:
+            return False
+
+        verbindung.commit()
+
+        cursor.execute("SELECT inventarnummer FROM assets WHERE id = ?", (asset_id,))
+        zeile = cursor.fetchone()
+        inventarnummer = zeile[0] if zeile else asset_id
+    finally:
         verbindung.close()
-        return False
-
-    verbindung.commit()
-
-    cursor.execute("SELECT inventarnummer FROM assets WHERE id = ?", (asset_id,))
-    zeile = cursor.fetchone()
-    inventarnummer = zeile[0] if zeile else asset_id
 
     historie_schreiben("Asset", f"Asset {inventarnummer} bearbeitet")
-
-    verbindung.close()
     return True
-
 def asset_zuweisen_sqlite(inventarnummer, name):
 
     verbindung = sqlite3.connect("asset_management.db")
