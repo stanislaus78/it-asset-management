@@ -71,9 +71,6 @@
 </div>
 
 
-
-</div>
-
     <div style="overflow-x:auto;">
 
         <table>
@@ -295,6 +292,17 @@
 
 
                 <th class="dropdown-column">
+                    MAC-Adresse
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort=mac_adresse&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort=mac_adresse&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
+
+
+                <th class="dropdown-column">
                     Laptop
                     <span class="dropdown-button">▼</span>
                     <div class="dropdown-menu">
@@ -400,6 +408,7 @@
             <td><input type="text" placeholder="Organisationseinheit"></td>
             <td><input type="text" placeholder="Hersteller"></td>
             <td><input type="text" placeholder="Modell"></td>
+            <td><input type="text" placeholder="MAC-Adresse"></td>
             <td><input type="text" placeholder="Laptop"></td>
             <td><input type="text" placeholder="Status"></td>
             <td><input type="text" placeholder="Garantie"></td>
@@ -423,13 +432,13 @@
                 <td>{{ dockingstation[7] }}</td>   <!-- Organisationseinheit -->
                 <td>{{ dockingstation[8] }}</td>   <!-- Hersteller -->
                 <td>{{ dockingstation[9] }}</td>   <!-- Modell -->
-                <td>{{ dockingstation[10] or "" }}</td>  <!-- Laptop -->
-                <td>{{ dockingstation[11] }}</td>  <!-- Status -->
-                <td>{{ dockingstation[12] }}</td>  <!-- Garantie -->
-                <td>{{ dockingstation[13] }}</td>  <!-- Anschaffungsdatum -->
-                <td>{{ dockingstation[14] }}</td>  <!-- Bemerkung -->
-
-            </tr>
+                <td>{{ dockingstation[10] or "" }}</td>  <!-- MAC-Adresse -->
+                <td>{{ dockingstation[11] or "" }}</td>  <!-- Laptop -->
+                <td>{{ dockingstation[12] }}</td>  <!-- Status -->
+                <td>{{ dockingstation[13] }}</td>  <!-- Garantie -->
+                <td>{{ dockingstation[14] }}</td>  <!-- Anschaffungsdatum -->
+                <td>{{ dockingstation[15] }}</td>  <!-- Bemerkung -->
+                            </tr>
 
             {% endfor %}
 
@@ -690,6 +699,9 @@ function detailsAnzeigen() {
         <div>Modell</div>
         <div>${data.modell || "-"}</div>
 
+        <div>MAC-Adresse</div>
+        <div>${data.mac_adresse || "-"}</div>
+
     </div>
 
 </div>
@@ -802,6 +814,13 @@ function assetBearbeiten() {
     <td><input id="edit_modell" value="${data.modell || ""}"></td>
 </tr>
 
+
+<tr>
+    <td>MAC-Adresse</td>
+    <td><input id="edit_mac_adresse" value="${data.mac_adresse || ""}"></td>
+</tr>
+
+
 <tr>
     <td>Status</td>
     <td><input id="edit_status" value="${data.status || ""}"></td>
@@ -859,7 +878,7 @@ function assetSpeichern() {
    const felder = [
     "inventarnummer", "seriennummer", "benutzer", "standort", "zimmer",
     "kostenstelle", "organisationseinheit", "hersteller", "modell",
-    "status", "garantie", "anschaffungsdatum", "bemerkung"
+    "mac_adresse", "status", "garantie", "anschaffungsdatum", "bemerkung"
 ];
 
     felder.forEach(feld => {
@@ -901,6 +920,7 @@ function assetAnlegen() {
         ["organisationseinheit", "Organisationseinheit"],
         ["hersteller", "Hersteller"],
         ["modell", "Modell"],
+        ["mac_adresse", "MAC-Adresse"],
         ["status", "Status"],
         ["garantie", "Garantie"],
         ["anschaffungsdatum", "Anschaffungsdatum"],
@@ -939,7 +959,7 @@ function assetNeuSpeichern() {
     const felder = [
         "inventarnummer", "seriennummer", "benutzer", "standort", "zimmer",
         "kostenstelle", "organisationseinheit", "hersteller", "modell",
-        "status", "garantie", "anschaffungsdatum", "bemerkung"
+        "mac_adresse", "status", "garantie", "anschaffungsdatum", "bemerkung"
     ];
 
     felder.forEach(feld => {

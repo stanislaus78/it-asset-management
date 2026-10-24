@@ -3,28 +3,16 @@ from funktionen_mitarbeiter import *
 from mitarbeiter import Mitarbeiter
 from datenbank import verbinden
 from funktionen_historie import historie_schreiben
+from contextlib import closing
 
 
 
 
 def asset_suchen_sqlite(id):
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
-
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
-
-    cursor.execute("""
-        SELECT *
-        FROM assets
-        WHERE id = ?
-    """, (id,))
-
-    asset = cursor.fetchone()
-
-    verbindung.close()
-
-    return asset
+    with closing(sqlite3.connect("asset_management.db")) as verbindung:
+        cursor = verbindung.cursor()
+        cursor.execute("SELECT * FROM assets WHERE id = ?", (id,))
+        return cursor.fetchone()
 
 
 
@@ -296,6 +284,7 @@ def neues_asset_erstellen_sqlite(werte):
         "anlagenummer": "anlagenummer",
         "displaygroesse": "displaygroesse",
         "dockingstation": "dockingstation",
+        "druckertyp": "druckertyp",
         "bemerkung": "bemerkung",
         "assettyp": "assettyp",
     }
@@ -646,6 +635,7 @@ def asset_speichern_popup_sqlite(asset_id, werte):
         "anlagenummer": "anlagenummer",
         "displaygroesse": "displaygroesse",
         "dockingstation": "dockingstation",
+        "druckertyp": "druckertyp",
         "bemerkung": "bemerkung",
     }
 
@@ -688,6 +678,9 @@ def asset_speichern_popup_sqlite(asset_id, werte):
 
     historie_schreiben("Asset", f"Asset {inventarnummer} bearbeitet")
     return True
+
+
+
 def asset_zuweisen_sqlite(inventarnummer, name):
 
     verbindung = sqlite3.connect("asset_management.db")
