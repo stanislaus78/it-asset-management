@@ -1050,10 +1050,51 @@ def medientechnik():
     return render_template("medientechnik.html")
 
 
+
+
+
+ZUBEHOER_SORT_SPALTEN = {
+    "inventarnummer": "inventarnummer",
+    "seriennummer": "seriennummer",
+    "mitarbeiter": "mitarbeiter",
+    "standort": "standort",
+    "zimmer": "zimmer",
+    "kostenstelle": "kostenstelle",
+    "organisationseinheit": "organisationseinheit",
+    "hersteller": "hersteller",
+    "modell": "modell",
+    "geraetetyp": "verwendungsart",
+    "status": "status",
+    "anschaffungsdatum": "anschaffungsdatum",
+    "bemerkung": "bemerkung",
+}
+
 @app.route("/assets/zubehoer")
 def zubehoer():
 
-    return render_template("zubehoer.html")
+    sortierung = request.args.get("sort", "inventarnummer")
+    richtung = request.args.get("richtung", "ASC")
+
+    spalte = ZUBEHOER_SORT_SPALTEN.get(sortierung, "inventarnummer")
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
+
+    with closing(sqlite3.connect("asset_management.db")) as verbindung:
+        cursor = verbindung.cursor()
+        cursor.execute(f"""
+            SELECT id, inventarnummer, seriennummer, mitarbeiter,
+                   standort, zimmer, kostenstelle, organisationseinheit,
+                   hersteller, modell, verwendungsart,
+                   status, anschaffungsdatum, bemerkung
+            FROM assets
+            WHERE LOWER(assettyp) = 'zubehoer'
+            ORDER BY {spalte} COLLATE NOCASE {richtung}
+        """)
+        zubehoerliste = cursor.fetchall()
+
+    return render_template("zubehoer.html", zubehoerliste=zubehoerliste)
+
+
 
 #Rechner
 @app.route("/assets/laptop")
@@ -1452,7 +1493,7 @@ def dockingstations():
                    d.standort, d.zimmer, d.kostenstelle, d.organisationseinheit,
                    d.hersteller, d.modell, d.mac_adresse,
                    (SELECT GROUP_CONCAT(l.inventarnummer, ', ')
-                      FROM assets d
+                      FROM assets l
                      WHERE l.dockingstation = d.inventarnummer
                        AND LOWER(l.assettyp) = 'laptop') AS laptop,
                    d.status, d.garantie, d.anschaffungsdatum, d.bemerkung
@@ -1464,6 +1505,7 @@ def dockingstations():
 
     return render_template("dockingstations.html",
                            dockingstations=dockingstations)
+
 
 @app.route("/assets/scanner")
 def scanner():
@@ -1821,57 +1863,104 @@ def mikrofons():
 @app.route("/assets/konferenzkameras")
 def konferenzkameras():
 
-    verbindung = sqlite3.connect("asset_management.db")
+    sortierung = request.args.get("sort", "inventarnummer")
+    richtung = request.args.get("richtung", "ASC")
 
-    cursor = verbindung.cursor()
+    erlaubte_spalten = [
+        "inventarnummer",
+        "seriennummer",
+        "kostenstelle",
+        "organisationseinheit",
+        "standort",
+        "zimmer",
+        "anschaffungsdatum",
+        "assettyp",
+        "status",
+        "hersteller",
+        "modell",
+        "garantie",
+        "mitarbeiter",
+        "bemerkung"
+    ]
 
-    cursor.execute("""
-        SELECT
-            inventarnummer,
-            mitarbeiter,
-            standort,
-            status
-        FROM assets
-        WHERE geraetetyp = 'Konferenzkameras'
-        ORDER BY inventarnummer
-    """)
+    if sortierung not in erlaubte_spalten:
+        sortierung = "inventarnummer"
 
-    kopfhoerer = cursor.fetchall()
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
 
-    verbindung.close()
+    with closing(sqlite3.connect("asset_management.db")) as verbindung:
+        cursor = verbindung.cursor()
+
+        cursor.execute(f"""
+            SELECT id, inventarnummer, seriennummer, mitarbeiter,
+                   standort, zimmer, kostenstelle, organisationseinheit,
+                   hersteller, modell, status,
+                   anschaffungsdatum, bemerkung
+            FROM assets
+            WHERE LOWER(assettyp) = 'konferenzkamera'
+            ORDER BY {sortierung} COLLATE NOCASE {richtung}
+        """)
+
+        konferenzkameras = cursor.fetchall()
 
     return render_template(
         "konferenzkameras.html",
-        kopfhoerer=kopfhoerer
+        konferenzkameras=konferenzkameras
     )
+
+
 
 
 @app.route("/assets/aufnahmegeraete")
 def aufnahmegeraete():
 
-    verbindung = sqlite3.connect("asset_management.db")
+    sortierung = request.args.get("sort", "inventarnummer")
+    richtung = request.args.get("richtung", "ASC")
 
-    cursor = verbindung.cursor()
+    erlaubte_spalten = [
+        "inventarnummer",
+        "seriennummer",
+        "kostenstelle",
+        "organisationseinheit",
+        "standort",
+        "zimmer",
+        "anschaffungsdatum",
+        "assettyp",
+        "status",
+        "hersteller",
+        "modell",
+        "garantie",
+        "mitarbeiter",
+        "bemerkung"
+    ]
 
-    cursor.execute("""
-        SELECT
-            inventarnummer,
-            mitarbeiter,
-            standort,
-            status
-        FROM assets
-        WHERE geraetetyp = 'Aufnahmegeräte'
-        ORDER BY inventarnummer
-    """)
+    if sortierung not in erlaubte_spalten:
+        sortierung = "inventarnummer"
 
-    kopfhoerer = cursor.fetchall()
+    if richtung not in ["ASC", "DESC"]:
+        richtung = "ASC"
 
-    verbindung.close()
+    with closing(sqlite3.connect("asset_management.db")) as verbindung:
+        cursor = verbindung.cursor()
+
+        cursor.execute(f"""
+            SELECT id, inventarnummer, seriennummer, mitarbeiter,
+                   standort, zimmer, kostenstelle, organisationseinheit,
+                   hersteller, modell, status,
+                   anschaffungsdatum, bemerkung
+            FROM assets
+            WHERE LOWER(assettyp) = 'aufnahmegeraet'
+            ORDER BY {sortierung} COLLATE NOCASE {richtung}
+        """)
+
+        aufnahmegeraete = cursor.fetchall()
 
     return render_template(
         "aufnahmegeraete.html",
-        kopfhoerer=kopfhoerer
+        aufnahmegeraete=aufnahmegeraete
     )
+
 
 #Liste
 
