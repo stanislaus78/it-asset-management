@@ -2,21 +2,18 @@
 import sqlite3
 from datetime import datetime
 
+from contextlib import closing
+from datetime import datetime
+from datenbank import verbinden
+
+
 def historie_schreiben(typ, aktion):
-
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
-
-    datum = datetime.now().strftime("%d.%m.%Y %H:%M")
-
-    cursor.execute("""
-        INSERT INTO historie
-        (datum, typ, aktion)
-        VALUES (?, ?, ?)
-    """, (datum, typ, aktion))
-
-    verbindung.commit()
-    verbindung.close()
+    with closing(verbinden()) as verbindung:
+        verbindung.execute(
+            "INSERT INTO historie (datum, typ, aktion) VALUES (?, ?, ?)",
+            (datetime.now().strftime("%d.%m.%Y %H:%M:%S"), typ, aktion)
+        )
+        verbindung.commit()
 
 
 
