@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mitarbeiter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='mitarbeiter_start.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>👥 Mitarbeiter</h1>
+
+    <div class="toolbar">
+        <a href="/mitarbeiter/anzeigen"><button>📋 Alle Mitarbeiter</button></a>
+    </div>
+
+    <div class="card-container">
+        {% for einheit, anzahl in einheiten %}
+        <a class="card" href="/mitarbeiter/anzeigen?einheit={{ einheit|urlencode }}">
+            <h2>{{ einheit }}</h2>
+            <p>👥 {{ anzahl }} Mitarbeiter</p>
+        </a>
+        {% else %}
+        <p>Noch keine Mitarbeiter angelegt.</p>
+        {% endfor %}
+    </div>
+
+    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
+
+</div>
+
+</body>
+</html>

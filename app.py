@@ -5,7 +5,6 @@ from funktionen_assets import neues_asset_erstellen_sqlite
 from funktionen_assets import asset_freigeben_sqlite
 from funktionen_assets import assets_bearbeiten_sqlite
 from funktionen_assets import assets_loeschen_sqlite
-from funktionen_assets import mitarbeiter_anlegen_sqlite
 from funktionen_mitarbeiter import mitarbeiter_bearbeiten_sqlite
 from funktionen_mitarbeiter import mitarbeiter_loeschen_sqlite
 from flask import request, render_template, session, redirect
@@ -99,16 +98,9 @@ def logout():
     return redirect("/login")
 
 @app.route("/assets")
-def assets():
-    return render_template("asset_dashboard.html")
-
-@app.route("/assets")
 def assets_dashboard():
     return render_template("asset_dashboard.html")
 
-@app.route("/mitarbeiter")
-def mitarbeiter():
-    return render_template("mitarbeiter.html")
 
 @app.route("/suche")
 def suche():
@@ -387,174 +379,141 @@ def asset_details(inventarnummer):
 
 
 #Mitarbeiter
+
+import sqlite3
+from contextlib import closing
+from datenbank import verbinden
+from funktionen_mitarbeiter import (
+    mitarbeiter_anlegen_sqlite, mitarbeiter_loeschen_sqlite
+)
+
+MITARBEITER_SORT = {
+    "vorname": "vorname", "nachname": "nachname", "uaccountid": "uaccountid",
+    "organisationseinheit": "organisationseinheit", "standort": "standort",
+    "zimmer": "zimmer", "arbeitsplatz": "arbeitsplatz",
+    "kostenstelle": "kostenstelle", "status": "status", "bemerkung": "bemerkung",
+}
+
+MITARBEITER_FELDER = [
+    "vorname", "nachname", "uaccountid", "organisationseinheit", "standort",
+    "zimmer", "arbeitsplatz", "kostenstelle", "status", "bemerkung",
+]
+
+def einheit_schluessel(wert):
+    ziffern = re.sub(r"\D", "", wert or "")
+    return ziffern if ziffern else (wert or "").strip().upper()
+
+
+ORGANISATIONSEINHEITEN = ["A600", "A601", "A602", "A603", "A736"]
+
+
+@app.route("/mitarbeiter")
+def mitarbeiter_start():
+    with closing(verbinden()) as verbindung:
+        eintraege = [z[0] for z in verbindung.execute(
+            "SELECT organisationseinheit FROM mitarbeiter "
+            "WHERE organisationseinheit IS NOT NULL AND organisationseinheit != ''"
+        )]
+
+    zaehler = {}
+    for e in eintraege:
+        schluessel = einheit_schluessel(e)
+        zaehler[schluessel] = zaehler.get(schluessel, 0) + 1
+
+    einheiten = [(name, zaehler.get(einheit_schluessel(name), 0))
+                 for name in ORGANISATIONSEINHEITEN]
+
+    bekannt = {einheit_schluessel(n) for n in ORGANISATIONSEINHEITEN}
+    for schluessel, anzahl in sorted(zaehler.items()):
+        if schluessel not in bekannt:
+            einheiten.append((schluessel, anzahl))
+
+    return render_template("mitarbeiter_start.html", einheiten=einheiten)
+
 @app.route("/mitarbeiter/anzeigen")
-def alle_mitarbeiter_anzeigen():
+def mitarbeiter_liste():
+    spalte = MITARBEITER_SORT.get(request.args.get("sort"), "nachname")
+    richtung = request.args.get("richtung", "ASC")
+    if richtung not in ("ASC", "DESC"):
+        richtung = "ASC"
 
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
+    einheit = request.args.get("einheit", "")
 
-    #cursor.execute("PRAGMA table_info(mitarbeiter)")
-    #return str(cursor.fetchall())
-
-    cursor.execute("""
-        SELECT *
+    sql = f"""
+        SELECT id, vorname, nachname, uaccountid, organisationseinheit,
+               standort, zimmer, arbeitsplatz, kostenstelle, status, bemerkung
         FROM mitarbeiter
-    """)
+        ORDER BY {spalte} COLLATE NOCASE {richtung}
+    """
 
-    mitarbeiter = cursor.fetchall()
-    anzahl = len(mitarbeiter)
+    with closing(verbinden()) as verbindung:
+        zeilen = verbindung.execute(sql).fetchall()
 
-    verbindung.close()
+    if einheit:
+        gesucht = einheit_schluessel(einheit)
+        zeilen = [z for z in zeilen if einheit_schluessel(z[4]) == gesucht]
 
-    return render_template(
-        "mitarbeiter_anzeigen.html",
-        mitarbeiter=mitarbeiter,
-        anzahl=anzahl
-    )
+    return render_template("mitarbeiter.html", mitarbeiter=zeilen)
 
 
-@app.route("/mitarbeiter/anlegen")
+@app.route("/mitarbeiter/details_json/<int:id>")
+def mitarbeiter_details_json(id):
+    with closing(verbinden()) as verbindung:
+        verbindung.row_factory = sqlite3.Row
+        zeile = verbindung.execute(
+            "SELECT * FROM mitarbeiter WHERE id = ?", (id,)
+        ).fetchone()
+    if zeile is None:
+        return {"status": "fehler", "meldung": "Mitarbeiter nicht gefunden"}, 404
+    return dict(zeile)
+
+
+@app.route("/mitarbeiter/anlegen", methods=["POST"])
 def mitarbeiter_anlegen():
-    name = request.args.get("name")
-    abteilung = request.args.get("abteilung")
-
-    if name:
-        erfolgreich = mitarbeiter_anlegen_sqlite(
-            name,
-            abteilung
-        )
-        if not erfolgreich:
-
-            return f"""
-    <h1>Mitarbeiter existiert bereits</h1>
-    Mitarbeiter {name} ist bereits vorhanden.<br><br>
-    <p><a href="/mitarbeiter/anlegen">Zurück zu Mitarbeitern</a></p>
-    """
-
-        return f"""
-            <h1>Mitarbeiter erfolgreich angelegt</h1>
-
-            Name: {name}<br>
-            Abteilung: {abteilung}<br><br>
-
-            <p><a href="/mitarbeiter/anlegen">Neuer Mitarbeiter anlegen</a></p>
-            <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
-            """
-
-    return """
-        <h1>Neuer Mitarbeiter anlegen</h1>
-
-        <form>
-
-            Name:<br>
-            <input type="text" name="name"><br><br>
-
-            Abteilung:<br>
-            <input type="text" name="abteilung"><br><br>
+    werte = {f: request.form.get(f, "").strip() for f in MITARBEITER_FELDER}
+    if not werte["uaccountid"]:
+        return {"status": "fehler", "meldung": "U-AccountID fehlt."}
+    if mitarbeiter_anlegen_sqlite(**werte) == "doppelt":
+        return {"status": "fehler", "meldung": "Diese U-AccountID existiert bereits."}
+    return {"status": "ok"}
 
 
+@app.route("/mitarbeiter/speichern", methods=["POST"])
+def mitarbeiter_speichern():
+    mid = request.form.get("id")
+    werte = {f: request.form.get(f, "").strip() for f in MITARBEITER_FELDER}
+    if not werte["uaccountid"]:
+        return {"status": "fehler", "meldung": "U-AccountID darf nicht leer sein."}
 
-            <button>Anlegen</button>
+    setteil = ", ".join(f"{f} = ?" for f in MITARBEITER_FELDER)
+    try:
+        with closing(verbinden()) as verbindung:
+            cur = verbindung.execute(
+                f"UPDATE mitarbeiter SET {setteil} WHERE id = ?",
+                [werte[f] for f in MITARBEITER_FELDER] + [mid],
+            )
+            verbindung.commit()
+    except sqlite3.IntegrityError:
+        return {"status": "fehler", "meldung": "Diese U-AccountID existiert bereits."}
 
-        </form>
-
-        <p><a href="/mitarbeiter">Zurück zu Mitarbeiter</a></p>
-        """
-
-
-@app.route("/mitarbeiter/bearbeiten")
-def mitarbeiter_bearbeiten():
-
-    name = request.args.get("name")
-    abteilung = request.args.get("abteilung")
-
-    if name and abteilung:
-        mitarbeiter_bearbeiten_sqlite(
-            name,
-            abteilung
-        )
-
-        return f"""
-        <h1>Mitarbeiter bearbeitet</h1>
-
-        Mitarbeiter {name} wurde geändert.
-
-        <p><a href="/mitarbeiter/bearbeiten">Einen weiteren Mitarbeiter bearbeiten</a></p>
-        <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
-        """
-
-    return """
-    <h1>Mitarbeiter bearbeiten</h1>
-
-    <form>
-
-        Name:<br>
-        <input type="text" name="name"><br><br>
-
-        Neuer Abteilung:<br>
-        <input type="text" name="abteilung"><br><br>
-
-        <button>Speichern</button>
-
-    </form>
-
-    <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
-    """
+    if cur.rowcount == 0:
+        return {"status": "fehler", "meldung": "Mitarbeiter nicht gefunden."}
+    return {"status": "ok"}
 
 
-@app.route("/mitarbeiter/loeschen")
+@app.route("/mitarbeiter/loeschen", methods=["POST"])
 def mitarbeiter_loeschen():
-
-    name = request.args.get("name")
-
-    if name:
-
-        erfolgreich = mitarbeiter_loeschen_sqlite(name)
-
-        if not erfolgreich:
-
-            return f"""
-            <h1>Mitarbeiter kann nicht gelöscht werden</h1>
-
-            Mitarbeiter {name} besitzt noch zugewiesene Assets.<br><br>
-
-            <br>Bitte zuerst alle Assets freigeben.<br>
-
-            <p><a href="/mitarbeiter/loeschen">Einen weiteren Mitarbeiter löschen</a></p>
-            <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
-            """
-
-        return f"""
-        <h1>Mitarbeiter gelöscht</h1>
-
-        Mitarbeiter {name} wurde gelöscht.<br><br>
-
-        <p><a href="/mitarbeiter/loeschen">Einen weiteren Mitarbeiter löschen</a></p>
-
-        <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
-        """
-
-    return """
-    <h1>Mitarbeiter löschen</h1>
-
-    <form>
-
-        Name:<br>
-        <input type="text" name="name"><br><br>
-
-        <button>Löschen</button>
-
-    </form>
-
-    <p><a href="/mitarbeiter">Zurück zu Mitarbeitern</a></p>
-    """
-
-
-@app.route("/mitarbeiter/oe/<oe>")
-def mitarbeiter_oe(oe):
-    return f"<h1>Organisationseinheit {oe}</h1>"
-
-
+    with closing(verbinden()) as verbindung:
+        zeile = verbindung.execute(
+            "SELECT uaccountid FROM mitarbeiter WHERE id = ?",
+            (request.form.get("id"),)
+        ).fetchone()
+    if zeile is None:
+        return {"status": "fehler", "meldung": "Mitarbeiter nicht gefunden."}
+    if not mitarbeiter_loeschen_sqlite(zeile[0]):
+        return {"status": "fehler",
+                "meldung": "Mitarbeiter hat noch Assets und kann nicht gelöscht werden."}
+    return {"status": "ok"}
 #Infos
 @app.route("/info/statistik")
 def info_statistik():
@@ -681,7 +640,7 @@ def info_geraetetypen():
     cursor.execute("""
         SELECT geraetetyp, COUNT(*)
         FROM assets
-        GROUP BY geraetetyp
+        GROUP BY assettyp
     """)
 
     ergebnisse = cursor.fetchall()
@@ -694,7 +653,7 @@ def info_geraetetypen():
     <table border="1">
 
         <tr>
-            <th>Gerätetyp</th>
+            <th>Assettyp</th>
             <th>Anzahl</th>
         </tr>
     """
@@ -713,7 +672,7 @@ def info_geraetetypen():
 
     <br>
 
-    <p><a href="/infos">Zurück zu Infos  """
+    <p><a href="/infos">Zurück zu Infos</a></p>  """
 
     return ausgabe
 
@@ -934,10 +893,11 @@ def suche_mitarbeiter():
         cursor = verbindung.cursor()
 
         cursor.execute("""
-            SELECT *
+            SELECT vorname, nachname, uaccountid, organisationseinheit
             FROM mitarbeiter
-            WHERE LOWER(name) = LOWER(?)
-        """, (mitarbeiter,))
+            WHERE LOWER(uaccountid) = LOWER(?)
+               OR LOWER(nachname) = LOWER(?)
+        """, (mitarbeiter, mitarbeiter))
 
         ergebnis = cursor.fetchone()
 
@@ -950,14 +910,15 @@ def suche_mitarbeiter():
             <table border="1">
 
                 <tr>
-                    <th>Name</th>
-                    <th>Abteilung</th>
-                </tr>
-
-                <tr>
-                    <td>{ergebnis[1]}</td>
-                    <td>{ergebnis[2]}</td>
-                </tr>
+                <th>Name</th>
+                <th>U-AccountID</th>
+                <th>Organisationseinheit</th>
+            </tr>
+            <tr>
+                <td>{ergebnis[0]} {ergebnis[1]}</td>
+                <td>{ergebnis[2]}</td>
+                <td>{ergebnis[3]}</td>
+            </tr>
 
             </table>
         

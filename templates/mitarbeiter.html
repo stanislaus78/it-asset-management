@@ -1,94 +1,1110 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
     <title>Mitarbeiter</title>
 
-     <link rel="stylesheet"
-          href="{{ url_for('static', filename='sidebar.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='dropdowns.css') }}">
+
 </head>
+
 <body>
 
-    <div class="sidebar">
-    <div class="menu-icon">☰</div>
-    <div class="sidebar-content">
+<div class="container">
+
+    <h1>👤 Mitarbeiter</h1>
+
+    <div class="toolbar">
+
+        <button onclick="assetAnlegen()">
+            ➕ Mitarbeiter anlegen
+        </button>
+
+           <button id="detailsBtn"
+                disabled
+                onclick="detailsAnzeigen()">
+                👁 Details
+            </button>
+
+            <button id="bearbeitenBtn"
+                disabled
+                onclick="assetBearbeiten()">
+            ✏️ Bearbeiten
+            </button>
+
+            <button id="loeschenBtn"
+                disabled
+                onclick="popupOeffnen(ausgewaehlteId)">
+                🗑️ Löschen
+            </button>
+
+    </div>
+
+<div
+    style="
+         margin-top:10px;
+        margin-bottom:0px;
+        text-align:left;
+    "
+>
+    <input
+        type="text"
+        id="globalFilter"
+        placeholder="🔍 In allen Spalten suchen..."
+        style="
+            width:400px;
+            padding:8px;
+            font-size:14px;
+            border:1px solid #ccc;
+            border-radius:5px;
+        "
+>
+
+</div>
 
 
 
-        <h3>👥 MITARBEITER</h3>
+    <div style="overflow-x:auto;">
 
-        <p><a href="/mitarbeiter/anlegen" >➕ Mitarbeiter anlegen</a></p>
+        <table>
 
-        <p><a href="/mitarbeiter/suchen">🔍 Mitarbeiter suchen</a></p>
+            <tr>
 
-        <p><a href="/mitarbeiter/anzeigen">📋 Alle Mitarbeiter</a>
-
-        <hr>
-
-        <h3>⚙️ VERWALTUNG</h3>
-
-        <p><a href="/mitarbeiter/bearbeiten">✏️ Mitarbeiter bearbeiten</a></p>
+                <th></th>
 
 
-        <p><a href="/mitarbeiter/loeschen">🗑️ Mitarbeiter löschen</a></p>
+
+                <th class="dropdown-column">
+
+                    Vorname
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=vorname&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=vorname&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Nachname
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=nachname&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=nachname&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    U-AccountID
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=uaccountid&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=uaccountid&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
 
 
-        <p><a href="/asset/zuweisen">🎒 Asset zuweisen</a></p>
+               <th class="dropdown-column">
 
-        <p><a href="/asset/zuweisen">📦 Zugewiesene Assets</a></p>
+                    Organisationseinheit
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=organisationseinheit&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=organisationseinheit&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+                <th class="dropdown-column">
+
+                    Standort
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=standort&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=standort&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
 
 
-        <hr>
+                <th class="dropdown-column">
 
-        <h3>📊 AUSWERTUNG</h3>
+                    Zimmer
 
-        <p><a href="/historie">📜 Mitarbeiterhistorie</a></p>
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=zimmer&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=zimmer&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+                <th class="dropdown-column">
+
+                    Arbeitsplatz
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=arbeitsplatz&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=arbeitsplatz&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+                <th class="dropdown-column">
+
+                    Kostenstelle
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=kostenstelle&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=kostenstelle&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+                <th class="dropdown-column">
+
+                    Status
+
+                    <span class="dropdown-button">▼</span>
+
+                    <div class="dropdown-menu">
+
+                        <a href="#" class="show-filters">
+                            🔎 Filtern nach Spalte
+                        </a>
+
+                        <a href="?sort=status&richtung=ASC">
+                            ↑ Nach Spalte sortieren A-Z
+                        </a>
+
+                        <a href="?sort=status&richtung=DESC">
+                            ↓ Nach Spalte sortieren Z-A
+                        </a>
+
+                    </div>
+
+                </th>
+
+
+
+
+                <th class="dropdown-column">
+                    Bemerkung
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort=bemerkung&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort=bemerkung&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
+            </tr>
+            <tr id="filter-row" class="filter-row" style="display:none;">
+
+            <td></td>
+            <td><input type="text" placeholder="Vorname"></td>
+            <td><input type="text" placeholder="Nachname"></td>
+            <td><input type="text" placeholder="U-Account"></td>
+            <td><input type="text" placeholder="Organisationseinheit"></td>
+            <td><input type="text" placeholder="Standort"></td>
+            <td><input type="text" placeholder="Zimmer"></td>
+            <td><input type="text" placeholder="Arbeitsplatz"></td>
+            <td><input type="text" placeholder="Kostenstelle"></td>
+            <td><input type="text" placeholder="Status"></td>
+            <td><input type="text" placeholder="Bemerkung"></td>
+
+        </tr>
+            {% for m in mitarbeiter %}
+
+            <tr>
+
+
+
+               <td><input type="checkbox" class="asset-checkbox" data-id="{{ m[0] }}"></td>
+                <td>{{ m[1] }}</td>
+                <td>{{ m[2] }}</td>
+                <td>{{ m[3] }}</td>
+                <td>{{ m[4] }}</td>
+                <td>{{ m[5] }}</td>
+                <td>{{ m[6] }}</td>
+                <td>{{ m[7] }}</td>
+                <td>{{ m[8] }}</td>
+                <td>{{ m[9] }}</td>
+                <td>{{ m[10]}}</td>
+
+                    </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+    <br><br>
+
+    <p><a href="javascript:history.back()">⬅️ Zurück</a></p>
+
+    <p><a href="/mitarbeiter">📦 Mitarbeiter</a></p>
+
+    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
+
+</div>
+<script>
+
+document.querySelectorAll(".dropdown-column").forEach(column => {
+
+    const button = column.querySelector(".dropdown-button");
+    const menu = column.querySelector(".dropdown-menu");
+
+    button.addEventListener("click", function(event) {
+
+        event.stopPropagation();
+
+        document.querySelectorAll(".dropdown-menu").forEach(m => {
+
+            if (m !== menu) {
+                m.style.display = "none";
+            }
+
+        });
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        }
+        else {
+            menu.style.display = "block";
+        }
+
+    });
+
+});
+
+document.addEventListener("click", function() {
+
+    document.querySelectorAll(".dropdown-menu").forEach(menu => {
+
+        menu.style.display = "none";
+
+    });
+
+});
+
+</script>
+<script>
+
+document.querySelectorAll(".show-filters").forEach(filterLink => {
+
+    filterLink.addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        document.getElementById("filter-row").style.display = "table-row";
+
+    });
+
+});
+
+</script>
+
+<div id="loeschPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        border:1px solid #ccc;
+        box-shadow:0 0 15px rgba(0,0,0,0.3);
+        z-index:9999;
+     ">
+
+    <h2>⚠️ Mitarbeiter löschen</h2>
+
+    <p id="popupText">
+        Asset wirklich löschen?
+    </p>
+
+    <button onclick="assetLoeschen()">
+        Ja, löschen
+    </button>
+    <button onclick="popupSchliessen()">
+        Abbrechen
+    </button>
+
+</div>
+
+<div id="detailsPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        border:1px solid #ccc;
+        box-shadow:0 0 15px rgba(0,0,0,0.3);
+        z-index:9999;
+     ">
+
+    <h2>👁 Details</h2>
+
+        <p id="detailsText">
+        Asset ausgewählt
+        </p>
+
+    <button onclick="detailsSchliessen()">
+        Schließen
+    </button>
+
+</div>
+
+<div id="bearbeitenPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        z-index:9999;
+     ">
+
+    <h2>✏️ Mitarbeiter bearbeiten</h2>
+
+    <div id="bearbeitenInhalt"></div>
+
+    <br>
+
+    <button onclick="bearbeitenSchliessen()">
+        ✖ Schließen
+    </button>
+
+</div>
+
+<div id="anlegenPopup"
+     style="
+        display:none;
+        position:fixed;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        width:1000px;
+        max-width:95vw;
+        max-height:85vh;
+        overflow-y:auto;
+        z-index:9999;
+     ">
+
+    <h2 id="anlegenTitel"
+    style="cursor:move; margin-top:0;">
+    ➕ Mitarbeiter anlegen
+    </h2>
+
+    <div id="anlegenInhalt"></div>
+
+</div>
+<script>
+
+
+const EINHEITEN = ["A600", "A601", "A602", "A603", "A736"];
+const STANDORTE = ["ZLB", "AAECC", "SSC", "SVP", "Büro des Zentrums"];
+
+function esc(text) {
+    return String(text ?? "")
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function optionen(liste, aktuell) {
+    const alle = (aktuell && !liste.includes(aktuell)) ? [aktuell, ...liste] : liste;
+    return `<option value=""></option>` + alle.map(w =>
+        `<option value="${esc(w)}" ${w === aktuell ? "selected" : ""}>${esc(w)}</option>`
+    ).join("");
+}
+
+let ausgewaehlteId = "";
+let idZumLoeschen = "";
+
+function popupOeffnen(id) {
+
+    idZumLoeschen = id;
+
+    document.getElementById("popupText").innerText =
+        "Mitarbeiter wirklich löschen?";
+
+    document.getElementById("loeschPopup").style.display =
+        "block";
+}
+
+function popupSchliessen() {
+
+    document.getElementById("loeschPopup").style.display =
+        "none";
+}
+
+function assetLoeschen() {
+    const daten = new FormData();
+    daten.append("id", idZumLoeschen);
+
+    fetch("/mitarbeiter/loeschen", { method: "POST", body: daten })
+    .then(response => response.json())
+    .then(data => {
+        popupSchliessen();
+        if (data.status === "fehler") {
+            alert("⚠️ " + data.meldung);
+            return;
+        }
+        window.location.href = window.location.pathname + "?geloescht=1";
+    });
+}
+
+function detailsAnzeigen() {
+
+    fetch("/mitarbeiter/details_json/" + ausgewaehlteId)
+    .then(response => response.json())
+    .then(data => {
+
+    document.getElementById("detailsText").innerHTML = `
+<div class="details-container">
+<div class="details-section">
+
+    <h3>Identität</h3>
+
+    <div class="details-grid">
+
+        <div>Vorname</div>
+        <div>${data.vorname || "-"}</div>
+
+        <div>Nachname</div>
+        <div>${data.nachname || "-"}</div>
+
+        <div>U-AccountID</div>
+        <div>${data.uaccountid || "-"}</div>
+    </div>
+
+</div>
+
+<div class="details-section">
+
+    <h3>Standort</h3>
+
+    <div class="details-grid">
+        <div>Organisationseinheit</div>
+        <div>${data.organisationseinheit || "-"}</div>
+
+        <div>Standort</div>
+        <div>${data.standort || "-"}</div>
+
+        <div>Zimmer</div>
+        <div>${data.zimmer || "-"}</div>
+
+        <div>Arbeitsplatz</div>
+        <div>${data.arbeitsplatz || "-"}</div>
+
+        <div>Kostenstelle</div>
+        <div>${data.kostenstelle || "-"}</div>
 
 
     </div>
 
 </div>
 
-<div class="main-content">
 
-    <hr>
 
-    <p><a href="/">Zurück zur Startseite</a></p>
+<div class="details-section">
 
-    <div class="card-container">
+    <h3>Verwaltung</h3>
 
-    <a href="/mitarbeiter">
-        <h2>A600</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
+    <div class="details-grid">
+        <div>Status</div>
+        <div>${data.status || "-"}</div>
 
-    <a href="/mitarbeiter">
-        <h2>A601</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
 
-    <a href="/mitarbeiter">
-        <h2>A602</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
-
-    <a href="/mitarbeiter">
-        <h2>A603</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
-
-    <a href="/mitarbeiter">
-        <h2>A736</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
+    </div>
 
 </div>
 
+<div class="details-section">
 
+    <h3>Bemerkung</h3>
 
-
+    <div class="details-grid">
+        <div>Bemerkung</div>
+        <div>${data.bemerkung || "-"}</div>
+    </div>
 
 </div>
+</div>
+`;
+        document.getElementById("detailsPopup").style.display = "block";
 
+    });
+
+}
+
+function assetBearbeiten() {
+
+    fetch(
+        "/mitarbeiter/details_json/" +
+        ausgewaehlteId
+    )
+    .then(response => response.json())
+    .then(data => {
+
+        document.getElementById(
+    "bearbeitenInhalt"
+).innerHTML = `
+
+<input
+    id="edit_id"
+    type="hidden"
+    value="${data.id || ""}"
+>
+
+<table class="bearbeiten-table">
+
+
+<tr>
+    <td>Vorname</td>
+    <td><input id="edit_vorname" value="${data.vorname || ""}"></td>
+</tr>
+
+
+<tr>
+    <td>Nachname</td>
+    <td><input id="edit_nachname" value="${data.nachname || ""}"></td>
+</tr>
+
+<tr>
+    <td>U-AccountID</td>
+    <td><input id="edit_uaccountid" value="${data.uaccountid || ""}"></td>
+</tr>
+
+<tr>
+    <td>Organisationseinheit</td>
+    <td>
+        <select id="edit_organisationseinheit">
+            ${optionen(EINHEITEN, data.organisationseinheit)}
+        </select>
+    </td>
+</tr>
+
+<tr>
+    <td>Standort</td>
+    <td>
+        <select id="edit_standort">
+            ${optionen(STANDORTE, data.standort)}
+        </select>
+    </td>
+</tr>
+
+<tr>
+    <td>Zimmer</td>
+    <td><input id="edit_zimmer" value="${data.zimmer || ""}"></td>
+</tr>
+
+<tr>
+    <td>Arbeitsplatz</td>
+    <td><input id="edit_arbeitsplatz" value="${data.arbeitsplatz || ""}"></td>
+</tr>
+
+
+<tr>
+    <td>Kostenstelle</td>
+    <td><input id="edit_kostenstelle" value="${data.kostenstelle || ""}"></td>
+</tr>
+
+<tr>
+    <td>Status</td>
+    <td><input id="edit_status" value="${data.status || ""}"></td>
+</tr>
+
+<tr>
+  <td>Bemerkung</td>
+  <td><input id="edit_bemerkung" value="${data.bemerkung || ""}"></td>
+</tr>
+
+</table>
+
+<br>
+
+<button onclick="assetSpeichern()">
+    💾 Speichern
+</button>
+
+`;
+
+        document.getElementById(
+            "bearbeitenPopup"
+        ).style.display = "block";
+
+    });
+
+}
+
+
+function detailsSchliessen() {
+
+    document.getElementById(
+        "detailsPopup"
+    ).style.display = "none";
+
+}
+
+
+function assetSpeichern() {
+
+    const daten = new FormData();
+    daten.append("id", ausgewaehlteId);
+
+   const felder = [
+    "vorname", "nachname", "uaccountid", "organisationseinheit",
+    "standort", "zimmer", "arbeitsplatz","kostenstelle",
+    "status", "bemerkung"
+];
+
+    felder.forEach(feld => {
+        const element = document.getElementById("edit_" + feld);
+        if (element) {
+            daten.append(feld, element.value);
+        }
+    });
+
+    fetch("/mitarbeiter/speichern", { method: "POST", body: daten })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "fehler") {
+            alert("⚠️ " + data.meldung);
+            return;
+        }
+        bearbeitenSchliessen();
+        location.reload();
+    })
+    .catch(fehler => {
+        console.error(fehler);
+        alert("⚠️ Speichern fehlgeschlagen, siehe Konsole");
+    });
+}
+
+function bearbeitenSchliessen() {
+    document.getElementById("bearbeitenPopup").style.display = "none";
+}
+
+
+
+
+
+function assetAnlegen() {
+
+    const felder = [
+        ["vorname", "Vorname"],
+        ["nachname", "Nachname"],
+        ["uaccountid", "U-AccountID"],
+        ["organisationseinheit", "Organisationseinheit"],
+        ["standort", "Standort"],
+        ["zimmer", "Zimmer"],
+        ["arbeitsplatz", "Arbeitsplatz"],
+        ["kostenstelle", "Kostenstelle"],
+        ["status", "Status"],
+        ["bemerkung", "Bemerkung"]
+    ];
+
+    const dropdowns = {
+        organisationseinheit: EINHEITEN,
+        standort: STANDORTE
+    };
+
+    const felderHtml = felder.map(([id, label]) => dropdowns[id]
+        ? `<div class="anlegen-feld">
+               <label>${label}</label>
+               <select id="neu_${id}">${optionen(dropdowns[id], "")}</select>
+           </div>`
+        : `<div class="anlegen-feld">
+               <label>${label}</label>
+               <input id="neu_${id}">
+           </div>`
+    ).join("");
+
+    document.getElementById("anlegenInhalt").innerHTML = `
+        <div class="anlegen-grid">${felderHtml}</div>
+        <br>
+        <button onclick="assetNeuSpeichern()">💾 Anlegen</button>
+        <button onclick="anlegenSchliessen()">✖ Schließen</button>
+    `;
+
+    const popup = document.getElementById("anlegenPopup");
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.display = "block";
+}
+function anlegenSchliessen() {
+    document.getElementById("anlegenPopup").style.display = "none";
+}
+
+function assetNeuSpeichern() {
+
+    const daten = new FormData();
+
+    const felder = [
+        "vorname", "nachname", "uaccountid", "organisationseinheit",
+        "standort", "zimmer", "arbeitsplatz", "kostenstelle",
+        "status", "bemerkung"
+    ];
+
+    felder.forEach(feld => {
+        daten.append(feld, document.getElementById("neu_" + feld).value);
+    });
+
+    fetch("/mitarbeiter/anlegen", { method: "POST", body: daten })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Server antwortete mit Status " + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === "fehler") {
+            alert("⚠️ " + data.meldung);
+            return;
+        }
+        alert("✅ Mitarbeiter angelegt");
+        anlegenSchliessen();
+        location.reload();
+    })
+    .catch(fehler => {
+        console.error(fehler);
+        alert("⚠️ Anlegen fehlgeschlagen: " + fehler.message);
+    });
+}
+</script>
+
+
+
+<script>
+
+document.querySelectorAll(".asset-checkbox").forEach(cb => {
+
+    cb.addEventListener("change", pruefeAuswahl);
+
+});
+
+function pruefeAuswahl() {
+
+    const anzahl =
+        document.querySelectorAll(
+            ".asset-checkbox:checked"
+        ).length;
+    const ausgewaehlt =
+    document.querySelector(
+        ".asset-checkbox:checked"
+    );
+
+if (ausgewaehlt) {
+
+    ausgewaehlteId =
+        ausgewaehlt.dataset.id;
+}
+    document.getElementById("detailsBtn").disabled =
+        anzahl !== 1;
+
+    document.getElementById("bearbeitenBtn").disabled =
+        anzahl !== 1;
+
+    document.getElementById("loeschenBtn").disabled =
+        anzahl !== 1;
+
+}
+
+
+document.querySelectorAll(".filter-row input").forEach(input => {
+
+    input.addEventListener("keyup", filterTabelle);
+
+});
+
+function filterTabelle() {
+
+    const filter = [];
+
+    document
+        .querySelectorAll(".filter-row input")
+        .forEach(input => {
+
+            filter.push(
+                input.value.toLowerCase()
+            );
+
+        });
+
+    const zeilen =
+        document.querySelectorAll("table tr");
+
+    zeilen.forEach((zeile, index) => {
+
+        if (index < 2) return;
+
+        const zellen =
+            zeile.querySelectorAll("td");
+
+        let anzeigen = true;
+
+        filter.forEach((wert, i) => {
+
+            if (!wert) return;
+
+            const text =
+                zellen[i + 1]
+                    .innerText
+                    .toLowerCase();
+
+            if (!text.includes(wert)) {
+                anzeigen = false;
+            }
+
+        });
+
+        zeile.style.display =
+            anzeigen ? "" : "none";
+
+    });
+
+}
+
+
+document.getElementById("globalFilter")
+    .addEventListener(
+        "keyup",
+        globaleSuche
+    );
+
+function globaleSuche() {
+
+    const suchtext =
+        document.getElementById(
+            "globalFilter"
+        ).value.toLowerCase();
+
+    const zeilen =
+        document.querySelectorAll("table tr");
+
+    for (let i = 2; i < zeilen.length; i++) {
+
+        const text =
+            zeilen[i].textContent.toLowerCase();
+
+        if (text.includes(suchtext)) {
+            zeilen[i].style.display = "";
+        } else {
+            zeilen[i].style.display = "none";
+        }
+
+    }
+
+}
+</script>
+<script>
+dragElement(
+    document.getElementById("anlegenPopup"),
+    document.getElementById("anlegenTitel")
+);
+
+function dragElement(element, griff) {
+
+    let pos1 = 0;
+    let pos2 = 0;
+    let pos3 = 0;
+    let pos4 = 0;
+
+    griff.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+
+        e.preventDefault();
+
+        // aktuelle Position festschreiben, bevor transform entfällt
+        const rect = element.getBoundingClientRect();
+        element.style.top = rect.top + "px";
+        element.style.left = rect.left + "px";
+        element.style.transform = "none";
+
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+
+        e.preventDefault();
+
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        element.style.top =
+            (element.offsetTop - pos2) + "px";
+
+        element.style.left =
+            (element.offsetLeft - pos1) + "px";
+
+        element.style.transform = "none";
+    }
+
+    function closeDragElement() {
+
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+
+    if (new URLSearchParams(window.location.search).get("geloescht") === "1") {
+
+        const meldung = document.getElementById("meldung");
+
+        if (meldung) {
+            meldung.classList.add("sichtbar");
+            setTimeout(() => meldung.classList.remove("sichtbar"), 3000);
+        }
+
+        history.replaceState(null, "", window.location.pathname);
+    }
+
+});
+</script>
+
+<div id="meldung" class="toast">
+    ✅ Mitarbeiter wurde gelöscht
+</div>
 
 </body>
 </html>
+
