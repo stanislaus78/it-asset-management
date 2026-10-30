@@ -1,25 +1,22 @@
-from flask import Flask, render_template
-import sqlite3
-from flask import request
-from funktionen_assets import neues_asset_erstellen_sqlite
-from funktionen_assets import asset_freigeben_sqlite
-from funktionen_assets import assets_bearbeiten_sqlite
-from funktionen_assets import assets_loeschen_sqlite
-from funktionen_mitarbeiter import mitarbeiter_bearbeiten_sqlite
-from funktionen_mitarbeiter import mitarbeiter_loeschen_sqlite
-from flask import request, render_template, session, redirect
-from funktionen_assets import asset_zuweisen_sqlite
-from funktionen_assets import neues_asset_erstellen_sqlite
-from datenbank import assets_tabelle_anlegen
-from datenbank import mitarbeiter_tabelle_anlegen
-from datenbank import historie_tabelle_anlegen
-from funktionen_assets import asset_suchen_sqlite
-from funktionen_assets import asset_speichern_popup_sqlite
-from funktionen_assets import asset_existiert_sqlite
-from flask import request
-from contextlib import closing
 import re
+import sqlite3
+from contextlib import closing
+from urllib.parse import urlparse
 
+from flask import Flask, render_template, request, session, redirect
+
+from datenbank import (
+    assets_tabelle_anlegen, mitarbeiter_tabelle_anlegen,
+    historie_tabelle_anlegen, verbinden,
+)
+from funktionen_assets import (
+    neues_asset_erstellen_sqlite, asset_freigeben_sqlite,
+    assets_loeschen_sqlite, asset_zuweisen_sqlite, asset_suchen_sqlite,
+    asset_speichern_popup_sqlite, asset_existiert_sqlite,
+)
+from funktionen_mitarbeiter import (
+    mitarbeiter_anlegen_sqlite, mitarbeiter_loeschen_sqlite,
+)
 
 app = Flask(__name__)
 app.secret_key = "fratelowsky_geheim"
@@ -128,6 +125,15 @@ def mac_normalisieren(mac):
     hex_only = hex_only.upper()
     return ":".join(hex_only[i:i+2] for i in range(0, 12, 2))
 
+def mitarbeiter_pruefen(benutzer):
+    """Gibt die U-AccountID (so wie in der Datenbank geschrieben) zurück oder None."""
+    with closing(verbinden()) as verbindung:
+        zeile = verbindung.execute(
+            "SELECT uaccountid FROM mitarbeiter WHERE LOWER(uaccountid) = LOWER(?)",
+            (benutzer,)
+        ).fetchone()
+    return zeile[0] if zeile else None
+
 
 @app.route("/asset/anlegen_popup", methods=["POST"])
 def asset_anlegen_popup():
@@ -160,6 +166,14 @@ def asset_anlegen_popup():
     daten = request.form.copy()
     daten["mac_adresse"] = mac
 
+    benutzer = request.form.get("benutzer", "").strip()
+    if benutzer:
+        gefunden = mitarbeiter_pruefen(benutzer)
+        if gefunden is None:
+            return {"status": "fehler",
+                    "meldung": f"Mitarbeiter '{benutzer}' existiert nicht. "
+                               "Bitte zuerst unter Mitarbeiter anlegen."}
+        daten["benutzer"] = gefunden
     try:
         neues_asset_erstellen_sqlite(daten)
     except sqlite3.Error as fehler:
@@ -181,7 +195,22 @@ def asset_bearbeiten(id):
 @app.route("/asset/speichern", methods=["POST"])
 def asset_speichern():
 
-    ergebnis = asset_speichern_popup_sqlite(request.form["id"], request.form)
+    daten = request.form.copy()
+
+    if "benutzer" in daten:
+        benutzer = daten["benutzer"].strip()
+        aktuell = asset_suchen_sqlite(daten["id"])
+        alter_wert = (aktuell[26] or "") if aktuell else ""
+
+        # unverändert gelassene Altwerte (z. B. "Vranesevic") nicht blockieren
+        if benutzer and benutzer != alter_wert:
+            gefunden = mitarbeiter_pruefen(benutzer)
+            if gefunden is None:
+                return {"status": "fehler",
+                        "meldung": f"Mitarbeiter '{benutzer}' existiert nicht."}
+            daten["benutzer"] = gefunden
+
+    ergebnis = asset_speichern_popup_sqlite(daten["id"], daten)
 
     if ergebnis == "doppelt":
         return {"status": "fehler", "meldung": "Diese Inventarnummer existiert bereits."}
@@ -191,7 +220,6 @@ def asset_speichern():
         return {"status": "fehler", "meldung": "Asset nicht gefunden (ID ungültig)"}
 
     return {"status": "ok"}
-
 
 from flask import redirect
 
@@ -514,123 +542,85 @@ def mitarbeiter_loeschen():
         return {"status": "fehler",
                 "meldung": "Mitarbeiter hat noch Assets und kann nicht gelöscht werden."}
     return {"status": "ok"}
+
+@app.route("/mitarbeiter/auswahl_json")
+def mitarbeiter_auswahl_json():
+    with closing(verbinden()) as verbindung:
+        zeilen = verbindung.execute(
+            "SELECT uaccountid, vorname, nachname FROM mitarbeiter ORDER BY nachname"
+        ).fetchall()
+    return [{"uaccountid": u, "name": f"{v} {n}"} for u, v, n in zeilen]
+
+
 #Infos
 @app.route("/info/statistik")
 def info_statistik():
+    with closing(verbinden()) as verbindung:
+        def zahl(sql):
+            return verbindung.execute(sql).fetchone()[0]
 
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
+        gesamt = zahl("SELECT COUNT(*) FROM assets")
+        mitarbeiter = zahl("SELECT COUNT(*) FROM mitarbeiter")
+        ausgegeben = zahl("SELECT COUNT(*) FROM assets WHERE status = 'Ausgegeben'")
+        lager = zahl("SELECT COUNT(*) FROM assets WHERE LOWER(TRIM(status)) = 'lager'")
+        sonstige = gesamt - ausgegeben - lager
 
-    cursor.execute("SELECT COUNT(*) FROM assets")
-    anzahl_assets = cursor.fetchone()[0]
+        pro_typ = verbindung.execute("""
+            SELECT COALESCE(NULLIF(assettyp, ''), 'Ohne Typ'), COUNT(*)
+            FROM assets
+            GROUP BY 1
+            ORDER BY 2 DESC, 1
+        """).fetchall()
 
-    cursor.execute("SELECT COUNT(*) FROM mitarbeiter")
-    anzahl_mitarbeiter = cursor.fetchone()[0]
+    kennzahlen = [
+        ("📦", "Assets gesamt", gesamt),
+        ("👤", "Mitarbeiter", mitarbeiter),
+        ("✅", "Ausgegeben", ausgegeben),
+        ("🏢", "Im Lager", lager),
+        ("🔧", "Sonstiger Status", sonstige),
+    ]
+    maximum = max((n for _, n in pro_typ), default=1)
 
-    cursor.execute("""
-        SELECT COUNT(*)
-        FROM assets
-        WHERE status = 'Ausgegeben'
-    """)
-    ausgegeben = cursor.fetchone()[0]
+    return render_template("statistik.html", kennzahlen=kennzahlen,
+                           pro_typ=pro_typ, maximum=maximum)
+def leere_spalten_entfernen(kopf, zeilen):
+    if not zeilen:
+        return kopf, zeilen
+    behalten = [i for i in range(len(kopf))
+                if any(z[i] not in (None, "") for z in zeilen)]
+    return ([kopf[i] for i in behalten],
+            [[z[i] for i in behalten] for z in zeilen])
 
-    cursor.execute("""
-        SELECT COUNT(*)
-        FROM assets
-        WHERE status != 'Ausgegeben'
-    """)
-    verfuegbar = cursor.fetchone()[0]
-
-    verbindung.close()
-
-    return f"""
-    <h1>📊 Statistik</h1>
-
-    <table border="1">
-
-        <tr>
-            <th>Kennzahl</th>
-            <th>Wert</th>
-        </tr>
-
-        <tr>
-            <td>Assets gesamt</td>
-            <td>{anzahl_assets}</td>
-        </tr>
-
-        <tr>
-            <td>Mitarbeiter gesamt</td>
-            <td>{anzahl_mitarbeiter}</td>
-        </tr>
-
-        <tr>
-            <td>Assets ausgegeben</td>
-            <td>{ausgegeben}</td>
-        </tr>
-
-        <tr>
-            <td>Assets verfügbar</td>
-            <td>{verfuegbar}</td>
-        </tr>
-
-    </table>
-
-    <br>
-
-    <p><a href="/">Zurück zur Startseite</a></p>
-    """
 
 @app.route("/info/lagerbestand")
 def info_lagerbestand():
+    typ = request.args.get("typ", "")
 
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
+    typen = [z[0] for z in abfragen(
+        "SELECT DISTINCT assettyp FROM assets "
+        "WHERE status = 'Lager' AND assettyp IS NOT NULL AND assettyp != '' "
+        "ORDER BY assettyp"
+    )]
 
-    cursor.execute("""
-        SELECT *
-        FROM assets
-        WHERE status = 'Lager'
-    """)
+    kopf, zeilen, hinweis = [], [], None
 
-    assets = cursor.fetchall()
+    if typ:
+        sql = ASSET_SQL + " WHERE status = 'Lager'"
+        parameter = ()
+        if typ != "ALLE":
+            sql += " AND assettyp = ?"
+            parameter = (typ,)
+        sql += " ORDER BY assettyp, inventarnummer"
 
-    verbindung.close()
+        zeilen = abfragen(sql, parameter)
+        kopf, zeilen = leere_spalten_entfernen(ASSET_KOPF, zeilen)
+        hinweis = f"Anzahl Assets im Lager: {len(zeilen)}"
 
-    ausgabe = f"""
-    <h1>📦 Lagerbestand</h1>
+    return render_template("info_seite.html",
+                           titel="📦 Lagerbestand",
+                           hinweis=hinweis, kopf=kopf, zeilen=zeilen,
+                           typen=typen, typ=typ)
 
-    Anzahl Assets im Lager: {len(assets)}
-
-    <br><br>
-
-    <table border="1">
-
-        <tr>
-            <th>Inventarnummer</th>
-            <th>Hersteller</th>
-            <th>Gerätetyp</th>
-        </tr>
-    """
-
-    for a in assets:
-
-        ausgabe += f"""
-        <tr>
-            <td>{a[0]}</td>
-            <td>{a[1]}</td>
-            <td>{a[3]}</td>
-        </tr>
-        """
-
-    ausgabe += """
-    </table>
-
-    <br>
-
-    <p><a href="/infos">Zurück zu Infos</a></p>
-    """
-
-    return ausgabe
 @app.route("/info/geraetetypen")
 def info_geraetetypen():
 
@@ -680,287 +670,132 @@ def info_geraetetypen():
 
 
 #Suche
-@app.route("/suche/hersteller")
-def suche_hersteller():
+STANDORTE_LISTE = ["ZLB", "AECC", "SSC", "SVP", "Büro des Zentrums"]
 
-    hersteller = request.args.get("hersteller")
+ASSET_SPALTEN = [
+    ("inventarnummer", "Inventarnummer"), ("rechnername", "Rechnername"),
+    ("seriennummer", "Seriennummer"), ("assettyp", "Typ"),
+    ("verwendungsart", "Verwendungsart"), ("hersteller", "Hersteller"),
+    ("modell", "Modell"), ("druckertyp", "Druckertyp"),
+    ("status", "Status"), ("mitarbeiter", "Benutzer"),
+    ("standort", "Standort"), ("zimmer", "Zimmer"),
+    ("kostenstelle", "Kostenstelle"), ("organisationseinheit", "Organisationseinheit"),
+    ("anschaffungsdatum", "Anschaffungsdatum"), ("installationsdatum", "Installationsdatum"),
+    ("garantie", "Garantie"), ("verwaltungsart", "Verwaltungsart"),
+    ("mac_adresse", "MAC-Adresse"), ("prozessor", "Prozessor"),
+    ("kerne_threads", "Kerne/Threads"), ("ram", "RAM"),
+    ("festplatte", "Festplatte"), ("betriebssystem", "Betriebssystem"),
+    ("displaygroesse", "Displaygröße"), ("dockingstation", "Dockingstation"),
+    ("anlagenummer", "Anlagenummer"), ("bemerkung", "Bemerkung"),
+]
 
-    if hersteller:
+ASSET_KOPF = [label for _, label in ASSET_SPALTEN]
+ASSET_SQL = "SELECT " + ", ".join(s for s, _ in ASSET_SPALTEN) + " FROM assets"
+EINHEIT_INDEX = [s for s, _ in ASSET_SPALTEN].index("organisationseinheit")
 
-        verbindung = sqlite3.connect("asset_management.db")
-        cursor = verbindung.cursor()
 
-        cursor.execute("""
-            SELECT *
-            FROM assets
-            WHERE LOWER(hersteller) = LOWER(?)
-        """, (hersteller,))
+def suche_seite(titel, platzhalter, kopf, zeilen, q, auswahl=None):
+    # Spalten ausblenden, die bei allen Treffern leer sind
+    if zeilen:
+        behalten = [i for i in range(len(kopf))
+                    if any(z[i] not in (None, "") for z in zeilen)]
+        kopf = [kopf[i] for i in behalten]
+        zeilen = [[z[i] for i in behalten] for z in zeilen]
 
-        ergebnisse = cursor.fetchall()
+    return render_template("suche_seite.html", titel=titel, platzhalter=platzhalter,
+                           kopf=kopf, zeilen=zeilen, q=q, auswahl=auswahl)
 
-        verbindung.close()
 
-        if not ergebnisse:
-            return f"""
-            <h1>Keine Assets gefunden</h1>
 
-            Hersteller '{hersteller}' wurde nicht gefunden.<br><br>
+def abfragen(sql, parameter=()):
+    with closing(verbinden()) as verbindung:
+        return verbindung.execute(sql, parameter).fetchall()
 
-            <p><a href="/suche/hersteller">Neue Suche</a></p>
-            <p><a href="/suche">Zurück zur Suche</a></p>
-            """
-        ausgabe = """
-        <h1>Gefundene Assets</h1>
+def suchbegriff():
+    return (request.args.get("q") or "").strip()
 
-        <table border="1">
-            <tr>
-                <th>Inventarnummer</th>
-                <th>Hersteller</th>
-                <th>Status</th>
-            </tr>
-        """
-
-        for a in ergebnisse:
-
-            ausgabe += f"""
-            <tr>
-                <td>{a[0]}</td>
-                <td>{a[1]}</td>
-                <td>{a[2]}</td>
-            </tr>
-            """
-
-        ausgabe += """
-        </table>
-
-        <p><a href="/suche/hersteller">Neue Suche</a></p>
-        <p><a href="/">Zurück zur Suche</a></p>  
-        """
-
-        return ausgabe
-
-    return """
-    <h1>Nach Hersteller suchen</h1>
-
-    <form>
-        <input type="text" name="hersteller">
-        <button>Suchen</button>
-    </form>
-     <p><a href="/suche">Zurück zur Suche</a></p>
-    """
-
-@app.route("/suche/standort")
-def suche_standort():
-
-    standort = request.args.get("standort")
-    if standort:
-        return f"Gesucht wurde: {standort}"
-
-    return """
-    <h1>Nach Standort suchen</h1>
-    <form>
-        <input type="text" name="standort">
-        <button>Suchen</button>
-    </form>
-    <p>/sucheZurück zur Suche</a></p>
-    """
-
-@app.route("/suche/organisationseinheit")
-def suche_organisationseinheit():
-
-    organisationseinheit = request.args.get("organisationseinheit")
-    if organisationseinheit:
-        return f"Gesucht wurde: {organisationseinheit}"
-
-    return """
-    <h1>Nach Organisationseinheit suchen</h1>
-    <form>
-        <input type="text" name="organisationseinheit">
-        <button>Suchen</button>
-    </form>
-    <p><a href="/suche">Zurück zur Suche</a></p>
-    """
 
 @app.route("/suche/asset")
 def suche_asset():
+    q = suchbegriff()
+    zeilen = []
+    if q:
+        m = f"%{q}%"
+        zeilen = abfragen(
+            ASSET_SQL + " WHERE inventarnummer LIKE ? OR seriennummer LIKE ? "
+                        "OR rechnername LIKE ? ORDER BY inventarnummer LIMIT 200",
+            (m, m, m))
+    return suche_seite("🔍 Asset suchen",
+                       "Inventarnummer, Seriennummer oder Rechnername",
+                       ASSET_KOPF, zeilen, q)
 
-    asset = request.args.get("asset")
 
-    if asset:
+@app.route("/suche/hersteller")
+def suche_hersteller():
+    q = suchbegriff()
+    zeilen = []
+    if q:
+        zeilen = abfragen(
+            ASSET_SQL + " WHERE hersteller LIKE ? ORDER BY assettyp, inventarnummer LIMIT 200",
+            (f"%{q}%",))
+    return suche_seite("🏭 Nach Hersteller suchen", "z. B. Dell, Lenovo",
+                       ASSET_KOPF, zeilen, q)
 
-        verbindung = sqlite3.connect("asset_management.db")
-        cursor = verbindung.cursor()
 
-        cursor.execute("""
-            SELECT *
-            FROM assets
-            WHERE LOWER(inventarnummer) = LOWER(?)
-        """, (asset,))
+@app.route("/suche/standort")
+def suche_standort():
+    q = suchbegriff()
+    zeilen = []
+    if q:
+        zeilen = abfragen(
+            ASSET_SQL + " WHERE standort = ? ORDER BY assettyp, inventarnummer LIMIT 200",
+            (q,))
+    return suche_seite("📍 Nach Standort suchen", "", ASSET_KOPF, zeilen, q,
+                       auswahl=STANDORTE_LISTE)
 
-        ergebnis = cursor.fetchone()
 
-        verbindung.close()
+@app.route("/suche/organisationseinheit")
+def suche_organisationseinheit():
+    q = suchbegriff()
+    zeilen = []
+    if q:
+        alle = abfragen(
+            ASSET_SQL + " WHERE organisationseinheit IS NOT NULL "
+                        "AND organisationseinheit != '' ORDER BY assettyp, inventarnummer")
+        gesucht = einheit_schluessel(q)
+        zeilen = [z for z in alle if einheit_schluessel(z[EINHEIT_INDEX]) == gesucht]
+    return suche_seite("🏢 Nach Organisationseinheit suchen", "", ASSET_KOPF, zeilen, q,
+                       auswahl=ORGANISATIONSEINHEITEN)
 
-        if ergebnis:
 
-            return f"""
-            <h1>Asset gefunden</h1>
-
-            <table border="1">
-
-                <tr>
-            <th>Inventarnummer</th>
-            <th>Rechnername</th>
-            <th>Seriennummer</th>
-            <th>Kostenstelle</th>
-            <th>Organisationseinheit</th>
-            <th>Standort</th>
-            <th>Zimmer</th>
-            <th>Assettyp</th>
-            <th>Verwendungsart</th>
-            <th>Status</th>
-            <th>Hersteller</th>
-            <th>Modell</th>
-            <th>Verwaltungsart</th>
-            <th>Prozessor</th>
-            <th>RAM</th>
-            <th>Betriebssystem</th>
-            <th>Mitarbeiter</th>
-        </tr>
-        
-        <tr>
-            <td>{ergebnis[1]}</td>
-            <td>{ergebnis[2]}</td>
-            <td>{ergebnis[3]}</td>
-            <td>{ergebnis[4]}</td>
-            <td>{ergebnis[5]}</td>
-            <td>{ergebnis[6]}</td>
-            <td>{ergebnis[7]}</td>
-            <td>{ergebnis[10]}</td>
-            <td>{ergebnis[11]}</td>
-            <td>{ergebnis[12]}</td>
-            <td>{ergebnis[13]}</td>
-            <td>{ergebnis[14]}</td>
-            <td>{ergebnis[17]}</td>
-            <td>{ergebnis[18]}</td>
-            <td>{ergebnis[20]}</td>
-            <td>{ergebnis[22]}</td>
-            <td>{ergebnis[26]}</td>
-        </tr>
-
-            </table>
-
-            <br>
-
-            <p> 
-                Details über die Asset-Liste aufrufen.
-            </p>
-
-            <p><a href="/suche">Neue Suche</a></p>
-            <p><a href="/suche">Zurück zur Suche</a></p>
-            """
-
-        return f"""
-        <h1>Asset nicht gefunden</h1>
-
-        Asset '{asset}' wurde nicht gefunden.<br><br>
-
-        <p><a href="/suche">Neue Suche</a></p>
-        <p><a href="/suche">Zurück zur Suche</a></p>
-        """
-
-    return """
-    <h1>Nach Asset suchen</h1>
-
-    <form>
-
-        <input type="text" name="asset">
-
-        <button>Suchen</button>
-
-    </form>
-
-    <p><a href="/suche">Zurück zur Suche</a></p>
-    """
 @app.route("/suche/mitarbeiter")
 def suche_mitarbeiter():
-
-    mitarbeiter = request.args.get("mitarbeiter")
-
-    if mitarbeiter:
-
-        verbindung = sqlite3.connect("asset_management.db")
-        cursor = verbindung.cursor()
-
-        cursor.execute("""
-            SELECT vorname, nachname, uaccountid, organisationseinheit
+    q = suchbegriff()
+    zeilen = []
+    if q:
+        m = f"%{q}%"
+        zeilen = abfragen("""
+            SELECT vorname || ' ' || nachname, uaccountid, organisationseinheit,
+                   standort, zimmer
             FROM mitarbeiter
-            WHERE LOWER(uaccountid) = LOWER(?)
-               OR LOWER(nachname) = LOWER(?)
-        """, (mitarbeiter, mitarbeiter))
+            WHERE vorname LIKE ? OR nachname LIKE ? OR uaccountid LIKE ?
+            ORDER BY nachname LIMIT 200
+        """, (m, m, m))
+    return suche_seite("👤 Nach Mitarbeiter suchen", "Name oder U-AccountID",
+                       ["Name", "U-AccountID", "Organisationseinheit", "Standort", "Zimmer"],
+                       zeilen, q)
 
-        ergebnis = cursor.fetchone()
-
-        verbindung.close()
-
-        if ergebnis:
-            return f"""
-            <h1>Mitarbeiter gefunden</h1>
-
-            <table border="1">
-
-                <tr>
-                <th>Name</th>
-                <th>U-AccountID</th>
-                <th>Organisationseinheit</th>
-            </tr>
-            <tr>
-                <td>{ergebnis[0]} {ergebnis[1]}</td>
-                <td>{ergebnis[2]}</td>
-                <td>{ergebnis[3]}</td>
-            </tr>
-
-            </table>
-        
-            <p><a href="/suche/mitarbeiter">Neue Suche</a></p>
-            <p><a href="/suche">Zurück zur Suche</a></p>  
-            """
-
-        return f"""
-        <h1>Mitarbeiter nicht gefunden</h1>
-
-        Mitarbeiter '{mitarbeiter}' wurde nicht gefunden.<br><br>
-
-        <p><a href="/suche/mitarbeiter">Neue Suche</a></p>
-        <p><a href="/suche">Zurück zur Suche</a></p>    
-        """
-    return """
-    
-    <h1>Nach Mitarbeiter suchen</h1>
-    
-    <form>
-        <input type="text" name="mitarbeiter">
-        <button>Suchen</button>
-    </form>
-    <p><a href="/suche">Zurück zur Suche</a></p>
-    """
 
 @app.route("/suche/assets-mitarbeiter")
 def suche_assets_mitarbeiter():
-
-    mitarbeiter = request.args.get("mitarbeiter")
-    if mitarbeiter:
-        return f"Assets von {mitarbeiter} werden gesucht"
-
-    return """
-    <h1>Assets eines Mitarbeiters suchen</h1>
-    <form>
-        <input type="text" name="mitarbeiter">
-        <button>Suchen</button>
-    </form>
-    <p>/sucheZurück zur Suche</a></p>
-    """
-
+    q = suchbegriff()
+    zeilen = []
+    if q:
+        zeilen = abfragen(
+            ASSET_SQL + " WHERE mitarbeiter LIKE ? ORDER BY assettyp, inventarnummer LIMIT 200",
+            (f"%{q}%",))
+    return suche_seite("🎒 Assets eines Mitarbeiters", "Name oder U-AccountID",
+                       ASSET_KOPF, zeilen, q)
 
 
 

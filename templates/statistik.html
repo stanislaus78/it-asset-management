@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Statistik</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='statistik.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>📊 Statistik</h1>
+
+    <div class="kennzahlen">
+        {% for icon, titel, wert in kennzahlen %}
+        <div class="kennzahl">
+            <div class="kennzahl-titel">{{ icon }} {{ titel }}</div>
+            <div class="kennzahl-wert">{{ wert }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2>Assets nach Typ</h2>
+
+    <div class="typ-liste">
+        {% for typ, anzahl in pro_typ %}
+        <div class="typ-zeile">
+            <span class="typ-name">{{ typ }}</span>
+            <span class="typ-balken">
+                <span style="width: {{ (anzahl / maximum * 100)|round|int }}%"></span>
+            </span>
+            <span class="typ-anzahl">{{ anzahl }}</span>
+        </div>
+        {% else %}
+        <p>Noch keine Assets angelegt.</p>
+        {% endfor %}
+    </div>
+
+    <p><a href="/infos">⬅️ Zurück zu Infos</a></p>
+
+</div>
+
+</body>
+</html>

@@ -780,7 +780,7 @@ function assetBearbeiten() {
 
 <tr>
     <td>Benutzer</td>
-    <td><input id="edit_benutzer" value="${data.benutzer || ""}"></td>
+    <td><input id="edit_benutzer" list="mitarbeiterListe" value="${data.benutzer || ""}"></td>
 </tr>
 
 <tr>
@@ -982,6 +982,8 @@ function assetAnlegen() {
         <button onclick="assetNeuSpeichern()">💾 Anlegen</button>
         <button onclick="anlegenSchliessen()">✖ Schließen</button>
     `;
+    document.getElementById("neu_benutzer").setAttribute("list", "mitarbeiterListe");
+
     const popup = document.getElementById("anlegenPopup");
     popup.style.top = "50%";
     popup.style.left = "50%";
@@ -1225,6 +1227,6 @@ window.addEventListener("DOMContentLoaded", function () {
 <div id="meldung" class="toast">
     ✅ Asset wurde gelöscht
 </div>
-
+<script src="{{ url_for('static', filename='mitarbeiter_auswahl.js') }}"></script>
 </body>
 </html>

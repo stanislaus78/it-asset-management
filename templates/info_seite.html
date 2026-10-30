@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ titel }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>{{ titel }}</h1>
+
+    {% if typen is defined %}
+    <form method="get" style="margin: 16px 0;">
+        <select name="typ" onchange="this.form.submit()">
+            <option value="">Assettyp wählen</option>
+
+            {% if typ == 'ALLE' %}
+            <option value="ALLE" selected>Alle Typen</option>
+            {% else %}
+            <option value="ALLE">Alle Typen</option>
+            {% endif %}
+
+            {% for t in typen %}
+                {% if t == typ %}
+                <option value="{{ t }}" selected>{{ t }}</option>
+                {% else %}
+                <option value="{{ t }}">{{ t }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </form>
+    {% endif %}
+
+    {% if hinweis %}<p>{{ hinweis }}</p>{% endif %}
+
+    {% if zeilen %}
+    <div style="overflow-x: auto;">
+        <table>
+            <tr>
+                {% for k in kopf %}<th>{{ k }}</th>{% endfor %}
+            </tr>
+            {% for z in zeilen %}
+            <tr>
+                {% for c in z %}<td>{{ c if c is not none else "" }}</td>{% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% elif typ or typen is not defined %}
+    <p>Keine Einträge.</p>
+    {% endif %}
+
+    <p><a href="/infos">⬅️ Zurück zu Infos</a></p>
+
+</div>
+
+</body>
+</html>

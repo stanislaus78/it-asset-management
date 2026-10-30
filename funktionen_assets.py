@@ -1,6 +1,9 @@
-from asset import Asset
+import sqlite3
+from contextlib import closing
+
+from datenbank import verbinden
+from funktionen_historie import historie_schreiben
 from funktionen_mitarbeiter import *
-from mitarbeiter import Mitarbeiter
 from datenbank import verbinden
 from funktionen_historie import historie_schreiben
 from contextlib import closing

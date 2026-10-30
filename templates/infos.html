@@ -2,20 +2,37 @@
 <html>
 <head>
     <title>Infos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='mitarbeiter_start.css') }}">
 </head>
 <body>
 
+<div class="container">
+
     <h1>📊 Infos</h1>
 
-    <p><a href="info/statistik">Statistik</a></p>
+    <div class="card-container">
 
-    <p><a href="info/lagerbestand">Lagerbestand</a></p>
+        <a class="card" href="/info/statistik">
+            <h2>📈 Statistik</h2>
+            <p>Kennzahlen im Überblick</p>
+        </a>
 
-    <p><a href="info/geraetetypen">Gerätetypen</a></p>
+        <a class="card" href="/info/lagerbestand">
+            <h2>📦 Lagerbestand</h2>
+            <p>Assets im Lager</p>
+        </a>
 
-    <hr>
+        <a class="card" href="/info/geraetetypen">
+            <h2>🖥️ Gerätetypen</h2>
+            <p>Anzahl pro Typ</p>
+        </a>
 
-    <p><a href="/">Zurück zur Startseite</a></p>
+    </div>
+
+    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
+
+</div>
 
 </body>
 </html>

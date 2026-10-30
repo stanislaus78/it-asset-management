@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ titel }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>{{ titel }}</h1>
+
+    <form method="get" style="margin: 16px 0;">
+        {% if auswahl %}
+        <select name="q" onchange="this.form.submit()">
+            <option value="">Bitte wählen</option>
+            {% for o in auswahl %}
+            <option value="{{ o }}" {{ "selected" if o == q else "" }}>{{ o }}</option>
+            {% endfor %}
+        </select>
+        {% else %}
+        <input type="text" name="q" value="{{ q }}" placeholder="{{ platzhalter }}"
+               style="width: 400px; padding: 8px; font-size: 14px;" autofocus>
+        <button>Suchen</button>
+        {% endif %}
+    </form>
+
+    {% if q %}
+        <p>{{ zeilen|length }} Treffer</p>
+
+        {% if zeilen %}
+        <div style="overflow-x: auto;">
+            <table>
+                <tr>
+                    {% for k in kopf %}<th>{{ k }}</th>{% endfor %}
+                </tr>
+                {% for z in zeilen %}
+                <tr>
+                    {% for c in z %}<td>{{ c if c is not none else "" }}</td>{% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% else %}
+        <p>Keine Treffer.</p>
+        {% endif %}
+    {% endif %}
+
+    <p><a href="/suche">⬅️ Zurück zur Suche</a></p>
+
+</div>
+
+</body>
+</html>
