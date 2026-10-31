@@ -1247,6 +1247,7 @@ function assetBearbeiten() {
 </button>
 
 `;
+        benutzerAlsAuswahl("edit_benutzer");
 
         document.getElementById(
             "bearbeitenPopup"
@@ -1363,7 +1364,7 @@ function assetAnlegen() {
         <button onclick="assetNeuSpeichern()">💾 Anlegen</button>
         <button onclick="anlegenSchliessen()">✖ Schließen</button>
     `;
-    document.getElementById("neu_benutzer").setAttribute("list", "mitarbeiterListe");
+    benutzerAlsAuswahl("neu_benutzer");
     document.getElementById("anlegenPopup").style.display = "block";
 }
 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Datenqualität</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>🩺 Datenqualität</h1>
+
+    {% for titel, kopf, zeilen in pruefungen %}
+    <h3>
+        {% if zeilen %}⚠️{% else %}✅{% endif %}
+        {{ titel }} ({{ zeilen|length }})
+    </h3>
+
+    {% if zeilen %}
+    <div style="overflow-x: auto;">
+        <table>
+            <tr>{% for k in kopf %}<th>{{ k }}</th>{% endfor %}</tr>
+            {% for z in zeilen %}
+            <tr>{% for c in z %}<td>{{ c if c is not none else "" }}</td>{% endfor %}</tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <p><a href="/administration">⬅️ Zurück zur Administration</a></p>
+
+</div>
+
+</body>
+</html>

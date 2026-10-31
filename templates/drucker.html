@@ -863,6 +863,8 @@ function assetBearbeiten() {
 
         macUmschalten("edit");
 
+        benutzerAlsAuswahl("edit_benutzer");
+
         document.getElementById(
             "bearbeitenPopup"
         ).style.display = "block";
@@ -982,7 +984,7 @@ function assetAnlegen() {
         <button onclick="assetNeuSpeichern()">💾 Anlegen</button>
         <button onclick="anlegenSchliessen()">✖ Schließen</button>
     `;
-    document.getElementById("neu_benutzer").setAttribute("list", "mitarbeiterListe");
+    benutzerAlsAuswahl("neu_benutzer");
 
     const popup = document.getElementById("anlegenPopup");
     popup.style.top = "50%";

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Administration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='mitarbeiter_start.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>⚙️ Administration</h1>
+
+    <div class="card-container">
+
+        <a class="card" href="/historie">
+            <h2>📜 Historie</h2>
+            <p>Änderungsprotokoll</p>
+        </a>
+
+        <a class="card" href="/administration/datenqualitaet">
+            <h2>🩺 Datenqualität</h2>
+            <p>Fehlende und fehlerhafte Daten</p>
+        </a>
+
+        <a class="card" href="/administration/export/assets">
+            <h2>📥 Assets exportieren</h2>
+            <p>CSV für Excel</p>
+        </a>
+
+        <a class="card" href="/administration/export/mitarbeiter">
+            <h2>📥 Mitarbeiter exportieren</h2>
+            <p>CSV für Excel</p>
+        </a>
+
+        <a class="card" href="/administration/export/backup">
+            <h2>💾 Datenbank-Backup</h2>
+            <p>Kopie der gesamten Datenbank</p>
+        </a>
+
+    </div>
+
+    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
+
+</div>
+
+</body>
+</html>

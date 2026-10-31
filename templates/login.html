@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Anmelden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container" style="max-width: 380px; margin: 80px auto;">
+
+    <h1>🔐 Anmelden</h1>
+
+    {% if fehler %}
+    <p style="color: #c0392b;">{{ fehler }}</p>
+    {% endif %}
+
+    <form method="post">
+        <input type="hidden" name="next" value="{{ ziel }}">
+
+        <p>
+            <label>Benutzer</label><br>
+            <input type="text" name="benutzer" autocomplete="username" autofocus
+                   style="width: 100%; padding: 8px;">
+        </p>
+
+        <p>
+            <label>Passwort</label><br>
+            <input type="password" name="passwort" autocomplete="current-password"
+                   style="width: 100%; padding: 8px;">
+        </p>
+
+        <button style="padding: 8px 20px;">Anmelden</button>
+    </form>
+
+</div>
+
+</body>
+</html>

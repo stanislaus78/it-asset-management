@@ -79,6 +79,17 @@ def historie_tabelle_anlegen():
         """)
         verbindung.commit()
 
+def benutzer_tabelle_anlegen():
+    with closing(verbinden()) as verbindung:
+        verbindung.execute("""
+            CREATE TABLE IF NOT EXISTS benutzer (
+                id INTEGER PRIMARY KEY,
+                name TEXT UNIQUE NOT NULL,
+                passwort_hash TEXT NOT NULL,
+                rolle TEXT NOT NULL DEFAULT 'admin'
+            )
+        """)
+        verbindung.commit()
 
 def historie_anzeigen():
     with closing(verbinden()) as verbindung:
