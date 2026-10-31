@@ -596,13 +596,13 @@ function detailsAnzeigen() {
     <div class="details-grid">
 
         <div>Vorname</div>
-        <div>${data.vorname || "-"}</div>
+        <div>${esc(data.vorname) || "-"}</div>
 
         <div>Nachname</div>
-        <div>${data.nachname || "-"}</div>
+        <div>${esc(data.nachname) || "-"}</div>
 
         <div>U-AccountID</div>
-        <div>${data.uaccountid || "-"}</div>
+        <div>${esc(data.uaccountid) || "-"}</div>
     </div>
 
 </div>
@@ -613,19 +613,19 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Organisationseinheit</div>
-        <div>${data.organisationseinheit || "-"}</div>
+        <div>${esc(data.organisationseinheit) || "-"}</div>
 
         <div>Standort</div>
-        <div>${data.standort || "-"}</div>
+        <div>${esc(data.standort) || "-"}</div>
 
         <div>Zimmer</div>
-        <div>${data.zimmer || "-"}</div>
+        <div>${esc(data.zimmer) || "-"}</div>
 
         <div>Arbeitsplatz</div>
-        <div>${data.arbeitsplatz || "-"}</div>
+        <div>${esc(data.arbeitsplatz) || "-"}</div>
 
         <div>Kostenstelle</div>
-        <div>${data.kostenstelle || "-"}</div>
+        <div>${esc(data.kostenstelle) || "-"}</div>
 
 
     </div>
@@ -640,7 +640,7 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Status</div>
-        <div>${data.status || "-"}</div>
+        <div>${esc(data.status) || "-"}</div>
 
 
     </div>
@@ -653,7 +653,7 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Bemerkung</div>
-        <div>${data.bemerkung || "-"}</div>
+        <div>${esc(data.bemerkung) || "-"}</div>
     </div>
 
 </div>
@@ -681,7 +681,7 @@ function assetBearbeiten() {
 <input
     id="edit_id"
     type="hidden"
-    value="${data.id || ""}"
+    value="${esc(data.id) || ""}"
 >
 
 <table class="bearbeiten-table">
@@ -689,18 +689,18 @@ function assetBearbeiten() {
 
 <tr>
     <td>Vorname</td>
-    <td><input id="edit_vorname" value="${data.vorname || ""}"></td>
+    <td><input id="edit_vorname" value="${esc(data.vorname) || ""}"></td>
 </tr>
 
 
 <tr>
     <td>Nachname</td>
-    <td><input id="edit_nachname" value="${data.nachname || ""}"></td>
+    <td><input id="edit_nachname" value="${esc(data.nachname) || ""}"></td>
 </tr>
 
 <tr>
     <td>U-AccountID</td>
-    <td><input id="edit_uaccountid" value="${data.uaccountid || ""}"></td>
+    <td><input id="edit_uaccountid" value="${esc(data.uaccountid) || ""}"></td>
 </tr>
 
 <tr>
@@ -723,28 +723,28 @@ function assetBearbeiten() {
 
 <tr>
     <td>Zimmer</td>
-    <td><input id="edit_zimmer" value="${data.zimmer || ""}"></td>
+    <td><input id="edit_zimmer" value="${esc(data.zimmer) || ""}"></td>
 </tr>
 
 <tr>
     <td>Arbeitsplatz</td>
-    <td><input id="edit_arbeitsplatz" value="${data.arbeitsplatz || ""}"></td>
+    <td><input id="edit_arbeitsplatz" value="${esc(data.arbeitsplatz) || ""}"></td>
 </tr>
 
 
 <tr>
     <td>Kostenstelle</td>
-    <td><input id="edit_kostenstelle" value="${data.kostenstelle || ""}"></td>
+    <td><input id="edit_kostenstelle" value="${esc(data.kostenstelle) || ""}"></td>
 </tr>
 
 <tr>
     <td>Status</td>
-    <td><input id="edit_status" value="${data.status || ""}"></td>
+    <td><input id="edit_status" value="${esc(data.status) || ""}"></td>
 </tr>
 
 <tr>
   <td>Bemerkung</td>
-  <td><input id="edit_bemerkung" value="${data.bemerkung || ""}"></td>
+  <td><input id="edit_bemerkung" value="${esc(data.bemerkung) || ""}"></td>
 </tr>
 
 </table>
@@ -1105,6 +1105,7 @@ window.addEventListener("DOMContentLoaded", function () {
     ✅ Mitarbeiter wurde gelöscht
 </div>
 
-</body>
+  <script src="{{ url_for('static', filename='sicher.js') }}"></script>
+  </body>
 </html>
 

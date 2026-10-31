@@ -9,7 +9,7 @@ from datenbank import verbinden
 
 ORGANISATIONSEINHEITEN = ["A600", "A601", "A602", "A603", "A736"]
 STANDORTE_LISTE = ["ZLB", "AECC", "SSC", "SVP", "Büro des Zentrums"]
-
+STATUS_WERTE = ["Lager", "Ausgegeben", "Defekt", "Ausgeschieden"]
 
 ASSET_SPALTEN = [
     ("inventarnummer", "Inventarnummer"), ("rechnername", "Rechnername"),

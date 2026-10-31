@@ -1,6 +1,6 @@
 import re
 from urllib.parse import urlparse
-
+from hilfen import STATUS_WERTE, abfragen, mitarbeiter_pruefen
 from flask import Blueprint, redirect, render_template, request
 
 from datenbank import verbinden
@@ -138,23 +138,16 @@ def asset_speichern():
     return {"status": "ok"}
 
 
-@bp.route("/asset/loeschen")
+@bp.route("/asset/loeschen", methods=["POST"])
 def assets_loeschen():
-    id = request.args.get("id")
+    id = request.form.get("id", "")
+    if not id.isdigit():
+        return {"status": "fehler", "meldung": "Ungültige ID."}
+    if asset_suchen_sqlite(id) is None:
+        return {"status": "fehler", "meldung": "Asset nicht gefunden."}
+
     assets_loeschen_sqlite(id)
-    ziel = urlparse(request.referrer or "/assets").path
-    return redirect(ziel + "?geloescht=1")
-
-
-@bp.route("/asset/loeschen/bestaetigen")
-def asset_loeschen_bestaetigen():
-    id = request.args.get("id")
-    assets_loeschen_sqlite(id)
-    return f"""
-    <h1>✅ Asset gelöscht</h1>
-
-    Asset {int(id) if str(id).isdigit() else ''} wurde gelöscht.
-    """
+    return {"status": "ok"}
 
 
 # ---------- Zuweisen und Freigeben ----------
@@ -271,3 +264,7 @@ def asset_details_json(id):
 def asset_details(inventarnummer):
     asset = asset_suchen_sqlite(inventarnummer)
     return render_template("asset_details.html", asset=asset)
+
+@bp.route("/asset/status_json")
+def asset_status_json():
+    return STATUS_WERTE

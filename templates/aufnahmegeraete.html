@@ -608,13 +608,13 @@ function detailsAnzeigen() {
     <div class="details-grid">
 
         <div>Inventarnummer</div>
-        <div>${data.inventarnummer || "-"}</div>
+        <div>${esc(data.inventarnummer) || "-"}</div>
 
         <div>Seriennummer</div>
-        <div>${data.seriennummer || "-"}</div>
+        <div>${esc(data.seriennummer) || "-"}</div>
 
         <div>Benutzer</div>
-        <div>${data.benutzer || "-"}</div>
+        <div>${esc(data.benutzer) || "-"}</div>
     </div>
 
 </div>
@@ -625,16 +625,16 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Standort</div>
-        <div>${data.standort || "-"}</div>
+        <div>${esc(data.standort) || "-"}</div>
 
         <div>Zimmer</div>
-        <div>${data.zimmer || "-"}</div>
+        <div>${esc(data.zimmer) || "-"}</div>
 
         <div>Kostenstelle</div>
-        <div>${data.kostenstelle || "-"}</div>
+        <div>${esc(data.kostenstelle) || "-"}</div>
 
         <div>Organisationseinheit</div>
-        <div>${data.organisationseinheit || "-"}</div>
+        <div>${esc(data.organisationseinheit) || "-"}</div>
     </div>
 
 </div>
@@ -645,10 +645,10 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Hersteller</div>
-        <div>${data.hersteller || "-"}</div>
+        <div>${esc(data.hersteller) || "-"}</div>
 
         <div>Modell</div>
-        <div>${data.modell || "-"}</div>
+        <div>${esc(data.modell) || "-"}</div>
 
     </div>
 
@@ -660,10 +660,10 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Status</div>
-        <div>${data.status || "-"}</div>
+        <div>${esc(data.status) || "-"}</div>
 
         <div>Anschaffungsdatum</div>
-        <div>${data.anschaffungsdatum || "-"}</div>
+        <div>${esc(data.anschaffungsdatum) || "-"}</div>
 
 
     </div>
@@ -676,7 +676,7 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Bemerkung</div>
-        <div>${data.bemerkung || "-"}</div>
+        <div>${esc(data.bemerkung) || "-"}</div>
     </div>
 
 </div>
@@ -704,7 +704,7 @@ function assetBearbeiten() {
 <input
     id="edit_id"
     type="hidden"
-    value="${data.id || ""}"
+    value="${esc(data.id) || ""}"
 >
 
 <table class="bearbeiten-table">
@@ -712,65 +712,65 @@ function assetBearbeiten() {
 
 <tr>
     <td>Inventarnummer</td>
-    <td><input id="edit_inventarnummer" value="${data.inventarnummer || ""}"></td>
+    <td><input id="edit_inventarnummer" value="${esc(data.inventarnummer) || ""}"></td>
 </tr>
 
 
 <tr>
     <td>Seriennummer</td>
-    <td><input id="edit_seriennummer" value="${data.seriennummer || ""}"></td>
+    <td><input id="edit_seriennummer" value="${esc(data.seriennummer) || ""}"></td>
 </tr>
 
 <tr>
     <td>Benutzer</td>
-    <td><input id="edit_benutzer" list="mitarbeiterListe" value="${data.benutzer || ""}"></td>
+    <td><input id="edit_benutzer" list="mitarbeiterListe" value="${esc(data.benutzer) || ""}"></td>
 </tr>
 
 <tr>
     <td>Standort</td>
-    <td><input id="edit_standort" value="${data.standort || ""}"></td>
+    <td><input id="edit_standort" value="${esc(data.standort) || ""}"></td>
 </tr>
 
 <tr>
     <td>Zimmer</td>
-    <td><input id="edit_zimmer" value="${data.zimmer || ""}"></td>
+    <td><input id="edit_zimmer" value="${esc(data.zimmer) || ""}"></td>
 </tr>
 
 <tr>
     <td>Kostenstelle</td>
-    <td><input id="edit_kostenstelle" value="${data.kostenstelle || ""}"></td>
+    <td><input id="edit_kostenstelle" value="${esc(data.kostenstelle) || ""}"></td>
 </tr>
 
 <tr>
     <td>Organisationseinheit</td>
-    <td><input id="edit_organisationseinheit" value="${data.organisationseinheit || ""}"></td>
+    <td><input id="edit_organisationseinheit" value="${esc(data.organisationseinheit) || ""}"></td>
 </tr>
 
 <tr>
     <td>Hersteller</td>
-    <td><input id="edit_hersteller" value="${data.hersteller || ""}"></td>
+    <td><input id="edit_hersteller" value="${esc(data.hersteller) || ""}"></td>
 </tr>
 
 <tr>
     <td>Modell</td>
-    <td><input id="edit_modell" value="${data.modell || ""}"></td>
+    <td><input id="edit_modell" value="${esc(data.modell) || ""}"></td>
 </tr>
 
 <tr>
     <td>Status</td>
-    <td><input id="edit_status" value="${data.status || ""}"></td>
+    <td><input id="edit_status" value="${esc(data.status) || ""}"></td>
 </tr>
 
 
 <tr>
     <td>Anschaffungsdatum</td>
-    <td><input id="edit_anschaffungsdatum" value="${data.anschaffungsdatum || ""}"></td>
+    <td><input id="edit_anschaffungsdatum" value="${esc(data.anschaffungsdatum) || ""}"></td>
 </tr>
 
 
 <tr>
   <td>Bemerkung</td>
-  <td><input id="edit_bemerkung" value="${data.bemerkung || ""}"></td>
+  <td><input id="edit_bemerkung" value="${esc(data.bemerkung) || ""}"></td>
 </tr>
 
 </table>
@@ -1118,5 +1118,6 @@ window.addEventListener("DOMContentLoaded", function () {
 
 <script src="{{ url_for('static', filename='mitarbeiter_auswahl.js') }}"></script>
 
-</body>
+  <script src="{{ url_for('static', filename='sicher.js') }}"></script>
+  </body>
 </html>

@@ -1,13 +1,10 @@
 import sqlite3
 from contextlib import closing
-
+from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
+from flask import abort
 from flask import Flask, render_template, request, session, redirect
-
-from datenbank import (
-    assets_tabelle_anlegen, mitarbeiter_tabelle_anlegen,
-    historie_tabelle_anlegen,
-)
-
+from hilfen import abfragen
 from datenbank import (
     assets_tabelle_anlegen, mitarbeiter_tabelle_anlegen,
     historie_tabelle_anlegen, benutzer_tabelle_anlegen,
@@ -48,49 +45,39 @@ def anmeldung_pruefen():
     if request.endpoint is None or request.endpoint in OFFENE_SEITEN:
         return
     if not session.get("eingeloggt"):
-        return redirect("/login?next=" + request.path)
+        return redirect("/login?next=" + quote(request.path))
+
+
+@app.before_request
+def csrf_pruefen():
+    if request.method not in ("POST", "PUT", "PATCH", "DELETE"):
+        return
+
+    seite = request.headers.get("Sec-Fetch-Site")
+    if seite is not None:
+        if seite not in ("same-origin", "none"):
+            abort(403)
+        return
+
+    origin = request.headers.get("Origin")
+    if origin is None or urlparse(origin).netloc != request.host:
+        abort(403)
+
 
 
 
 @app.route("/")
 def startseite():
-
-
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
-
-    cursor.execute("SELECT COUNT(*) FROM assets")
-    assets = cursor.fetchone()[0]
-
-    cursor.execute("SELECT COUNT(*) FROM mitarbeiter")
-    mitarbeiter = cursor.fetchone()[0]
-
-    cursor.execute("""
-        SELECT COUNT(*)
-        FROM assets
-        WHERE status = 'Ausgegeben'
-    """)
-    ausgegeben = cursor.fetchone()[0]
-
-    cursor.execute("""
-        SELECT COUNT(*)
-        FROM assets
-        WHERE status = 'Lager'
-    """)
-    lager = cursor.fetchone()[0]
-
-    verbindung.close()
+    def zahl(sql):
+        return abfragen(sql)[0][0]
 
     return render_template(
         "startseite.html",
-        assets=assets,
-        mitarbeiter=mitarbeiter,
-        ausgegeben=ausgegeben,
-        lager=lager
+        assets=zahl("SELECT COUNT(*) FROM assets"),
+        mitarbeiter=zahl("SELECT COUNT(*) FROM mitarbeiter"),
+        ausgegeben=zahl("SELECT COUNT(*) FROM assets WHERE status = 'Ausgegeben'"),
+        lager=zahl("SELECT COUNT(*) FROM assets WHERE LOWER(TRIM(status)) = 'lager'"),
     )
-
-
-
 
 
 

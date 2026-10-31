@@ -1,13 +1,14 @@
-
-import sqlite3
-from datetime import datetime
-
 from contextlib import closing
 from datetime import datetime
+
+from flask import has_request_context, session
+
 from datenbank import verbinden
 
 
 def historie_schreiben(typ, aktion):
+    if has_request_context() and session.get("benutzer"):
+        aktion = f"{aktion} (von {session['benutzer']})"
     with closing(verbinden()) as verbindung:
         verbindung.execute(
             "INSERT INTO historie (datum, typ, aktion) VALUES (?, ?, ?)",
@@ -16,22 +17,6 @@ def historie_schreiben(typ, aktion):
         verbindung.commit()
 
 
-
 def historie_anzeigen():
-
-    verbindung = sqlite3.connect("asset_management.db")
-    cursor = verbindung.cursor()
-
-    cursor.execute("""
-    SELECT *
-    FROM historie
-    """)
-
-    print(cursor.fetchall())
-
-    verbindung.close()
-
-
-
-
-#historie_anzeigen()
+    with closing(verbinden()) as verbindung:
+        print(verbindung.execute("SELECT * FROM historie").fetchall())

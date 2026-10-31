@@ -967,16 +967,16 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Rechnername</div>
-        <div>${data.rechnername || "-"}</div>
+        <div>${esc(data.rechnername) || "-"}</div>
 
         <div>Inventarnummer</div>
-        <div>${data.inventarnummer || "-"}</div>
+        <div>${esc(data.inventarnummer) || "-"}</div>
 
         <div>Seriennummer</div>
-        <div>${data.seriennummer || "-"}</div>
+        <div>${esc(data.seriennummer) || "-"}</div>
 
         <div>Benutzer</div>
-        <div>${data.benutzer || "-"}</div>
+        <div>${esc(data.benutzer) || "-"}</div>
     </div>
 
 </div>
@@ -987,16 +987,16 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Standort</div>
-        <div>${data.standort || "-"}</div>
+        <div>${esc(data.standort) || "-"}</div>
 
         <div>Zimmer</div>
-        <div>${data.zimmer || "-"}</div>
+        <div>${esc(data.zimmer) || "-"}</div>
 
         <div>Kostenstelle</div>
-        <div>${data.kostenstelle || "-"}</div>
+        <div>${esc(data.kostenstelle) || "-"}</div>
 
         <div>Organisationseinheit</div>
-        <div>${data.organisationseinheit || "-"}</div>
+        <div>${esc(data.organisationseinheit) || "-"}</div>
     </div>
 
 </div>
@@ -1007,31 +1007,31 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Hersteller</div>
-        <div>${data.hersteller || "-"}</div>
+        <div>${esc(data.hersteller) || "-"}</div>
 
         <div>Modell</div>
-        <div>${data.modell || "-"}</div>
+        <div>${esc(data.modell) || "-"}</div>
 
         <div>Prozessor</div>
-        <div>${data.prozessor || "-"}</div>
+        <div>${esc(data.prozessor) || "-"}</div>
 
         <div>Kerne/Threads</div>
-        <div>${data.kerne_threads || "-"}</div>
+        <div>${esc(data.kerne_threads) || "-"}</div>
 
         <div>RAM</div>
-        <div>${data.ram || "-"}</div>
+        <div>${esc(data.ram) || "-"}</div>
 
         <div>Festplatte</div>
-        <div>${data.festplatte || "-"}</div>
+        <div>${esc(data.festplatte) || "-"}</div>
 
         <div>Betriebssystem</div>
-        <div>${data.betriebssystem || "-"}</div>
+        <div>${esc(data.betriebssystem) || "-"}</div>
 
         <div>Displaygröße</div>
-        <div>${data.displaygroesse || "-"}</div>
+        <div>${esc(data.displaygroesse) || "-"}</div>
 
         <div>Dockingstation</div>
-        <div>${data.dockingstation || "-"}</div>
+        <div>${esc(data.dockingstation) || "-"}</div>
     </div>
 
 </div>
@@ -1042,28 +1042,28 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Status</div>
-        <div>${data.status || "-"}</div>
+        <div>${esc(data.status) || "-"}</div>
 
         <div>Verwaltungsart</div>
-        <div>${data.verwaltungsart || "-"}</div>
+        <div>${esc(data.verwaltungsart) || "-"}</div>
 
         <div>Verwendungsart</div>
-        <div>${data.verwendungsart || "-"}</div>
+        <div>${esc(data.verwendungsart) || "-"}</div>
 
         <div>MAC-Adresse</div>
-        <div>${data.mac_adresse || "-"}</div>
+        <div>${esc(data.mac_adresse) || "-"}</div>
 
         <div>Garantie</div>
-        <div>${data.garantie || "-"}</div>
+        <div>${esc(data.garantie) || "-"}</div>
 
         <div>Anschaffungsdatum</div>
-        <div>${data.anschaffungsdatum || "-"}</div>
+        <div>${esc(data.anschaffungsdatum) || "-"}</div>
 
         <div>Installationsdatum</div>
-        <div>${data.installationsdatum || "-"}</div>
+        <div>${esc(data.installationsdatum) || "-"}</div>
 
         <div>Anlagenummer</div>
-        <div>${data.anlagenummer || "-"}</div>
+        <div>${esc(data.anlagenummer) || "-"}</div>
     </div>
 
 </div>
@@ -1074,7 +1074,7 @@ function detailsAnzeigen() {
 
     <div class="details-grid">
         <div>Bemerkung</div>
-        <div>${data.bemerkung || "-"}</div>
+        <div>${esc(data.bemerkung) || "-"}</div>
     </div>
 
 </div>
@@ -1102,124 +1102,124 @@ function assetBearbeiten() {
 <input
     id="edit_id"
     type="hidden"
-    value="${data.id || ""}"
+    value="${esc(data.id) || ""}"
 >
 
 <table class="bearbeiten-table">
 
 <tr>
     <td>Rechnername</td>
-    <td><input id="edit_rechnername" value="${data.rechnername || ""}"></td>
+    <td><input id="edit_rechnername" value="${esc(data.rechnername) || ""}"></td>
 </tr>
 
 <tr>
     <td>Seriennummer</td>
-    <td><input id="edit_seriennummer" value="${data.seriennummer || ""}"></td>
+    <td><input id="edit_seriennummer" value="${esc(data.seriennummer) || ""}"></td>
 </tr>
 
 <tr>
     <td>Benutzer</td>
-    <td><input id="edit_benutzer" list="mitarbeiterListe" value="${data.benutzer || ""}"></td>
+    <td><input id="edit_benutzer" list="mitarbeiterListe" value="${esc(data.benutzer) || ""}"></td>
 </tr>
 
 <tr>
     <td>Standort</td>
-    <td><input id="edit_standort" value="${data.standort || ""}"></td>
+    <td><input id="edit_standort" value="${esc(data.standort) || ""}"></td>
 </tr>
 
 <tr>
     <td>Zimmer</td>
-    <td><input id="edit_zimmer" value="${data.zimmer || ""}"></td>
+    <td><input id="edit_zimmer" value="${esc(data.zimmer) || ""}"></td>
 </tr>
 
 <tr>
     <td>Kostenstelle</td>
-    <td><input id="edit_kostenstelle" value="${data.kostenstelle || ""}"></td>
+    <td><input id="edit_kostenstelle" value="${esc(data.kostenstelle) || ""}"></td>
 </tr>
 
 <tr>
     <td>Organisationseinheit</td>
-    <td><input id="edit_organisationseinheit" value="${data.organisationseinheit || ""}"></td>
+    <td><input id="edit_organisationseinheit" value="${esc(data.organisationseinheit) || ""}"></td>
 </tr>
 
 <tr>
     <td>Hersteller</td>
-    <td><input id="edit_hersteller" value="${data.hersteller || ""}"></td>
+    <td><input id="edit_hersteller" value="${esc(data.hersteller) || ""}"></td>
 </tr>
 
 <tr>
     <td>Modell</td>
-    <td><input id="edit_modell" value="${data.modell || ""}"></td>
+    <td><input id="edit_modell" value="${esc(data.modell) || ""}"></td>
 </tr>
 
 <tr>
     <td>Prozessor</td>
-    <td><input id="edit_prozessor" value="${data.prozessor || ""}"></td>
+    <td><input id="edit_prozessor" value="${esc(data.prozessor) || ""}"></td>
 </tr>
 
 <tr>
     <td>Kerne/Threads</td>
-    <td><input id="edit_kerne_threads" value="${data.kerne_threads || ""}"></td>
+    <td><input id="edit_kerne_threads" value="${esc(data.kerne_threads) || ""}"></td>
 </tr>
 
 <tr>
     <td>RAM</td>
-    <td><input id="edit_ram" value="${data.ram || ""}"></td>
+    <td><input id="edit_ram" value="${esc(data.ram) || ""}"></td>
 </tr>
 
 <tr>
     <td>Festplatte</td>
-    <td><input id="edit_festplatte" value="${data.festplatte || ""}"></td>
+    <td><input id="edit_festplatte" value="${esc(data.festplatte) || ""}"></td>
 </tr>
 
 <tr>
     <td>Betriebssystem</td>
-    <td><input id="edit_betriebssystem" value="${data.betriebssystem || ""}"></td>
+    <td><input id="edit_betriebssystem" value="${esc(data.betriebssystem) || ""}"></td>
 </tr>
 
 <tr>
     <td>Displaygröße</td>
-    <td><input id="edit_displaygroesse" value="${data.displaygroesse || ""}"></td>
+    <td><input id="edit_displaygroesse" value="${esc(data.displaygroesse) || ""}"></td>
 </tr>
 
 <tr>
     <td>Dockingstation</td>
-    <td><input id="edit_dockingstation" value="${data.dockingstation || ""}"></td>
+    <td><input id="edit_dockingstation" value="${esc(data.dockingstation) || ""}"></td>
 </tr>
 
 <tr>
     <td>Verwaltungsart</td>
-    <td><input id="edit_verwaltungsart" value="${data.verwaltungsart || ""}"></td>
+    <td><input id="edit_verwaltungsart" value="${esc(data.verwaltungsart) || ""}"></td>
 </tr>
 
 <tr>
     <td>Status</td>
-    <td><input id="edit_status" value="${data.status || ""}"></td>
+    <td><input id="edit_status" value="${esc(data.status) || ""}"></td>
 </tr>
 
 <tr>
     <td>MAC-Adresse</td>
-    <td><input id="edit_mac_adresse" value="${data.mac_adresse || ""}"></td>
+    <td><input id="edit_mac_adresse" value="${esc(data.mac_adresse) || ""}"></td>
 </tr>
 
 <tr>
     <td>Garantie</td>
-    <td><input id="edit_garantie" value="${data.garantie || ""}"></td>
+    <td><input id="edit_garantie" value="${esc(data.garantie) || ""}"></td>
 </tr>
 
 <tr>
     <td>Anschaffungsdatum</td>
-    <td><input id="edit_anschaffungsdatum" value="${data.anschaffungsdatum || ""}"></td>
+    <td><input id="edit_anschaffungsdatum" value="${esc(data.anschaffungsdatum) || ""}"></td>
 </tr>
 
 <tr>
     <td>Installationsdatum</td>
-    <td><input id="edit_installationsdatum" value="${data.installationsdatum || ""}"></td>
+    <td><input id="edit_installationsdatum" value="${esc(data.installationsdatum) || ""}"></td>
 </tr>
 
 <tr>
     <td>Anlagenummer</td>
-    <td><input id="edit_anlagenummer" value="${data.anlagenummer || ""}"></td>
+    <td><input id="edit_anlagenummer" value="${esc(data.anlagenummer) || ""}"></td>
 </tr>
 
 <tr>
@@ -1235,7 +1235,7 @@ function assetBearbeiten() {
 
 <tr>
   <td>Bemerkung</td>
-  <td><input id="edit_bemerkung" value="${data.bemerkung || ""}"></td>
+  <td><input id="edit_bemerkung" value="${esc(data.bemerkung) || ""}"></td>
 </tr>
 
 </table>
@@ -1690,5 +1690,6 @@ window.addEventListener("DOMContentLoaded", function () {
     ✅ Asset wurde gelöscht
 </div>
 <script src="{{ url_for('static', filename='mitarbeiter_auswahl.js') }}"></script>
-</body>
+  <script src="{{ url_for('static', filename='sicher.js') }}"></script>
+  </body>
 </html>
