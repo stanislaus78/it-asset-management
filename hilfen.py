@@ -3,7 +3,7 @@ from contextlib import closing
 from functools import wraps
 from datetime import datetime
 from flask import redirect, session
-
+import calendar
 from datenbank import verbinden
 
 
@@ -88,9 +88,13 @@ def datum_normalisieren(text):
             pass
     return None
 
+
+
 NUTZUNGSDAUER_JAHRE = 5
-ABSCHREIBUNG_TYPEN = ["laptop", "stand-pc", "diensthandy"]
 WARN_TAGE = 90
+
+ABSCHREIBUNG_TYPEN = ["laptop", "stand-pc", "diensthandy"]
+GARANTIE_TYPEN = ["laptop", "stand-pc", "drucker", "diensthandy", "monitor", "tablet"]
 
 
 def jahre_addieren(d, jahre):
@@ -98,3 +102,38 @@ def jahre_addieren(d, jahre):
         return d.replace(year=d.year + jahre)
     except ValueError:  # 29.02. in einem Jahr ohne Schalttag
         return d.replace(year=d.year + jahre, day=28)
+
+
+def monate_addieren(d, monate):
+    gesamt = d.year * 12 + (d.month - 1) + monate
+    jahr, monat = divmod(gesamt, 12)
+    monat += 1
+    tag = min(d.day, calendar.monthrange(jahr, monat)[1])
+    return d.replace(year=jahr, month=monat, day=tag)
+
+
+GARANTIE_MUSTER = re.compile(r"^\s*(\d+(?:[.,]\d+)?)\s*([a-zäöüß]*)\.?\s*$", re.I)
+
+
+def garantie_monate(text):
+    """'3 Jahre', '3', '36 Monate' -> 36. None, wenn die Dauer nicht lesbar ist."""
+    treffer = GARANTIE_MUSTER.match(text or "")
+    if not treffer:
+        return None
+    zahl = float(treffer.group(1).replace(",", "."))
+    einheit = treffer.group(2).lower()
+
+    if einheit in ("", "j", "jahr", "jahre", "jahren"):
+        monate = round(zahl * 12)
+    elif einheit in ("m", "mon", "monat", "monate", "monaten"):
+        monate = round(zahl)
+    else:
+        return None
+    return monate if monate > 0 else None
+
+
+def garantie_text(monate):
+    if monate % 12 == 0:
+        jahre = monate // 12
+        return f"{jahre} Jahr" if jahre == 1 else f"{jahre} Jahre"
+    return f"{monate} Monat" if monate == 1 else f"{monate} Monate"

@@ -109,10 +109,18 @@ function datenAnzeigen() {
     });
 }
 
+function garantiePlatzhalter() {
+    document.querySelectorAll("input").forEach(feld => {
+        if (/garantie$/.test(feld.id) && !feld.placeholder) {
+            feld.placeholder = "z. B. 3 Jahre";
+        }
+    });
+}
+
 function datumAktualisieren() {
     datumsfelderUmstellen();
     datenAnzeigen();
+    garantiePlatzhalter();
 }
-
 document.addEventListener("DOMContentLoaded", datumAktualisieren);
 new MutationObserver(datumAktualisieren).observe(document.body, { childList: true, subtree: true });

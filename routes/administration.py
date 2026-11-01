@@ -5,7 +5,7 @@ import tempfile
 from contextlib import closing
 from datetime import datetime
 from pathlib import Path
-
+from hilfen import garantie_monate
 from flask import Blueprint, Response, render_template
 
 from datenbank import verbinden
@@ -110,6 +110,27 @@ def admin_datenqualitaet():
               AND anschaffungsdatum NOT GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
             ORDER BY inventarnummer
         """)))
+    garantien = abfragen("""
+        SELECT inventarnummer, assettyp, garantie FROM assets
+        WHERE garantie IS NOT NULL AND TRIM(garantie) != ''
+          AND LOWER(assettyp) IN ('laptop', 'stand-pc', 'drucker',
+                                  'diensthandy', 'monitor', 'tablet')
+        ORDER BY inventarnummer
+    """)
+    pruefungen.append(("Assets mit nicht lesbarer Garantiedauer",
+        ["Inventarnummer", "Typ", "Garantie"],
+        [z for z in garantien if garantie_monate(z[2]) is None]))
+
+    pruefungen.append(("Assets ohne Garantiedauer (Laptop, PC, Drucker, Handy, Monitor, Tablet)",
+        ["Inventarnummer", "Typ"],
+        abfragen("""
+            SELECT inventarnummer, assettyp FROM assets
+            WHERE (garantie IS NULL OR TRIM(garantie) = '')
+              AND LOWER(assettyp) IN ('laptop', 'stand-pc', 'drucker',
+                                      'diensthandy', 'monitor', 'tablet')
+            ORDER BY inventarnummer
+        """)))
+
     personen = abfragen("""
         SELECT uaccountid, vorname || ' ' || nachname, organisationseinheit, standort
         FROM mitarbeiter ORDER BY nachname

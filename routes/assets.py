@@ -9,9 +9,9 @@ from funktionen_assets import (
     asset_suchen_sqlite, asset_zuweisen_sqlite, assets_loeschen_sqlite,
     neues_asset_erstellen_sqlite,
 )
-from hilfen import abfragen, mitarbeiter_pruefen
 from hilfen import (
-    DATUMSFELDER, STATUS_WERTE, abfragen, datum_normalisieren, mitarbeiter_pruefen,
+    DATUMSFELDER, STATUS_WERTE, abfragen, datum_normalisieren,
+    garantie_monate, garantie_text, mitarbeiter_pruefen,
 )
 import sqlite3
 from contextlib import closing
@@ -26,6 +26,26 @@ def mac_normalisieren(mac):
     hex_only = hex_only.upper()
     return ":".join(hex_only[i:i + 2] for i in range(0, 12, 2))
 
+def garantie_pruefen(daten, alter_wert=None):
+    """Gibt eine Fehlermeldung zurück oder None. Vereinheitlicht daten['garantie']."""
+    if "garantie" not in daten:
+        return None
+
+    text = daten["garantie"].strip()
+    if not text:
+        daten["garantie"] = ""
+        return None
+
+    # unveränderter Altwert (zum Beispiel "lebenslang") blockiert das Speichern nicht
+    if alter_wert is not None and text == (alter_wert or "").strip():
+        return None
+
+    monate = garantie_monate(text)
+    if monate is None:
+        return "Garantie: bitte eine Dauer angeben, zum Beispiel 3 Jahre oder 36 Monate."
+
+    daten["garantie"] = garantie_text(monate)
+    return None
 
 # ---------- Menüseiten ----------
 
@@ -86,15 +106,22 @@ def asset_anlegen_popup():
         return {"status": "fehler", "meldung": f"{vorhanden} existiert bereits."}
 
     daten = request.form.copy()
+
     for feld, bezeichnung in DATUMSFELDER.items():
-        if not daten.get("anschaffungsdatum"):
-            return {"status": "fehler", "meldung": "Anschaffungsdatum fehlt."}
         if feld in daten:
             normiert = datum_normalisieren(daten[feld])
             if normiert is None:
                 return {"status": "fehler",
                         "meldung": f"{bezeichnung} ist ungültig (TT.MM.JJJJ erwartet)."}
             daten[feld] = normiert
+
+    if not daten.get("anschaffungsdatum"):
+        return {"status": "fehler", "meldung": "Anschaffungsdatum fehlt."}
+
+    fehler = garantie_pruefen(daten)
+    if fehler:
+        return {"status": "fehler", "meldung": fehler}
+
     daten["mac_adresse"] = mac
 
     benutzer = request.form.get("benutzer", "").strip()
@@ -108,8 +135,8 @@ def asset_anlegen_popup():
 
     try:
         neues_asset_erstellen_sqlite(daten)
-    except sqlite3.Error as fehler:
-        return {"status": "fehler", "meldung": f"Datenbankfehler: {fehler}"}
+    except sqlite3.Error as db_fehler:
+        return {"status": "fehler", "meldung": f"Datenbankfehler: {db_fehler}"}
 
     return {"status": "ok"}
 
@@ -124,6 +151,8 @@ def asset_bearbeiten(id):
 def asset_speichern():
 
     daten = request.form.copy()
+    aktuell = asset_suchen_sqlite(daten.get("id", ""))
+
     for feld, bezeichnung in DATUMSFELDER.items():
         if feld in daten:
             normiert = datum_normalisieren(daten[feld])
@@ -132,9 +161,12 @@ def asset_speichern():
                         "meldung": f"{bezeichnung} ist ungültig (TT.MM.JJJJ erwartet)."}
             daten[feld] = normiert
 
+    fehler = garantie_pruefen(daten, aktuell[16] if aktuell else None)
+    if fehler:
+        return {"status": "fehler", "meldung": fehler}
+
     if "benutzer" in daten:
         benutzer = daten["benutzer"].strip()
-        aktuell = asset_suchen_sqlite(daten["id"])
         alter_wert = (aktuell[26] or "") if aktuell else ""
 
         if benutzer and benutzer != alter_wert:
