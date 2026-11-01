@@ -306,13 +306,23 @@
 
 
 
-                <th class="dropdown-column">
+                                <th class="dropdown-column">
                     Bemerkung
                     <span class="dropdown-button">▼</span>
                     <div class="dropdown-menu">
                         <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
                         <a href="?sort=bemerkung&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
                         <a href="?sort=bemerkung&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
+
+                <th class="dropdown-column">
+                    Assets
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort=anzahl_assets&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort=anzahl_assets&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
                     </div>
                 </th>
             </tr>
@@ -329,6 +339,7 @@
             <td><input type="text" placeholder="Kostenstelle"></td>
             <td><input type="text" placeholder="Status"></td>
             <td><input type="text" placeholder="Bemerkung"></td>
+            <td><input type="text" placeholder="Assets"></td>
 
         </tr>
             {% for m in mitarbeiter %}
@@ -348,6 +359,7 @@
                 <td>{{ m[8] }}</td>
                 <td>{{ m[9] }}</td>
                 <td>{{ m[10]}}</td>
+                <td>{{ m[11] }}</td>
 
                     </tr>
 
@@ -464,6 +476,9 @@ document.querySelectorAll(".show-filters").forEach(filterLink => {
         border:1px solid #ccc;
         box-shadow:0 0 15px rgba(0,0,0,0.3);
         z-index:9999;
+        max-width:95vw;
+        max-height:85vh;
+        overflow:auto;
      ">
 
     <h2>👁 Details</h2>
@@ -586,6 +601,27 @@ function detailsAnzeigen() {
     fetch("/mitarbeiter/details_json/" + ausgewaehlteId)
     .then(response => response.json())
     .then(data => {
+            const assetZeilen = (data.assets || []).map(a => `
+        <tr>
+            <td><a href="/suche/asset?q=${encodeURIComponent(a.inventarnummer)}">${esc(a.inventarnummer)}</a></td>
+            <td>${esc(a.assettyp)}</td>
+            <td>${esc([a.hersteller, a.modell].filter(Boolean).join(" "))}</td>
+            <td>${esc(a.standort)}</td>
+            <td>${esc(a.zimmer)}</td>
+            <td>${esc(a.arbeitsplatz)}</td>
+            <td>${esc(a.status)}</td>
+        </tr>
+    `).join("");
+
+    const assetsHtml = assetZeilen
+        ? `<table style="width:100%">
+               <tr>
+                   <th>Inventarnummer</th><th>Typ</th><th>Gerät</th>
+                   <th>Standort</th><th>Zimmer</th><th>Arbeitsplatz</th><th>Status</th>
+               </tr>
+               ${assetZeilen}
+           </table>`
+        : "<p>Keine Assets zugewiesen.</p>";
 
     document.getElementById("detailsText").innerHTML = `
 <div class="details-container">
@@ -644,6 +680,13 @@ function detailsAnzeigen() {
 
 
     </div>
+
+</div>
+<div class="details-section">
+
+    <h3>Zugewiesene Assets (${(data.assets || []).length})</h3>
+
+    ${assetsHtml}
 
 </div>
 

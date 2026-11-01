@@ -17,6 +17,7 @@ MITARBEITER_SORT = {
     "organisationseinheit": "organisationseinheit", "standort": "standort",
     "zimmer": "zimmer", "arbeitsplatz": "arbeitsplatz",
     "kostenstelle": "kostenstelle", "status": "status", "bemerkung": "bemerkung",
+    "anzahl_assets": "anzahl_assets",
 }
 
 MITARBEITER_FELDER = [
@@ -58,9 +59,12 @@ def mitarbeiter_liste():
     einheit = request.args.get("einheit", "")
 
     zeilen = abfragen(f"""
-        SELECT id, vorname, nachname, uaccountid, organisationseinheit,
-               standort, zimmer, arbeitsplatz, kostenstelle, status, bemerkung
-        FROM mitarbeiter
+        SELECT m.id, m.vorname, m.nachname, m.uaccountid, m.organisationseinheit,
+               m.standort, m.zimmer, m.arbeitsplatz, m.kostenstelle, m.status,
+               m.bemerkung,
+               (SELECT COUNT(*) FROM assets a
+                 WHERE LOWER(TRIM(a.mitarbeiter)) = LOWER(m.uaccountid)) AS anzahl_assets
+        FROM mitarbeiter m
         ORDER BY {spalte} COLLATE NOCASE {richtung}
     """)
 
@@ -75,12 +79,24 @@ def mitarbeiter_liste():
 def mitarbeiter_details_json(id):
     with closing(verbinden()) as verbindung:
         verbindung.row_factory = sqlite3.Row
+
         zeile = verbindung.execute(
             "SELECT * FROM mitarbeiter WHERE id = ?", (id,)
         ).fetchone()
-    if zeile is None:
-        return {"status": "fehler", "meldung": "Mitarbeiter nicht gefunden"}, 404
-    return dict(zeile)
+        if zeile is None:
+            return {"status": "fehler", "meldung": "Mitarbeiter nicht gefunden"}, 404
+
+        daten = dict(zeile)
+        assets = verbindung.execute("""
+            SELECT inventarnummer, assettyp, hersteller, modell,
+                   standort, zimmer, arbeitsplatz, status
+            FROM assets
+            WHERE LOWER(TRIM(mitarbeiter)) = LOWER(?)
+            ORDER BY assettyp, inventarnummer
+        """, (daten["uaccountid"],)).fetchall()
+
+    daten["assets"] = [dict(a) for a in assets]
+    return daten
 
 
 @bp.route("/mitarbeiter/auswahl_json")
