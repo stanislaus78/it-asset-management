@@ -300,6 +300,7 @@ def asset_details_json(id):
         "benutzer": asset[26],
         "bemerkung": asset[27],
         "druckertyp": asset[28],
+        "arbeitsplatz": asset[29],
         "laptop": laptop
     }
 

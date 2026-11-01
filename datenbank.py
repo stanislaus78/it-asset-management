@@ -41,6 +41,7 @@ def assets_tabelle_anlegen():
                 anlagenummer TEXT,
                 mitarbeiter TEXT,
                 bemerkung TEXT,
+                arbeitsplatz TEXT,
                 druckertyp TEXT
             )
         """)

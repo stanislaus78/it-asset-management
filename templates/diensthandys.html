@@ -203,6 +203,16 @@
                 </th>
 
                 <th class="dropdown-column">
+                    Arbeitsplatz
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort=arbeitsplatz&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort=arbeitsplatz&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
+
+                <th class="dropdown-column">
 
                     Kostenstelle
 
@@ -425,6 +435,7 @@
             <td><input type="text" placeholder="Benutzer"></td>
             <td><input type="text" placeholder="Standort"></td>
             <td><input type="text" placeholder="Zimmer"></td>
+            <td><input type="text" placeholder="Arbeitsplatz"></td>
             <td><input type="text" placeholder="Kostenstelle"></td>
             <td><input type="text" placeholder="Organisationseinheit"></td>
             <td><input type="text" placeholder="Hersteller"></td>
@@ -451,6 +462,7 @@
                 <td>{{ d[3] }}</td>   <!-- Benutzer -->
                 <td>{{ d[4] }}</td>   <!-- Standort -->
                 <td>{{ d[5] }}</td>   <!-- Zimmer -->
+                <td>{{ d[18] or "" }}</td>
                 <td>{{ d[6] }}</td>   <!-- Kostenstelle -->
                 <td>{{ d[7] }}</td>   <!-- Organisationseinheit -->
                 <td>{{ d[8] }}</td>   <!-- Hersteller -->
@@ -704,6 +716,9 @@ function detailsAnzeigen() {
         <div>Zimmer</div>
         <div>${esc(data.zimmer) || "-"}</div>
 
+        <div>Arbeitsplatz</div>
+        <div>${esc(data.arbeitsplatz) || "-"}</div>
+
         <div>Kostenstelle</div>
         <div>${esc(data.kostenstelle) || "-"}</div>
 
@@ -826,6 +841,11 @@ function assetBearbeiten() {
 </tr>
 
 <tr>
+    <td>Arbeitsplatz</td>
+    <td><input id="edit_arbeitsplatz" value="${esc(data.arbeitsplatz) || ""}"></td>
+</tr>
+
+<tr>
     <td>Kostenstelle</td>
     <td><input id="edit_kostenstelle" value="${esc(data.kostenstelle) || ""}"></td>
 </tr>
@@ -922,7 +942,7 @@ function assetSpeichern() {
     daten.append("id", ausgewaehlteId);
 
    const felder = [
-    "inventarnummer", "seriennummer", "benutzer", "standort", "zimmer",
+    "inventarnummer", "seriennummer", "benutzer", "standort", "zimmer", "arbeitsplatz",
     "kostenstelle", "organisationseinheit", "hersteller", "modell", "displaygroesse",
     "ram", "festplatte", "mac_adresse", "status", "garantie", "anschaffungsdatum", "bemerkung"
 ];
@@ -962,6 +982,7 @@ function assetAnlegen() {
         ["benutzer", "Benutzer"],
         ["standort", "Standort"],
         ["zimmer", "Zimmer"],
+        ["arbeitsplatz", "Arbeitsplatz"],
         ["kostenstelle", "Kostenstelle"],
         ["organisationseinheit", "Organisationseinheit"],
         ["hersteller", "Hersteller"],
@@ -1007,7 +1028,7 @@ function assetNeuSpeichern() {
     const daten = new FormData();
 
     const felder = [
-        "inventarnummer", "seriennummer", "benutzer", "standort", "zimmer",
+        "inventarnummer", "seriennummer", "benutzer", "standort", "zimmer", "arbeitsplatz",
         "kostenstelle", "organisationseinheit", "hersteller", "modell", "displaygroesse",
         "ram", "festplatte", "mac_adresse", "status", "garantie", "anschaffungsdatum", "bemerkung"
     ];

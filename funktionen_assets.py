@@ -31,6 +31,7 @@ FORMULAR_SPALTEN = {
     "displaygroesse": "displaygroesse",
     "dockingstation": "dockingstation",
     "druckertyp": "druckertyp",
+    "arbeitsplatz": "arbeitsplatz",
     "bemerkung": "bemerkung",
 }
 

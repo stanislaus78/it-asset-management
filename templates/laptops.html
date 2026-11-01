@@ -227,6 +227,16 @@
                 </th>
 
                 <th class="dropdown-column">
+                    Arbeitsplatz
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort=arbeitsplatz&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort=arbeitsplatz&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
+
+                <th class="dropdown-column">
 
                     Kostenstelle
 
@@ -679,6 +689,7 @@
             <td><input type="text" placeholder="Benutzer"></td>
             <td><input type="text" placeholder="Standort"></td>
             <td><input type="text" placeholder="Zimmer"></td>
+            <td><input type="text" placeholder="Arbeitsplatz"></td>
             <td><input type="text" placeholder="Kostenstelle"></td>
             <td><input type="text" placeholder="Organisationseinheit"></td>
             <td><input type="text" placeholder="Hersteller"></td>
@@ -722,6 +733,7 @@
 
                 <td>{{ laptop[6] }}</td>
                 <td>{{ laptop[7] }}</td>
+                <td>{{ laptop[29] or "" }}</td>
 
                 <td>{{ laptop[4] }}</td>
                 <td>{{ laptop[5] }}</td>
@@ -992,6 +1004,9 @@ function detailsAnzeigen() {
         <div>Zimmer</div>
         <div>${esc(data.zimmer) || "-"}</div>
 
+        <div>Arbeitsplatz</div>
+        <div>${esc(data.arbeitsplatz) || "-"}</div>
+
         <div>Kostenstelle</div>
         <div>${esc(data.kostenstelle) || "-"}</div>
 
@@ -1130,6 +1145,11 @@ function assetBearbeiten() {
 <tr>
     <td>Zimmer</td>
     <td><input id="edit_zimmer" value="${esc(data.zimmer) || ""}"></td>
+</tr>
+
+<tr>
+    <td>Arbeitsplatz</td>
+    <td><input id="edit_arbeitsplatz" value="${esc(data.arbeitsplatz) || ""}"></td>
 </tr>
 
 <tr>
@@ -1273,7 +1293,7 @@ function assetSpeichern() {
     daten.append("id", ausgewaehlteId);
 
     const felder = [
-        "rechnername", "seriennummer", "benutzer", "standort", "zimmer",
+        "rechnername", "seriennummer", "benutzer", "standort", "zimmer", "arbeitsplatz",
         "kostenstelle", "organisationseinheit", "hersteller", "modell",
         "prozessor", "kerne_threads", "ram", "festplatte", "betriebssystem",
         "verwaltungsart", "verwendungsart", "status", "mac_adresse",
@@ -1325,6 +1345,7 @@ function assetAnlegen() {
         ["standort", "Standort"],
         ["betriebssystem", "Betriebssystem"],
         ["zimmer", "Zimmer"],
+        ["arbeitsplatz", "Arbeitsplatz"],
         ["verwaltungsart", "Verwaltungsart"],
         ["kostenstelle", "Kostenstelle"],
         ["status", "Status"],
@@ -1396,6 +1417,9 @@ function assetNeuSpeichern() {
 
     daten.append("zimmer",
         document.getElementById("neu_zimmer").value);
+
+    daten.append("arbeitsplatz",
+        document.getElementById("neu_arbeitsplatz").value);
 
     daten.append("kostenstelle",
         document.getElementById("neu_kostenstelle").value);

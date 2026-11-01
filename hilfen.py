@@ -17,7 +17,7 @@ ASSET_SPALTEN = [
     ("verwendungsart", "Verwendungsart"), ("hersteller", "Hersteller"),
     ("modell", "Modell"), ("druckertyp", "Druckertyp"),
     ("status", "Status"), ("mitarbeiter", "Benutzer"),
-    ("standort", "Standort"), ("zimmer", "Zimmer"),
+    ("standort", "Standort"), ("zimmer", "Zimmer"), ("arbeitsplatz", "Arbeitsplatz"),
     ("kostenstelle", "Kostenstelle"), ("organisationseinheit", "Organisationseinheit"),
     ("anschaffungsdatum", "Anschaffungsdatum"), ("installationsdatum", "Installationsdatum"),
     ("garantie", "Garantie"), ("verwaltungsart", "Verwaltungsart"),

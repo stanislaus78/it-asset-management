@@ -79,6 +79,9 @@ def sortierung_waehlen(cfg):
 
 
 def liste_bauen(cfg):
+    spalten = cfg["spalten"]
+    if spalten != "*":
+        spalten += ", arbeitsplatz"
     def ansicht():
         spalte, richtung = sortierung_waehlen(cfg)
         zeilen = abfragen(
@@ -112,7 +115,7 @@ def dockingstations():
                   FROM assets l
                  WHERE l.dockingstation = d.inventarnummer
                    AND LOWER(l.assettyp) = 'laptop') AS laptop,
-               d.status, d.garantie, d.anschaffungsdatum, d.bemerkung
+               d.status, d.garantie, d.anschaffungsdatum, d.bemerkung, d.arbeitsplatz
         FROM assets d
         WHERE LOWER(d.assettyp) = 'dockingstation'
         ORDER BY {spalte} COLLATE NOCASE {richtung}
