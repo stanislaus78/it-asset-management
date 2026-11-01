@@ -754,7 +754,7 @@ function assetBearbeiten() {
 
 <tr>
     <td>Benutzer</td>
-    <td><input id="edit_benutzer" list="mitarbeiterListe" value="${esc(data.benutzer) || ""}"></td>
+    <td><input id="edit_benutzer" value="${esc(data.benutzer) || ""}"></td>
 </tr>
 
 <tr>
@@ -933,7 +933,7 @@ document.getElementById("anlegenInhalt").innerHTML = `
     <button onclick="anlegenSchliessen()">✖ Schließen</button>
 `;
 
-    document.getElementById("neu_benutzer").setAttribute("list", "mitarbeiterListe");
+    benutzerAlsAuswahl("neu_benutzer");
 
     const popup = document.getElementById("anlegenPopup");
     popup.style.top = "50%";
