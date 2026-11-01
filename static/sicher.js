@@ -65,3 +65,48 @@ if (!location.pathname.startsWith("/mitarbeiter")) {
         });
     }).observe(document.body, { childList: true, subtree: true });
 }
+
+const DATUM_IDS = [
+    "neu_anschaffungsdatum", "edit_anschaffungsdatum",
+    "neu_installationsdatum", "edit_installationsdatum",
+];
+
+function zuIso(text) {
+    const t = (text || "").trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return t;
+    const m = t.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    return m ? `${m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}` : "";
+}
+
+function zuAnzeige(iso) {
+    const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return m ? `${m[3]}.${m[2]}.${m[1]}` : iso;
+}
+
+function datumsfelderUmstellen() {
+    DATUM_IDS.forEach(id => {
+        const feld = document.getElementById(id);
+        if (feld && feld.tagName === "INPUT" && feld.type !== "date") {
+            const iso = zuIso(feld.value);
+            feld.type = "date";
+            feld.value = iso;
+        }
+    });
+}
+
+function datenAnzeigen() {
+    document.querySelectorAll("td, .details-grid div").forEach(el => {
+        const text = el.textContent.trim();
+        if (el.children.length === 0 && /^\d{4}-\d{2}-\d{2}$/.test(text)) {
+            el.textContent = zuAnzeige(text);
+        }
+    });
+}
+
+function datumAktualisieren() {
+    datumsfelderUmstellen();
+    datenAnzeigen();
+}
+
+document.addEventListener("DOMContentLoaded", datumAktualisieren);
+new MutationObserver(datumAktualisieren).observe(document.body, { childList: true, subtree: true });

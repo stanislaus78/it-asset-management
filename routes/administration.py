@@ -94,7 +94,22 @@ def admin_datenqualitaet():
             WHERE mac_adresse IS NOT NULL AND mac_adresse != ''
             GROUP BY mac_adresse HAVING COUNT(*) > 1
         """)))
+    pruefungen.append(("Assets ohne Anschaffungsdatum",
+        ["Inventarnummer", "Typ"],
+        abfragen("""
+            SELECT inventarnummer, assettyp FROM assets
+            WHERE anschaffungsdatum IS NULL OR TRIM(anschaffungsdatum) = ''
+            ORDER BY inventarnummer
+        """)))
 
+    pruefungen.append(("Assets mit ungültigem Anschaffungsdatum",
+        ["Inventarnummer", "Typ", "Anschaffungsdatum"],
+        abfragen("""
+            SELECT inventarnummer, assettyp, anschaffungsdatum FROM assets
+            WHERE anschaffungsdatum IS NOT NULL AND TRIM(anschaffungsdatum) != ''
+              AND anschaffungsdatum NOT GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
+            ORDER BY inventarnummer
+        """)))
     personen = abfragen("""
         SELECT uaccountid, vorname || ' ' || nachname, organisationseinheit, standort
         FROM mitarbeiter ORDER BY nachname

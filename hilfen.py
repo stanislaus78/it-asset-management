@@ -1,7 +1,7 @@
 import re
 from contextlib import closing
 from functools import wraps
-
+from datetime import datetime
 from flask import redirect, session
 
 from datenbank import verbinden
@@ -69,3 +69,21 @@ def admin_noetig(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return innen
+
+DATUMSFELDER = {
+    "anschaffungsdatum": "Anschaffungsdatum",
+    "installationsdatum": "Installationsdatum",
+}
+
+
+def datum_normalisieren(text):
+    """Gibt 'JJJJ-MM-TT' zurück, '' bei leerer Eingabe, None bei ungültigem Datum."""
+    text = (text or "").strip()
+    if not text:
+        return ""
+    for muster in ("%Y-%m-%d", "%d.%m.%Y"):
+        try:
+            return datetime.strptime(text, muster).strftime("%Y-%m-%d")
+        except ValueError:
+            pass
+    return None

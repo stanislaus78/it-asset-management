@@ -10,7 +10,9 @@ from funktionen_assets import (
     neues_asset_erstellen_sqlite,
 )
 from hilfen import abfragen, mitarbeiter_pruefen
-
+from hilfen import (
+    DATUMSFELDER, STATUS_WERTE, abfragen, datum_normalisieren, mitarbeiter_pruefen,
+)
 import sqlite3
 from contextlib import closing
 
@@ -84,6 +86,13 @@ def asset_anlegen_popup():
         return {"status": "fehler", "meldung": f"{vorhanden} existiert bereits."}
 
     daten = request.form.copy()
+    for feld, bezeichnung in DATUMSFELDER.items():
+        if feld in daten:
+            normiert = datum_normalisieren(daten[feld])
+            if normiert is None:
+                return {"status": "fehler",
+                        "meldung": f"{bezeichnung} ist ungültig (TT.MM.JJJJ erwartet)."}
+            daten[feld] = normiert
     daten["mac_adresse"] = mac
 
     benutzer = request.form.get("benutzer", "").strip()
@@ -113,6 +122,13 @@ def asset_bearbeiten(id):
 def asset_speichern():
 
     daten = request.form.copy()
+    for feld, bezeichnung in DATUMSFELDER.items():
+        if feld in daten:
+            normiert = datum_normalisieren(daten[feld])
+            if normiert is None:
+                return {"status": "fehler",
+                        "meldung": f"{bezeichnung} ist ungültig (TT.MM.JJJJ erwartet)."}
+            daten[feld] = normiert
 
     if "benutzer" in daten:
         benutzer = daten["benutzer"].strip()
