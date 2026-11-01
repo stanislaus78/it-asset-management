@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Abschreibung</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='mitarbeiter_start.css') }}">
+    <style>.card.aktiv { border-color: #1a7fd4; }</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>⏳ Abschreibung</h1>
+        <p>Gilt für Laptops, Stand-PCs und Diensthandys. Nutzungsdauer: {{ jahre }} Jahre
+       ab Anschaffung. „Läuft bald ab“ bedeutet innerhalb von {{ warn_tage }} Tagen.</p>
+
+    <form method="get" style="margin: 16px 0;">
+        <input type="hidden" name="status" value="{{ filter_status }}">
+        <select name="typ" onchange="this.form.submit()">
+            <option value="">Alle Typen</option>
+            {% for t in typen %}
+                {% if t == typ %}
+                <option value="{{ t }}" selected>{{ t }}</option>
+                {% else %}
+                <option value="{{ t }}">{{ t }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        {% if filter_status or typ %}
+        <a href="/info/abschreibung">✖ Filter zurücksetzen</a>
+        {% endif %}
+    </form>
+
+    <div class="card-container">
+        {% for key, text in status_text.items() %}
+        <a class="card{% if key == filter_status %} aktiv{% endif %}"
+           href="?status={{ key }}&typ={{ typ|urlencode }}">
+            <h2>{{ text }}</h2>
+            <p>{{ anzahl[key] }} Assets</p>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if ohne_datum %}
+    <p>⚠️ {{ ohne_datum }} Assets haben kein gültiges Anschaffungsdatum und fehlen hier.
+       <a href="/administration/datenqualitaet">Liste anzeigen</a></p>
+    {% endif %}
+
+    {% if eintraege %}
+    <div style="overflow-x: auto;">
+        <table>
+            <tr>
+                <th>Inventarnummer</th><th>Typ</th><th>Gerät</th><th>Benutzer</th>
+                <th>Angeschafft</th><th>Abschreibung bis</th><th>Status</th>
+            </tr>
+            {% for e in eintraege %}
+            <tr>
+                <td>{{ e.inventarnummer }}</td>
+                <td>{{ e.typ }}</td>
+                <td>{{ e.geraet }}</td>
+                <td>{{ e.benutzer }}</td>
+                <td>{{ e.anschaffung }}</td>
+                <td>{{ e.ende_text }}</td>
+                <td>{{ status_text[e.status] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+    <p>Keine Einträge.</p>
+    {% endif %}
+
+    <p><a href="/infos">⬅️ Zurück zu Infos</a></p>
+
+</div>
+
+</body>
+</html>

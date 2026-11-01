@@ -87,3 +87,14 @@ def datum_normalisieren(text):
         except ValueError:
             pass
     return None
+
+NUTZUNGSDAUER_JAHRE = 5
+ABSCHREIBUNG_TYPEN = ["laptop", "stand-pc", "diensthandy"]
+WARN_TAGE = 90
+
+
+def jahre_addieren(d, jahre):
+    try:
+        return d.replace(year=d.year + jahre)
+    except ValueError:  # 29.02. in einem Jahr ohne Schalttag
+        return d.replace(year=d.year + jahre, day=28)

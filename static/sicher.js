@@ -90,6 +90,12 @@ function datumsfelderUmstellen() {
             const iso = zuIso(feld.value);
             feld.type = "date";
             feld.value = iso;
+
+            if (feld.id === "neu_anschaffungsdatum") {
+                const label = feld.closest(".anlegen-feld")?.querySelector("label");
+                if (label && !label.textContent.includes("*")) label.textContent += " *";
+
+            }
         }
     });
 }

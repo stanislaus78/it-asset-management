@@ -87,6 +87,8 @@ def asset_anlegen_popup():
 
     daten = request.form.copy()
     for feld, bezeichnung in DATUMSFELDER.items():
+        if not daten.get("anschaffungsdatum"):
+            return {"status": "fehler", "meldung": "Anschaffungsdatum fehlt."}
         if feld in daten:
             normiert = datum_normalisieren(daten[feld])
             if normiert is None:
