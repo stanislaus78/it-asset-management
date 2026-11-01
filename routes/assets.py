@@ -152,52 +152,78 @@ def assets_loeschen():
 
 # ---------- Zuweisen und Freigeben ----------
 
-@bp.route("/asset/zuweisen")
+def asset_existiert(inventarnummer):
+    return bool(abfragen(
+        "SELECT 1 FROM assets WHERE LOWER(inventarnummer) = LOWER(?)",
+        (inventarnummer,)
+    ))
+
+@bp.route("/asset/zuweisen", methods=["GET", "POST"])
 def assets_zuweisen():
-    inventarnummer = request.args.get("inventarnummer")
-    mitarbeiter = request.args.get("mitarbeiter")
+    mitarbeiter_liste = abfragen(
+        "SELECT uaccountid, vorname, nachname FROM mitarbeiter ORDER BY nachname"
+    )
+    ergebnis = ""
+    inventarnummer = ""
+    mitarbeiter = ""
 
-    if inventarnummer and mitarbeiter:
-        gefunden = mitarbeiter_pruefen(mitarbeiter)
-        if gefunden is None:
-            ergebnis = f"Mitarbeiter '{mitarbeiter}' existiert nicht."
+    if request.method == "POST":
+        inventarnummer = request.form.get("inventarnummer", "").strip()
+        mitarbeiter = request.form.get("mitarbeiter", "").strip()
+
+        if not inventarnummer or not mitarbeiter:
+            ergebnis = "Bitte Inventarnummer und Mitarbeiter angeben."
         else:
-            ergebnis = asset_zuweisen_sqlite(inventarnummer, gefunden)
+            gefunden = mitarbeiter_pruefen(mitarbeiter)
+            if gefunden is None:
+                ergebnis = f"Mitarbeiter '{mitarbeiter}' existiert nicht."
+            else:
+                code = asset_zuweisen_sqlite(inventarnummer, gefunden)
+                ergebnis = {
+                    "nicht_gefunden": f"Asset '{inventarnummer}' existiert nicht.",
+                    "besetzt": f"Asset '{inventarnummer}' ist bereits vergeben. "
+                               "Bitte zuerst freigeben.",
+                    "erfolg": f"Asset {inventarnummer} wurde {gefunden} zugewiesen.",
+                }.get(code, code)
+                if code == "erfolg":
+                    inventarnummer = ""
+                    mitarbeiter = ""
 
-        return render_template("asset_zuweisen.html", ergebnis=ergebnis,
-                               inventarnummer=inventarnummer,
-                               mitarbeiter=mitarbeiter)
-
-    return render_template("asset_zuweisen.html", ergebnis="")
+    return render_template("asset_zuweisen.html", ergebnis=ergebnis,
+                           inventarnummer=inventarnummer, mitarbeiter=mitarbeiter,
+                           mitarbeiter_liste=mitarbeiter_liste)
 
 
 @bp.route("/mitarbeiter/asset_zuweisen")
 def asset_zuweisen():
-    return render_template("asset_zuweisen.html")
+    return redirect("/asset/zuweisen")
 
 
-@bp.route("/asset/freigeben")
+@bp.route("/asset/freigeben", methods=["GET", "POST"])
 def assets_freigeben():
-    inventarnummer = request.args.get("inventarnummer")
+    ergebnis = ""
+    inventarnummer = ""
 
-    if inventarnummer:
-        asset_freigeben_sqlite(inventarnummer)
-        return render_template("info_seite.html",
-                               titel="Asset freigegeben",
-                               hinweis=f"Asset {inventarnummer} wurde freigegeben.",
-                               kopf=[], zeilen=[], zurueck="/assets")
+    if request.method == "POST":
+        inventarnummer = request.form.get("inventarnummer", "").strip()
 
-    return """
-    <h1>Asset freigeben</h1>
+        if not inventarnummer:
+            ergebnis = "Bitte Inventarnummer angeben."
+        else:
+            code = asset_freigeben_sqlite(inventarnummer)
+            ergebnis = {
+                "nicht_gefunden": f"Asset '{inventarnummer}' existiert nicht.",
+                "nicht_vergeben": f"Asset '{inventarnummer}' ist nicht vergeben.",
+                "erfolg": f"Asset {inventarnummer} wurde freigegeben.",
+            }.get(code, code)
+            if code == "erfolg":
+                inventarnummer = ""
 
-    <form>
-        Inventarnummer:<br>
-        <input type="text" name="inventarnummer"><br><br>
-        <button>Freigeben</button>
-    </form>
+    return render_template("asset_freigeben.html", ergebnis=ergebnis,
+                           inventarnummer=inventarnummer)
 
-    <p><a href="/assets">Zurück zu Assets</a></p>
-    """
+
+
 
 
 # ---------- Anzeigen und Details ----------
