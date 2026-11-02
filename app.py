@@ -36,9 +36,12 @@ app.register_blueprint(asset_listen_bp)
 
 from routes.login import bp as login_bp
 app.register_blueprint(login_bp)
-
+from routes.benutzer import bp as benutzer_bp
+app.register_blueprint(benutzer_bp)
 
 OFFENE_SEITEN = {"login.login", "static"}
+NUR_LESEN_ERLAUBT = {"benutzer.passwort_aendern", "login.logout"}
+
 
 @app.before_request
 def anmeldung_pruefen():
@@ -46,6 +49,23 @@ def anmeldung_pruefen():
         return
     if not session.get("eingeloggt"):
         return redirect("/login?next=" + quote(request.path))
+    if (session.get("rolle") == "leser"
+            and request.method not in ("GET", "HEAD", "OPTIONS")
+            and request.endpoint not in NUR_LESEN_ERLAUBT):
+        abort(403, "Mit der Rolle „Nur lesen“ sind keine Änderungen erlaubt.")
+
+
+@app.errorhandler(403)
+def verboten(fehler):
+    text = fehler.description
+    if request.method != "GET":
+        return {"status": "fehler", "meldung": text}, 403
+    return (f"<h1>Kein Zugriff</h1><p>{text}</p>"
+            '<p><a href="/">Zur Startseite</a></p>'), 403
+
+@app.context_processor
+def rolle_bereitstellen():
+    return {"rolle": session.get("rolle")}
 
 
 @app.before_request
@@ -56,12 +76,14 @@ def csrf_pruefen():
     seite = request.headers.get("Sec-Fetch-Site")
     if seite is not None:
         if seite not in ("same-origin", "none"):
-            abort(403)
+            abort(403, "Anfrage von einer anderen Adresse abgelehnt. "
+                       "Bitte die Seite über dieselbe Adresse aufrufen.")
         return
 
     origin = request.headers.get("Origin")
     if origin is None or urlparse(origin).netloc != request.host:
-        abort(403)
+        abort(403, "Anfrage von einer anderen Adresse abgelehnt. "
+                   "Bitte die Seite über dieselbe Adresse aufrufen.")
 
 
 
@@ -81,7 +103,9 @@ def startseite():
 
 
 
-
+@app.route("/rolle_json")
+def rolle_json():
+    return {"rolle": session.get("rolle")}
 
 
 

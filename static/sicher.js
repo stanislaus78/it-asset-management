@@ -14,12 +14,10 @@ function assetLoeschen() {
     daten.append("id", idZumLoeschen);
 
     fetch(url, { method: "POST", body: daten })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Server antwortete mit Status " + response.status);
-        }
-        return response.json();
-    })
+    .then(response => response.json().catch(() => ({
+        status: "fehler",
+        meldung: "Server antwortete mit Status " + response.status
+    })))
     .then(data => {
         popupSchliessen();
         if (data.status === "fehler") {
@@ -33,7 +31,6 @@ function assetLoeschen() {
         alert("⚠️ Löschen fehlgeschlagen: " + fehler.message);
     });
 }
-
 let STATUS_WERTE = [];
 
 if (!location.pathname.startsWith("/mitarbeiter")) {
@@ -124,3 +121,18 @@ function datumAktualisieren() {
 }
 document.addEventListener("DOMContentLoaded", datumAktualisieren);
 new MutationObserver(datumAktualisieren).observe(document.body, { childList: true, subtree: true });
+
+
+fetch("/rolle_json")
+    .then(r => r.json())
+    .then(d => {
+        if (d.rolle === "leser") {
+            ["bearbeitenBtn", "loeschenBtn"].forEach(id => {
+                const knopf = document.getElementById(id);
+                if (knopf) knopf.style.display = "none";
+            });
+            document.querySelectorAll(".toolbar button").forEach(b => {
+                if (b.textContent.includes("anlegen")) b.style.display = "none";
+            });
+        }
+    });

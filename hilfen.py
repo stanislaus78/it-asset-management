@@ -1,15 +1,25 @@
+import calendar
 import re
 from contextlib import closing
-from functools import wraps
 from datetime import datetime
-from flask import redirect, session
-import calendar
+from functools import wraps
+
+from flask import abort, redirect, session
+
 from datenbank import verbinden
 
+
+# ---------- Feste Listen ----------
 
 ORGANISATIONSEINHEITEN = ["A600", "A601", "A602", "A603", "A736"]
 STANDORTE_LISTE = ["ZLB", "AECC", "SSC", "SVP", "Büro des Zentrums"]
 STATUS_WERTE = ["Lager", "Ausgegeben", "Defekt", "Ausgeschieden"]
+
+ROLLEN = ["admin", "bearbeiter", "leser"]
+ROLLEN_TEXT = {"admin": "Administrator", "bearbeiter": "Bearbeiter", "leser": "Nur lesen"}
+
+
+# ---------- Spalten der Tabelle assets ----------
 
 ASSET_SPALTEN = [
     ("inventarnummer", "Inventarnummer"), ("rechnername", "Rechnername"),
@@ -17,7 +27,8 @@ ASSET_SPALTEN = [
     ("verwendungsart", "Verwendungsart"), ("hersteller", "Hersteller"),
     ("modell", "Modell"), ("druckertyp", "Druckertyp"),
     ("status", "Status"), ("mitarbeiter", "Benutzer"),
-    ("standort", "Standort"), ("zimmer", "Zimmer"), ("arbeitsplatz", "Arbeitsplatz"),
+    ("standort", "Standort"), ("zimmer", "Zimmer"),
+    ("arbeitsplatz", "Arbeitsplatz"),
     ("kostenstelle", "Kostenstelle"), ("organisationseinheit", "Organisationseinheit"),
     ("anschaffungsdatum", "Anschaffungsdatum"), ("installationsdatum", "Installationsdatum"),
     ("garantie", "Garantie"), ("verwaltungsart", "Verwaltungsart"),
@@ -32,6 +43,8 @@ ASSET_KOPF = [label for _, label in ASSET_SPALTEN]
 ASSET_SQL = "SELECT " + ", ".join(s for s, _ in ASSET_SPALTEN) + " FROM assets"
 EINHEIT_INDEX = [s for s, _ in ASSET_SPALTEN].index("organisationseinheit")
 
+
+# ---------- Datenbank und Texte ----------
 
 def abfragen(sql, parameter=()):
     with closing(verbinden()) as verbindung:
@@ -62,13 +75,28 @@ def mitarbeiter_pruefen(benutzer):
     return zeile[0] if zeile else None
 
 
+# ---------- Anmeldung und Rechte ----------
+
 def admin_noetig(f):
     @wraps(f)
     def innen(*args, **kwargs):
         if not session.get("eingeloggt"):
             return redirect("/login")
+        if session.get("rolle") != "admin":
+            abort(403, "Dafür fehlt dir die Berechtigung (nur Administratoren).")
         return f(*args, **kwargs)
     return innen
+
+
+def passwort_fehler(passwort, wiederholung):
+    if len(passwort) < 10:
+        return "Das Passwort braucht mindestens 10 Zeichen."
+    if passwort != wiederholung:
+        return "Die beiden Passwörter stimmen nicht überein."
+    return None
+
+
+# ---------- Datum ----------
 
 DATUMSFELDER = {
     "anschaffungsdatum": "Anschaffungsdatum",
@@ -89,6 +117,7 @@ def datum_normalisieren(text):
     return None
 
 
+# ---------- Abschreibung und Garantie ----------
 
 NUTZUNGSDAUER_JAHRE = 5
 WARN_TAGE = 90

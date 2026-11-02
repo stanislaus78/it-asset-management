@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Passwort ändern</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container" style="max-width: 420px;">
+
+    <h1>🔑 Passwort ändern</h1>
+
+    {% with nachrichten = get_flashed_messages(with_categories=true) %}
+    {% for kategorie, text in nachrichten %}
+        {% if kategorie == "fehler" %}
+        <p style="padding: 10px 14px; background: #fdecea; border-radius: 8px;">⚠️ {{ text }}</p>
+        {% else %}
+        <p style="padding: 10px 14px; background: #e8f5e9; border-radius: 8px;">✅ {{ text }}</p>
+        {% endif %}
+    {% endfor %}
+    {% endwith %}
+
+    <form method="post">
+        <p><label>Aktuelles Passwort</label><br>
+           <input type="password" name="aktuell" autocomplete="current-password"
+                  style="width: 100%; padding: 8px;" required></p>
+        <p><label>Neues Passwort (mindestens 10 Zeichen)</label><br>
+           <input type="password" name="neu" autocomplete="new-password"
+                  style="width: 100%; padding: 8px;" required></p>
+        <p><label>Neues Passwort wiederholen</label><br>
+           <input type="password" name="wiederholung" autocomplete="new-password"
+                  style="width: 100%; padding: 8px;" required></p>
+        <button style="padding: 8px 20px;">Ändern</button>
+    </form>
+
+    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
+
+</div>
+
+</body>
+</html>
