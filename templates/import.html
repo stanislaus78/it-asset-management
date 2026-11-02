@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Import</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>📤 Import aus Excel</h1>
+
+    {% if fehlermeldung %}
+    <p style="padding: 10px 14px; background: #fdecea; border-radius: 8px;">⚠️ {{ fehlermeldung }}</p>
+    {% endif %}
+
+    {% if ergebnis %}
+    <div style="padding: 14px 18px; background: #f3f6fa; border-radius: 10px; margin-bottom: 24px;">
+        <h3>{{ ergebnis.titel }} aus „{{ ergebnis.datei }}“</h3>
+
+        {% if ergebnis.gespeichert %}
+        <p>✅ {{ ergebnis.neu }} {{ ergebnis.titel }} importiert.</p>
+        {% elif ergebnis.fehler %}
+        <p>⚠️ Es wurde nichts importiert, weil die Datei Fehler enthält. Bitte in Excel
+           korrigieren und noch einmal hochladen.</p>
+        {% elif ergebnis.probelauf %}
+        <p>🔍 Probelauf: {{ ergebnis.neu }} würden importiert. Es wurde nichts gespeichert.</p>
+        {% else %}
+        <p>Es gibt nichts Neues zu importieren.</p>
+        {% endif %}
+
+        <p>{{ ergebnis.gelesen }} Zeilen gelesen · {{ ergebnis.neu }} neu ·
+           {{ ergebnis.uebersprungen|length }} übersprungen ·
+           {{ ergebnis.fehler|length }} mit Fehlern</p>
+
+        {% if ergebnis.unbekannt %}
+        <p>Nicht erkannte Spalten (werden ignoriert): {{ ergebnis.unbekannt|join(", ") }}</p>
+        {% endif %}
+
+        {% if ergebnis.fehler %}
+        <h4>Fehler</h4>
+        <table>
+            <tr><th>Zeile</th><th>Problem</th></tr>
+            {% for nr, text in ergebnis.fehler[:200] %}
+            <tr><td>{{ nr }}</td><td>{{ text }}</td></tr>
+            {% endfor %}
+        </table>
+        {% if ergebnis.fehler|length > 200 %}<p>… und weitere Fehler.</p>{% endif %}
+        {% endif %}
+
+        {% if ergebnis.uebersprungen %}
+        <details>
+            <summary>{{ ergebnis.uebersprungen|length }} übersprungene Zeilen (schon vorhanden)</summary>
+            <table>
+                <tr><th>Zeile</th><th>Grund</th></tr>
+                {% for nr, text in ergebnis.uebersprungen[:200] %}
+                <tr><td>{{ nr }}</td><td>{{ text }}</td></tr>
+                {% endfor %}
+            </table>
+        </details>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <h3>Schritt 1: Mitarbeiter</h3>
+    <form method="post" action="/administration/import/mitarbeiter" enctype="multipart/form-data"
+          style="margin-bottom: 8px;">
+        <input type="file" name="datei" accept=".xlsx" required>
+        <label><input type="checkbox" name="probelauf" value="1" checked> Nur prüfen (Probelauf)</label>
+        <button>Hochladen</button>
+    </form>
+    <p><a href="/administration/import/vorlage/mitarbeiter">📄 Vorlage herunterladen</a></p>
+
+    <h3>Schritt 2: Assets</h3>
+    <form method="post" action="/administration/import/assets" enctype="multipart/form-data"
+          style="margin-bottom: 8px;">
+        <input type="file" name="datei" accept=".xlsx" required>
+        <label><input type="checkbox" name="probelauf" value="1" checked> Nur prüfen (Probelauf)</label>
+        <button>Hochladen</button>
+    </form>
+    <p><a href="/administration/import/vorlage/assets">📄 Vorlage herunterladen</a></p>
+
+    <p><a href="/administration">⬅️ Zurück zur Administration</a></p>
+
+</div>
+
+</body>
+</html>

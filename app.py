@@ -39,6 +39,13 @@ app.register_blueprint(login_bp)
 from routes.benutzer import bp as benutzer_bp
 app.register_blueprint(benutzer_bp)
 
+from routes.import_excel import bp as import_excel_bp
+app.register_blueprint(import_excel_bp)
+
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
+
+
+
 OFFENE_SEITEN = {"login.login", "static"}
 NUR_LESEN_ERLAUBT = {"benutzer.passwort_aendern", "login.logout"}
 
@@ -103,9 +110,11 @@ def startseite():
 
 
 
+
+
 @app.route("/rolle_json")
 def rolle_json():
-    return {"rolle": session.get("rolle")}
+    return {"rolle": session.get("rolle"), "benutzer": session.get("benutzer")}
 
 
 

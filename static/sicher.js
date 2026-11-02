@@ -123,9 +123,28 @@ document.addEventListener("DOMContentLoaded", datumAktualisieren);
 new MutationObserver(datumAktualisieren).observe(document.body, { childList: true, subtree: true });
 
 
+const ROLLEN_NAMEN = { admin: "Administrator", bearbeiter: "Bearbeiter", leser: "Nur lesen" };
+
+function anmeldungAnzeigen(d) {
+    const feld = document.createElement("div");
+    feld.style.cssText =
+        "position:fixed; top:8px; right:12px; z-index:1000; font-size:13px;" +
+        "background:white; border:1px solid #ccc; border-radius:8px;" +
+        "padding:5px 12px; box-shadow:0 1px 4px rgba(0,0,0,0.12);";
+    feld.innerHTML =
+        `👤 <b>${esc(d.benutzer)}</b> (${esc(ROLLEN_NAMEN[d.rolle] || d.rolle)})` +
+        ` · <a href="/passwort">🔑 Passwort</a>` +
+        ` · <a href="/logout">🚪 Logout</a>`;
+    document.body.appendChild(feld);
+}
+
 fetch("/rolle_json")
-    .then(r => r.json())
+    .then(r => r.ok ? r.json() : {})
     .then(d => {
+        if (!d.benutzer) return;
+
+        anmeldungAnzeigen(d);
+
         if (d.rolle === "leser") {
             ["bearbeitenBtn", "loeschenBtn"].forEach(id => {
                 const knopf = document.getElementById(id);
@@ -135,4 +154,5 @@ fetch("/rolle_json")
                 if (b.textContent.includes("anlegen")) b.style.display = "none";
             });
         }
-    });
+    })
+    .catch(() => {});
