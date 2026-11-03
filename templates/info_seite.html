@@ -10,7 +10,9 @@
 <div class="container">
 
     <h1>{{ titel }}</h1>
-
+       <p style="position: sticky; top: 0; background: #f4f6f8; padding: 8px 0; z-index: 10;">
+        <a href="{{ zurueck or '/infos' }}">⬅️ Zurück</a>
+    </p>
     {% if typen is defined %}
     <form method="get" style="margin: 16px 0;">
         <select name="typ" onchange="this.form.submit()">

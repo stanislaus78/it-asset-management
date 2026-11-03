@@ -9,15 +9,25 @@ from funktionen_assets import (
     asset_suchen_sqlite, asset_zuweisen_sqlite, assets_loeschen_sqlite,
     neues_asset_erstellen_sqlite,
 )
-from hilfen import (
-    DATUMSFELDER, STATUS_WERTE, abfragen, datum_normalisieren,
-    garantie_monate, garantie_text, mitarbeiter_pruefen,
-)
+
 import sqlite3
 from contextlib import closing
 
-bp = Blueprint("assets", __name__)
+from hilfen import (
+    DATUMSFELDER, ORGANISATIONSEINHEITEN, STANDORTE_LISTE, STATUS_WERTE, abfragen,
+    datum_normalisieren, garantie_monate, garantie_text, mitarbeiter_pruefen,
+)
 
+
+
+bp = Blueprint("assets", __name__)
+@bp.route("/asset/listen_json")
+def asset_listen_json():
+    return {
+        "status": STATUS_WERTE,
+        "standort": STANDORTE_LISTE,
+        "organisationseinheit": ORGANISATIONSEINHEITEN,
+    }
 
 def mac_normalisieren(mac):
     hex_only = re.sub(r"[^0-9A-Fa-f]", "", mac or "")

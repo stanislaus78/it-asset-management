@@ -31,34 +31,54 @@ function assetLoeschen() {
         alert("⚠️ Löschen fehlgeschlagen: " + fehler.message);
     });
 }
-let STATUS_WERTE = [];
+const AUSWAHL = { status: [], standort: [], organisationseinheit: [] };
+
+function auswahlSchluessel(feldname, text) {
+    const t = String(text || "").toLowerCase().replace(/[\s\-_.]/g, "");
+    if (feldname === "organisationseinheit") {
+        return t.replace(/\D/g, "") || t;
+    }
+    return t;
+}
+
+function auswahlOptionen(feldname, aktuell) {
+    const liste = AUSWAHL[feldname];
+    const treffer = liste.find(
+        w => auswahlSchluessel(feldname, w) === auswahlSchluessel(feldname, aktuell));
+    const gewaehlt = treffer || aktuell;
+    const alle = (gewaehlt && !liste.includes(gewaehlt)) ? [gewaehlt, ...liste] : liste;
+    return `<option value=""></option>` + alle.map(w =>
+        `<option value="${esc(w)}" ${w === gewaehlt ? "selected" : ""}>${esc(w)}</option>`
+    ).join("");
+}
 
 if (!location.pathname.startsWith("/mitarbeiter")) {
 
-    fetch("/asset/status_json")
-        .then(response => response.json())
-        .then(liste => { STATUS_WERTE = liste; });
+    fetch("/asset/listen_json")
+        .then(response => response.ok ? response.json() : null)
+        .then(daten => {
+            if (!daten) return;
+            Object.keys(AUSWAHL).forEach(k => {
+                if (Array.isArray(daten[k])) AUSWAHL[k] = daten[k];
+            });
+        })
+        .catch(() => {});
 
-    function statusOptionen(aktuell) {
-        const alle = (aktuell && !STATUS_WERTE.includes(aktuell))
-            ? [aktuell, ...STATUS_WERTE] : STATUS_WERTE;
-        return `<option value=""></option>` + alle.map(w =>
-            `<option value="${esc(w)}" ${w === aktuell ? "selected" : ""}>${esc(w)}</option>`
-        ).join("");
-    }
-
-    function statusAlsAuswahl(feld) {
+    function alsAuswahl(feld, feldname) {
         const neu = feld.id.startsWith("neu_");
+        const vorgabe = (neu && feldname === "status") ? "Lager" : "";
         const auswahl = document.createElement("select");
         auswahl.id = feld.id;
-        auswahl.innerHTML = statusOptionen(neu ? (feld.value || "Lager") : feld.value);
+        auswahl.innerHTML = auswahlOptionen(feldname, feld.value || vorgabe);
         feld.replaceWith(auswahl);
     }
 
     new MutationObserver(() => {
-        ["neu_status", "edit_status"].forEach(id => {
-            const feld = document.getElementById(id);
-            if (feld && feld.tagName === "INPUT") statusAlsAuswahl(feld);
+        Object.keys(AUSWAHL).forEach(feldname => {
+            ["neu_", "edit_"].forEach(praefix => {
+                const feld = document.getElementById(praefix + feldname);
+                if (feld && feld.tagName === "INPUT") alsAuswahl(feld, feldname);
+            });
         });
     }).observe(document.body, { childList: true, subtree: true });
 }

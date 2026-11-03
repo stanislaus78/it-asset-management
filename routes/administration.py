@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from hilfen import garantie_monate
 from flask import Blueprint, Response, render_template
-
+from hilfen import STATUS_WERTE
 from datenbank import verbinden
 from hilfen import (
     ASSET_KOPF, ASSET_SQL, ORGANISATIONSEINHEITEN, STANDORTE_LISTE,
@@ -130,7 +130,30 @@ def admin_datenqualitaet():
                                       'diensthandy', 'monitor', 'tablet')
             ORDER BY inventarnummer
         """)))
+    def nicht_in_liste(spalte, bezeichnung, liste):
+        platz = ", ".join("?" for _ in liste)
+        return (f"Assets mit {bezeichnung} außerhalb der Liste",
+                ["Inventarnummer", "Typ", bezeichnung],
+                abfragen(f"""
+                    SELECT inventarnummer, assettyp, {spalte} FROM assets
+                    WHERE {spalte} IS NOT NULL AND TRIM({spalte}) != ''
+                      AND {spalte} NOT IN ({platz})
+                    ORDER BY inventarnummer
+                """, liste))
 
+    pruefungen.append(nicht_in_liste(
+        "status", "Status", STATUS_WERTE + ["Leihgerät", "Festgerät"]))
+    pruefungen.append(nicht_in_liste("standort", "Standort", STANDORTE_LISTE))
+    pruefungen.append(nicht_in_liste(
+        "organisationseinheit", "Organisationseinheit", ORGANISATIONSEINHEITEN))
+
+    pruefungen.append(("Assets ohne Arbeitsplatz",
+        ["Inventarnummer", "Typ", "Standort", "Zimmer"],
+        abfragen("""
+            SELECT inventarnummer, assettyp, standort, zimmer FROM assets
+            WHERE arbeitsplatz IS NULL OR TRIM(arbeitsplatz) = ''
+            ORDER BY inventarnummer
+        """)))
     personen = abfragen("""
         SELECT uaccountid, vorname || ' ' || nachname, organisationseinheit, standort
         FROM mitarbeiter ORDER BY nachname

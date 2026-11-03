@@ -1,6 +1,6 @@
 import sqlite3
 from contextlib import closing
-
+from funktionen_historie import historie_schreiben
 from flask import Blueprint, render_template, request
 
 from datenbank import verbinden
@@ -125,20 +125,39 @@ def mitarbeiter_speichern():
         return {"status": "fehler", "meldung": "U-AccountID darf nicht leer sein."}
 
     setteil = ", ".join(f"{f} = ?" for f in MITARBEITER_FELDER)
+    alt = None
+    angepasst = 0
+
     try:
         with closing(verbinden()) as verbindung:
-            cur = verbindung.execute(
+            zeile = verbindung.execute(
+                "SELECT uaccountid FROM mitarbeiter WHERE id = ?", (mid,)
+            ).fetchone()
+            if zeile is None:
+                return {"status": "fehler", "meldung": "Mitarbeiter nicht gefunden."}
+            alt = zeile[0]
+
+            verbindung.execute(
                 f"UPDATE mitarbeiter SET {setteil} WHERE id = ?",
                 [werte[f] for f in MITARBEITER_FELDER] + [mid],
             )
+
+            if alt and alt != werte["uaccountid"]:
+                angepasst = verbindung.execute(
+                    "UPDATE assets SET mitarbeiter = ? "
+                    "WHERE LOWER(TRIM(mitarbeiter)) = LOWER(?)",
+                    (werte["uaccountid"], alt),
+                ).rowcount
             verbindung.commit()
     except sqlite3.IntegrityError:
         return {"status": "fehler", "meldung": "Diese U-AccountID existiert bereits."}
 
-    if cur.rowcount == 0:
-        return {"status": "fehler", "meldung": "Mitarbeiter nicht gefunden."}
+    if alt and alt != werte["uaccountid"]:
+        historie_schreiben(
+            "Mitarbeiter",
+            f"U-AccountID {alt} in {werte['uaccountid']} geändert "
+            f"({angepasst} Assets angepasst)")
     return {"status": "ok"}
-
 
 @bp.route("/mitarbeiter/loeschen", methods=["POST"])
 def mitarbeiter_loeschen():
