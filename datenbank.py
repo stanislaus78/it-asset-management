@@ -92,6 +92,19 @@ def benutzer_tabelle_anlegen():
         """)
         verbindung.commit()
 
+
+def login_versuche_tabelle_anlegen():
+    with closing(verbinden()) as verbindung:
+        verbindung.execute("""
+            CREATE TABLE IF NOT EXISTS login_versuche (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                ip TEXT,
+                zeit REAL
+            )
+        """)
+        verbindung.commit()
+
 def historie_anzeigen():
     with closing(verbinden()) as verbindung:
         print(verbindung.execute("SELECT * FROM historie").fetchall())

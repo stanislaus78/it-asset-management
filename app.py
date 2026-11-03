@@ -11,7 +11,11 @@ from datenbank import (
 )
 import secrets
 from pathlib import Path
-
+from datenbank import (
+    assets_tabelle_anlegen, mitarbeiter_tabelle_anlegen,
+    historie_tabelle_anlegen, benutzer_tabelle_anlegen,
+    login_versuche_tabelle_anlegen,
+)
 schluessel_datei = Path(__file__).resolve().parent / "secret.key"
 if not schluessel_datei.exists():
     schluessel_datei.write_text(secrets.token_hex(32))
@@ -123,6 +127,8 @@ if __name__ == "__main__":
     assets_tabelle_anlegen()
     historie_tabelle_anlegen()
     benutzer_tabelle_anlegen()
+    login_versuche_tabelle_anlegen()
+
 
     import os
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
