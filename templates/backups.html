@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backups</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>💾 Backups</h1>
+    <p>Täglich wird automatisch eine Kopie der Datenbank angelegt. Kopien werden
+       {{ tage }} Tage aufbewahrt.</p>
+
+    {% with nachrichten = get_flashed_messages(with_categories=true) %}
+    {% for kategorie, text in nachrichten %}
+    <p style="padding: 10px 14px; background: #e8f5e9; border-radius: 8px;">✅ {{ text }}</p>
+    {% endfor %}
+    {% endwith %}
+
+    <form method="post" action="/administration/backups/jetzt" style="margin: 16px 0;">
+        <button>Jetzt Backup anlegen</button>
+        <a href="/administration/export/backup">⬇️ Aktuelle Datenbank herunterladen</a>
+    </form>
+
+    {% if backups %}
+    <table>
+        <tr><th>Datei</th><th>Angelegt</th><th>Größe</th></tr>
+        {% for b in backups %}
+        <tr>
+            <td>{{ b.name }}</td>
+            <td>{{ b.datum.strftime("%d.%m.%Y %H:%M") }}</td>
+            <td>{{ b.groesse_kb }} KB</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>⚠️ Es gibt noch keine Backups.</p>
+    {% endif %}
+
+    <p><a href="/administration">⬅️ Zurück zur Administration</a></p>
+
+</div>
+
+</body>
+</html>

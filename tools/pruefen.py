@@ -25,7 +25,7 @@ con.close()
 import sqlite3
 from pathlib import Path
 
-db = Path(__file__).resolve().parent.parent / "asset_management.db"
+db = Path(r"C:\Users\install\Desktop\test.db")
 
 with sqlite3.connect(db) as con:
     con.row_factory = sqlite3.Row

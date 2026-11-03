@@ -123,4 +123,10 @@ if __name__ == "__main__":
     assets_tabelle_anlegen()
     historie_tabelle_anlegen()
     benutzer_tabelle_anlegen()
+
+    import os
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        from backup import automatik_starten
+        automatik_starten()
+
     app.run(debug=True)

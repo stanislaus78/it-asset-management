@@ -6,9 +6,12 @@ from contextlib import closing
 from datetime import datetime
 from pathlib import Path
 from hilfen import garantie_monate
+from funktionen_historie import  historie_schreiben
 from flask import Blueprint, Response, render_template
 from hilfen import STATUS_WERTE
 from datenbank import verbinden
+from flask import Blueprint, Response, flash, redirect, render_template
+from backup import backup_anlegen, backups_auflisten, AUFBEWAHRUNG_TAGE
 from hilfen import (
     ASSET_KOPF, ASSET_SQL, ORGANISATIONSEINHEITEN, STANDORTE_LISTE,
     abfragen, admin_noetig,
@@ -202,3 +205,19 @@ def admin_backup():
     name = datetime.now().strftime("asset_management_%Y-%m-%d_%H%M.db")
     return Response(daten, mimetype="application/octet-stream",
                     headers={"Content-Disposition": f"attachment; filename={name}"})
+
+
+@bp.route("/administration/backups")
+@admin_noetig
+def admin_backups():
+    return render_template("backups.html", backups=backups_auflisten(),
+                           tage=AUFBEWAHRUNG_TAGE)
+
+
+@bp.route("/administration/backups/jetzt", methods=["POST"])
+@admin_noetig
+def admin_backup_jetzt():
+    datei = backup_anlegen(zusatz=datetime.now().strftime("_%H%M"))
+    historie_schreiben("Backup", f"Backup {datei.name} angelegt")
+    flash(f"Backup {datei.name} angelegt.", "ok")
+    return redirect("/administration/backups")
