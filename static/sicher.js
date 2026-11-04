@@ -13,13 +13,14 @@ function assetLoeschen() {
     const daten = new FormData();
     daten.append("id", idZumLoeschen);
 
+    popupSchliessen();
+
     fetch(url, { method: "POST", body: daten })
     .then(response => response.json().catch(() => ({
         status: "fehler",
         meldung: "Server antwortete mit Status " + response.status
     })))
     .then(data => {
-        popupSchliessen();
         if (data.status === "fehler") {
             alert("⚠️ " + data.meldung);
             return;
