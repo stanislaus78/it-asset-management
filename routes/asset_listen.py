@@ -48,8 +48,6 @@ LISTEN = [
 
     dict(url="/assets/scanner", endpoint="scanner", template="scanner.html",
          variable="scanners", typ="scanner", spalten=BASIS),
-    dict(url="/assets/maus", endpoint="maeuse", template="maeuse.html",
-         variable="maeuse", typ="maus", spalten=BASIS),
     dict(url="/assets/kopfhoerer", endpoint="kopfhoerer", template="kopfhoerer.html",
          variable="kopfhoerern", typ="kopfhoerer", spalten=BASIS),
     dict(url="/assets/webcams", endpoint="webcams", template="webcams.html",

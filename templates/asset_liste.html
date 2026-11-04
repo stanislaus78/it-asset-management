@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ typ.titel }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dropdowns.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>{{ typ.icon }} {{ typ.titel }}</h1>
+
+    <div class="toolbar">
+        <button onclick="assetAnlegen()">➕ {{ typ.einzahl }} anlegen</button>
+        <button id="detailsBtn" disabled onclick="detailsAnzeigen()">👁 Details</button>
+        <button id="bearbeitenBtn" disabled onclick="assetBearbeiten()">✏️ Bearbeiten</button>
+        <button id="loeschenBtn" disabled onclick="popupOeffnen(ausgewaehlteId)">🗑️ Löschen</button>
+    </div>
+
+    <div style="margin-top:10px; text-align:left;">
+        <input type="text" id="globalFilter" placeholder="🔍 In allen Spalten suchen..."
+               style="width:400px; padding:8px; font-size:14px; border:1px solid #ccc; border-radius:5px;">
+    </div>
+
+    <div style="overflow-x:auto;">
+        <table>
+            <tr>
+                <th></th>
+                {% for name, label, spalte in felder %}
+                <th class="dropdown-column">
+                    {{ label }}
+                    <span class="dropdown-button">▼</span>
+                    <div class="dropdown-menu">
+                        <a href="#" class="show-filters">🔎 Filtern nach Spalte</a>
+                        <a href="?sort={{ spalte }}&richtung=ASC">↑ Nach Spalte sortieren A-Z</a>
+                        <a href="?sort={{ spalte }}&richtung=DESC">↓ Nach Spalte sortieren Z-A</a>
+                    </div>
+                </th>
+                {% endfor %}
+            </tr>
+            <tr id="filter-row" class="filter-row" style="display:none;">
+                <td></td>
+                {% for name, label, spalte in felder %}
+                <td><input type="text" placeholder="{{ label }}"></td>
+                {% endfor %}
+            </tr>
+            {% for z in zeilen %}
+            <tr>
+                <td><input type="checkbox" class="asset-checkbox" data-id="{{ z[0] }}"></td>
+                {% for wert in z[1:] %}<td>{{ wert if wert is not none else "" }}</td>{% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <br><br>
+    <p><a href="javascript:history.back()">⬅️ Zurück</a></p>
+    <p><a href="/assets">📦 Assets</a></p>
+
+</div>
+
+<div id="loeschPopup" style="display:none; position:fixed; top:50%; left:50%;
+     transform:translate(-50%, -50%); background:white; padding:20px; border:1px solid #ccc;
+     box-shadow:0 0 15px rgba(0,0,0,0.3); z-index:9999;">
+    <h2>⚠️ Asset löschen</h2>
+    <p id="popupText">Wirklich löschen?</p>
+    <button onclick="assetLoeschen()">Ja, löschen</button>
+    <button onclick="popupSchliessen()">Abbrechen</button>
+</div>
+
+<div id="detailsPopup" style="display:none; position:fixed; top:50%; left:50%;
+     transform:translate(-50%, -50%); background:white; padding:20px; border:1px solid #ccc;
+     box-shadow:0 0 15px rgba(0,0,0,0.3); z-index:9999; max-width:95vw; max-height:85vh; overflow:auto;">
+    <h2>👁 Details</h2>
+    <div id="detailsText"></div>
+    <button onclick="detailsSchliessen()">Schließen</button>
+</div>
+
+<div id="bearbeitenPopup" style="display:none; position:fixed; top:50%; left:50%;
+     transform:translate(-50%, -50%); background:white; padding:20px; z-index:9999;
+     max-height:85vh; overflow:auto;">
+    <h2>✏️ {{ typ.einzahl }} bearbeiten</h2>
+    <div id="bearbeitenInhalt"></div>
+    <br>
+    <button onclick="bearbeitenSchliessen()">✖ Schließen</button>
+</div>
+
+<div id="anlegenPopup" style="display:none; position:fixed; top:50%; left:50%;
+     transform:translate(-50%, -50%); background:white; padding:20px; width:1000px;
+     max-width:95vw; max-height:85vh; overflow-y:auto; z-index:9999;">
+    <h2 id="anlegenTitel" style="cursor:move; margin-top:0;">➕ {{ typ.einzahl }} anlegen</h2>
+    <div id="anlegenInhalt"></div>
+</div>
+
+<div id="meldung" class="toast">✅ Asset wurde gelöscht</div>
+
+<script>window.ASSET_KONFIG = {{ konfig|tojson }};</script>
+<script src="{{ url_for('static', filename='asset_liste.js') }}"></script>
+<script src="{{ url_for('static', filename='mitarbeiter_auswahl.js') }}"></script>
+<script src="{{ url_for('static', filename='sicher.js') }}"></script>
+</body>
+</html>

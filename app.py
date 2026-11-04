@@ -46,6 +46,9 @@ app.register_blueprint(benutzer_bp)
 from routes.import_excel import bp as import_excel_bp
 app.register_blueprint(import_excel_bp)
 
+from routes.asset_generisch import bp as asset_generisch_bp
+app.register_blueprint(asset_generisch_bp)
+
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 
