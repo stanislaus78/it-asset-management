@@ -224,22 +224,26 @@ document.querySelectorAll(".asset-checkbox").forEach(cb => {
     cb.addEventListener("change", pruefeAuswahl);
 });
 
-function filterTabelle() {
-    const filter = [...document.querySelectorAll(".filter-row input")]
-        .map(input => input.value.toLowerCase());
+function zeilenFiltern() {
+    const spaltenFilter = [...document.querySelectorAll(".filter-row input")]
+        .map(input => input.value.trim().toLowerCase());
+    const suchtext = document.getElementById("globalFilter").value.trim().toLowerCase();
 
     document.querySelectorAll("table tr").forEach((zeile, index) => {
-        if (index < 2) return;
+        if (index < 2) return;   // Kopfzeile und Filterzeile
         const zellen = zeile.querySelectorAll("td");
-        const anzeigen = filter.every((wert, i) =>
+        const passtSpalten = spaltenFilter.every((wert, i) =>
             !wert || (zellen[i + 1] && zellen[i + 1].innerText.toLowerCase().includes(wert)));
-        zeile.style.display = anzeigen ? "" : "none";
+        const passtGlobal = !suchtext || zeile.textContent.toLowerCase().includes(suchtext);
+        zeile.style.display = passtSpalten && passtGlobal ? "" : "none";
     });
 }
 
 document.querySelectorAll(".filter-row input").forEach(input => {
-    input.addEventListener("keyup", filterTabelle);
+    input.addEventListener("keyup", zeilenFiltern);
 });
+
+document.getElementById("globalFilter").addEventListener("keyup", zeilenFiltern);
 
 function globaleSuche() {
     const suchtext = document.getElementById("globalFilter").value.toLowerCase();
