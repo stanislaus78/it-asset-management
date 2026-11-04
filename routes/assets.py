@@ -2,7 +2,7 @@ import re
 from urllib.parse import urlparse
 from hilfen import STATUS_WERTE, abfragen, mitarbeiter_pruefen
 from flask import Blueprint, redirect, render_template, request
-
+from hilfen import abfragen
 from datenbank import verbinden
 from funktionen_assets import (
     asset_existiert_sqlite, asset_freigeben_sqlite, asset_speichern_popup_sqlite,
@@ -59,11 +59,31 @@ def garantie_pruefen(daten, alter_wert=None):
 
 # ---------- Menüseiten ----------
 
+KACHELN = [
+    # (Titel, Link, Symbol, Assettypen in Kleinschreibung)
+    ("Rechner", "/assets/rechner", "💻",
+     ["laptop", "stand-pc", "dockingstation", "monitor"]),
+    ("Peripherie", "/assets/peripherie", "🖱️",
+     ["maus", "scanner", "drucker", "kopfhoerer", "switch"]),
+    ("Mobile Geräte", "/assets/mobile", "📱",
+     ["tablet", "diensthandy"]),
+    ("Medientechnik", "/assets/medientechnik", "🎥",
+     ["webcam", "kamera", "mikrofon", "aufnahmegeraet", "konferenzkamera"]),
+    ("Zubehör", "/liste/zubehoer", "📦",
+     ["zubehoer"]),
+]
+
+
 @bp.route("/assets")
 def assets_dashboard():
-    return render_template("asset_dashboard.html")
-
-
+    zaehler = dict(abfragen(
+        "SELECT LOWER(assettyp), COUNT(*) FROM assets GROUP BY LOWER(assettyp)"
+    ))
+    kacheln = [
+        (titel, link, symbol, sum(zaehler.get(t, 0) for t in typen))
+        for titel, link, symbol, typen in KACHELN
+    ]
+    return render_template("asset_dashboard.html", kacheln=kacheln)
 @bp.route("/assets/rechner")
 def rechner():
     return render_template("rechner.html")

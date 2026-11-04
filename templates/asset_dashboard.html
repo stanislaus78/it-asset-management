@@ -1,103 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Assets</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
 
-    <title>Dashboard</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='dashboard.css') }}">
-
-    <link rel="stylesheet"
-            href="{{ url_for('static', filename='sidebar.css') }}">
-
+        <style>
+        .card-container a {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+        }
+        .card-container a p {
+            margin: 0 !important;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="sidebar">
-    <div class="menu-icon">☰</div>
-    <div class="sidebar-content">
+<div class="main-content">
 
+    <h1>📦 Assets</h1>
 
+    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
 
-        <h3>👥 Assets</h3>
-
-        <p><a href="/asset/anlegen" >➕ Asset anlegen</a></p>
-
-        <p><a href="/asset/suchen">🔍 Asset suchen</a></p>
-
-        <p><a href="/asset/anzeigen">📋 Alle Assets</a>
-
-        <hr>
-
-        <h3>⚙️ VERWALTUNG</h3>
-
-        <p><a href="/asset/bearbeiten">✏️ Assets bearbeiten</a></p>
-
-
-        <p><a href="/asset/loeschen">🗑️ Assets löschen</a></p>
-
-
-        <p><a href="/asset/zuweisen">🎒 Asset zuweisen</a></p>
-
-        <p><a href="/asset/zuweisen">📦 Zugewiesene Assets</a></p>
-
-
-        <hr>
-
-        <h3>📊 AUSWERTUNG</h3>
-
-        <p><a href="/historie">📜 Assetshistorie</a></p>
-
-
+    <div class="card-container">
+        {% for titel, link, symbol, anzahl in kacheln %}
+        <a href="{{ link }}">
+            <h2>{{ symbol }} {{ titel }}</h2>
+            <p>{{ anzahl }} Assets</p>
+        </a>
+        {% endfor %}
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:10px; margin-top:30px;">
+        <a href="/suche/asset">🔍 Asset suchen</a>
+        <a href="/administration/historie">📜 Historie</a>
     </div>
 
 </div>
 
-<div class="main-content">
-
-    <hr>
-
-    <p><a href="/">Zurück zur Startseite</a></p>
-
-    <div class="card-container">
-
-    <a href="/assets/rechner">
-        <h2>Rechner</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
-
-    <a href="/assets/peripherie">
-        <h2>Peripherie</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
-
-    <a href="/assets/mobile">
-        <h2>Mobile Geräte</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
-
-    <a href="/assets/medientechnik">
-        <h2>Medientechnik</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
-
-    <a href="/liste/zubehoer">
-        <h2>Zubehör</h2>
-        <p>👥 34 Mitarbeiter</p>
-    </a>
-
-</div>
-
-
-
-
-
-</div>
-
-
-  <script src="{{ url_for('static', filename='sicher.js') }}"></script>
-  </body>
+<script src="{{ url_for('static', filename='sicher.js') }}"></script>
+</body>
 </html>

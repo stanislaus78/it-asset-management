@@ -31,8 +31,7 @@ zeige("hilfen.py", enthaelt("hilfen.py", '("arbeitsplatz", "Arbeitsplatz")'),
       'Eintrag in ASSET_SPALTEN ergänzen')
 zeige("routes/assets.py", enthaelt("routes/assets.py", "asset[29]"),
       '"arbeitsplatz": asset[29] in asset_details_json ergänzen')
-zeige("routes/asset_listen.py", enthaelt("routes/asset_listen.py", ", arbeitsplatz"),
-      "neue liste_bauen einfügen")
+
 
 print()
 fehlen = []

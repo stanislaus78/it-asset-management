@@ -35,8 +35,6 @@ from routes.mitarbeiter import bp as mitarbeiter_bp
 app.register_blueprint(mitarbeiter_bp)
 from routes.assets import bp as assets_bp
 app.register_blueprint(assets_bp)
-from routes.asset_listen import bp as asset_listen_bp
-app.register_blueprint(asset_listen_bp)
 
 from routes.login import bp as login_bp
 app.register_blueprint(login_bp)
