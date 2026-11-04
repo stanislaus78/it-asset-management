@@ -25,7 +25,8 @@ function assetLoeschen() {
             alert("⚠️ " + data.meldung);
             return;
         }
-        window.location.href = location.pathname + "?geloescht=1";
+        const pfad = "/" + location.pathname.replace(/^\/+/, "");
+        window.location.assign(pfad + "?geloescht=1");
     })
     .catch(fehler => {
         console.error(fehler);

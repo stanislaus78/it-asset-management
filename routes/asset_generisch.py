@@ -12,17 +12,30 @@ def asset_liste(slug):
     if typ is None:
         abort(404)
 
-    felder = [(n, FELDER[n][0], FELDER[n][1]) for n in typ.felder()]
-    spalten = [s for _, _, s in felder]
+    felder = []      # (name, Beschriftung, Sortierschlüssel)
+    ausdruecke = []  # SQL-Ausdrücke für das SELECT
+    for n in typ.felder():
+        spalte = FELDER[n][1]
+        if n in typ.berechnet:
+            ausdruecke.append(f"({typ.berechnet[n]}) AS {n}")
+            felder.append((n, typ.label(n), n))
+        elif n in typ.anzeige_standard:
+            vorgabe = typ.anzeige_standard[n].replace("'", "''")
+            ausdruecke.append(f"COALESCE(NULLIF({spalte}, ''), '{vorgabe}') AS {n}")
+            felder.append((n, typ.label(n), n))
+        else:
+            ausdruecke.append(spalte)
+            felder.append((n, typ.label(n), spalte))
 
+    erlaubt = [s for _, _, s in felder]
     sort = request.args.get("sort", "")
-    spalte = sort if sort in spalten else "inventarnummer"
+    spalte = sort if sort in erlaubt else "inventarnummer"
     richtung = request.args.get("richtung", "ASC")
     if richtung not in ("ASC", "DESC"):
         richtung = "ASC"
 
     zeilen = abfragen(
-        f"SELECT id, {', '.join(spalten)} FROM assets "
+        f"SELECT id, {', '.join(ausdruecke)} FROM assets "
         f"WHERE LOWER(assettyp) = ? ORDER BY {spalte} COLLATE NOCASE {richtung}",
         (typ.assettyp.lower(),),
     )

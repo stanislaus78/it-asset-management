@@ -4,12 +4,14 @@ let ausgewaehlteId = "";
 let idZumLoeschen = "";
 
 function alleFelder() {
-    return KONFIG.gruppen.flatMap(([titel, namen]) => namen);
+    // ohne berechnete Felder, die nur angezeigt werden
+    return KONFIG.gruppen.flatMap(([titel, namen]) => namen)
+        .filter(n => !KONFIG.nur_lesen.includes(n));
 }
 
-function listenOptionen(liste, aktuell) {
+function listenOptionen(liste, aktuell, ohneLeer) {
     const alle = (aktuell && !liste.includes(aktuell)) ? [aktuell, ...liste] : liste;
-    return `<option value=""></option>` + alle.map(w =>
+    return (ohneLeer ? "" : `<option value=""></option>`) + alle.map(w =>
         `<option value="${esc(w)}" ${w === aktuell ? "selected" : ""}>${esc(w)}</option>`
     ).join("");
 }
@@ -18,9 +20,25 @@ function eingabeFeld(praefix, name, wert) {
     const id = `${praefix}_${name}`;
     const liste = KONFIG.auswahl[name];
     if (liste) {
-        return `<select id="${id}">${listenOptionen(liste, wert || "")}</select>`;
+        return `<select id="${id}">${listenOptionen(liste, wert || "", KONFIG.ohne_leer.includes(name))}</select>`;
     }
     return `<input id="${id}" value="${esc(wert)}">`;
+}
+
+function feldVerbergen(praefix) {
+    Object.entries(KONFIG.verbergen).forEach(([feld, [bedingung, wert]]) => {
+        const ziel = document.getElementById(`${praefix}_${feld}`);
+        const quelle = document.getElementById(`${praefix}_${bedingung}`);
+        if (!ziel || !quelle) return;
+        const behaelter = ziel.closest("tr") || ziel.closest(".anlegen-feld");
+        const umschalten = () => {
+            const aus = quelle.value === wert;
+            if (aus) ziel.value = "";
+            behaelter.style.display = aus ? "none" : "";
+        };
+        quelle.addEventListener("change", umschalten);
+        umschalten();
+    });
 }
 
 function antwortLesen(response) {
@@ -63,13 +81,17 @@ function detailsAnzeigen() {
     fetch("/asset/details_json/" + ausgewaehlteId)
     .then(response => response.json())
     .then(data => {
+                const sichtbar = n => {
+            const regel = KONFIG.verbergen[n];
+            return !(regel && data[regel[0]] === regel[1]);
+        };
         const abschnitte = KONFIG.gruppen.map(([titel, namen]) => `
             <div class="details-section">
                 <h3>${esc(titel)}</h3>
                 <div class="details-grid">
-                    ${namen.map(n => `
+                    ${namen.filter(sichtbar).map(n => `
                         <div>${esc(KONFIG.felder[n])}</div>
-                        <div>${esc(data[n]) || "-"}</div>
+                        <div>${esc(data[n] || KONFIG.anzeige_standard[n]) || "-"}</div>
                     `).join("")}
                 </div>
             </div>
@@ -102,6 +124,7 @@ function assetBearbeiten() {
         `;
 
         benutzerAlsAuswahl("edit_benutzer");
+        feldVerbergen("edit");
         document.getElementById("bearbeitenPopup").style.display = "block";
     });
 }
@@ -151,6 +174,7 @@ function assetAnlegen() {
     `;
 
     benutzerAlsAuswahl("neu_benutzer");
+    feldVerbergen("neu");
 
     const popup = document.getElementById("anlegenPopup");
     popup.style.top = "50%";
