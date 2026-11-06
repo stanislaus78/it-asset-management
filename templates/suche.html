@@ -1,54 +1,34 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Suche</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='mitarbeiter_start.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block titel %}Suche{% endblock %}
 
-<div class="container">
-
+{% block inhalt %}
+    <div class="pfad"><a href="/">Start</a> › Suche</div>
     <h1>🔍 Suche</h1>
 
-    <div class="card-container">
-
-        <a class="card" href="/suche/asset">
+    <div class="kacheln">
+        <a class="kachel-karte" href="/suche/asset">
             <h2>📦 Asset</h2>
-            <p>Nach Inventarnummer suchen</p>
+            <div class="hinweis">Nach Inventarnummer suchen</div>
         </a>
-
-        <a class="card" href="/suche/hersteller">
+        <a class="kachel-karte" href="/suche/hersteller">
             <h2>🏭 Hersteller</h2>
-            <p>Alle Assets eines Herstellers</p>
+            <div class="hinweis">Alle Assets eines Herstellers</div>
         </a>
-
-        <a class="card" href="/suche/standort">
+        <a class="kachel-karte" href="/suche/standort">
             <h2>📍 Standort</h2>
-            <p>Assets nach Standort</p>
+            <div class="hinweis">Assets nach Standort</div>
         </a>
-
-        <a class="card" href="/suche/organisationseinheit">
+        <a class="kachel-karte" href="/suche/organisationseinheit">
             <h2>🏢 Organisationseinheit</h2>
-            <p>Assets nach Einheit</p>
+            <div class="hinweis">Assets nach Einheit</div>
         </a>
-
-        <a class="card" href="/suche/mitarbeiter">
+        <a class="kachel-karte" href="/suche/mitarbeiter">
             <h2>👤 Mitarbeiter</h2>
-            <p>Nach Name oder U-AccountID</p>
+            <div class="hinweis">Nach Name oder U-AccountID</div>
         </a>
-
-        <a class="card" href="/suche/assets-mitarbeiter">
+        <a class="kachel-karte" href="/suche/assets-mitarbeiter">
             <h2>🎒 Assets eines Mitarbeiters</h2>
-            <p>Zugewiesene Geräte anzeigen</p>
+            <div class="hinweis">Zugewiesene Geräte anzeigen</div>
         </a>
-
     </div>
-
-    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
-
-</div>
-
-  <script src="{{ url_for('static', filename='sicher.js') }}"></script>
-  </body>
-</html>
+{% endblock %}

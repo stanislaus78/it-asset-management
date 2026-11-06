@@ -1,69 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Administration</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='mitarbeiter_start.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block titel %}Administration{% endblock %}
 
-<div class="container">
-
+{% block inhalt %}
+    <div class="pfad"><a href="/">Start</a> › Administration</div>
     <h1>⚙️ Administration</h1>
 
-    <div class="card-container">
-
-        <a class="card" href="/historie">
+    <div class="kacheln">
+        <a class="kachel-karte" href="/historie">
             <h2>📜 Historie</h2>
-            <p>Änderungsprotokoll</p>
+            <div class="hinweis">Änderungsprotokoll</div>
         </a>
-
-        <a class="card" href="/administration/datenqualitaet">
+        <a class="kachel-karte" href="/administration/datenqualitaet">
             <h2>🩺 Datenqualität</h2>
-            <p>Fehlende und fehlerhafte Daten</p>
+            <div class="hinweis">Fehlende und fehlerhafte Daten</div>
         </a>
-
-        <a class="card" href="/administration/export/assets">
+        <a class="kachel-karte" href="/administration/export/assets">
             <h2>📥 Assets exportieren</h2>
-            <p>CSV für Excel</p>
+            <div class="hinweis">CSV für Excel</div>
         </a>
-
-        <a class="card" href="/administration/export/mitarbeiter">
+        <a class="kachel-karte" href="/administration/export/mitarbeiter">
             <h2>📥 Mitarbeiter exportieren</h2>
-            <p>CSV für Excel</p>
+            <div class="hinweis">CSV für Excel</div>
         </a>
-
-        <a class="card" href="/administration/export/backup">
+        <a class="kachel-karte" href="/administration/export/backup">
             <h2>💾 Datenbank-Backup</h2>
-            <p>Kopie der gesamten Datenbank</p>
+            <div class="hinweis">Kopie der gesamten Datenbank</div>
         </a>
-
-        <a class="card" href="/benutzer">
+        <a class="kachel-karte" href="/benutzer">
             <h2>👥 Benutzer</h2>
-            <p>Anlegen, Rollen und Passwörter</p>
+            <div class="hinweis">Anlegen, Rollen und Passwörter</div>
         </a>
-
-        <a class="card" href="/administration/import">
+        <a class="kachel-karte" href="/administration/import">
             <h2>📤 Import aus Excel</h2>
-            <p>Mitarbeiter und Assets einlesen</p>
+            <div class="hinweis">Mitarbeiter und Assets einlesen</div>
         </a>
-
-                <a class="card" href="/administration/backups">
-            <h2>💾 Backups</h2>
-            <p>Automatische Sicherungen</p>
+        <a class="kachel-karte" href="/administration/backups">
+            <h2>🗄️ Backups</h2>
+            <div class="hinweis">Automatische Sicherungen</div>
         </a>
-
-        <a class="card" href="/administration/tests">
-            <h2>💾 Test</h2>
-            <p>Automatische Sicherungen</p>
+        <a class="kachel-karte" href="/administration/tests">
+            <h2>🧪 Tests</h2>
+            <div class="hinweis">Automatische Tests ausführen</div>
         </a>
-
     </div>
-
-    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
-
-</div>
-
-  <script src="{{ url_for('static', filename='sicher.js') }}"></script>
-  </body>
-</html>
+{% endblock %}

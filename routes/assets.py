@@ -394,3 +394,46 @@ def asset_details(inventarnummer):
 @bp.route("/asset/status_json")
 def asset_status_json():
     return STATUS_WERTE
+
+# ---------- Scannen ----------
+
+SLUG_NACH_TYP = {t.assettyp.lower(): t.slug for t in TYPEN.values()}
+
+
+@bp.route("/scan")
+def scan_seite():
+    return render_template("scan.html")
+
+
+@bp.route("/scan/suche")
+def scan_suche():
+    code = request.args.get("code", "").strip()
+    if not code:
+        return {"status": "fehler", "meldung": "Kein Code übergeben."}
+
+    zeilen = abfragen(
+        "SELECT inventarnummer, rechnername, assettyp, hersteller, modell, status, "
+        "mitarbeiter, standort, zimmer, arbeitsplatz, seriennummer "
+        "FROM assets WHERE LOWER(TRIM(inventarnummer)) = LOWER(?)",
+        (code,)
+    )
+    if not zeilen:
+        return {"status": "nicht_gefunden", "meldung": f"'{code}' ist nicht vorhanden."}
+
+    (inv, rechnername, typ, hersteller, modell, status,
+     benutzer, standort, zimmer, arbeitsplatz, seriennummer) = zeilen[0]
+
+    return {
+        "status": "ok",
+        "inventarnummer": inv,
+        "rechnername": rechnername or "",
+        "assettyp": typ or "",
+        "geraet": " ".join(x for x in (hersteller, modell) if x),
+        "asset_status": status or "",
+        "benutzer": benutzer or "",
+        "standort": standort or "",
+        "zimmer": zimmer or "",
+        "arbeitsplatz": arbeitsplatz or "",
+        "seriennummer": seriennummer or "",
+        "liste": "/liste/" + SLUG_NACH_TYP.get((typ or "").lower(), ""),
+    }

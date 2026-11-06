@@ -19,6 +19,7 @@
         <a href="/assets" class="{{ 'aktiv' if pfad.startswith('/assets') or pfad.startswith('/liste') or pfad.startswith('/asset/') }}">Assets</a>
         <a href="/mitarbeiter" class="{{ 'aktiv' if pfad.startswith('/mitarbeiter') }}">Mitarbeiter</a>
         <a href="/suche" class="{{ 'aktiv' if pfad.startswith('/suche') }}">Suche</a>
+        <a href="/scan" class="{{ 'aktiv' if pfad.startswith('/scan') }}">Scannen</a>
         <a href="/infos" class="{{ 'aktiv' if pfad.startswith('/infos') }}">Infos</a>
         {% if session.get('rolle') != 'leser' %}
         <a href="/administration" class="{{ 'aktiv' if pfad.startswith('/administration') }}">Administration</a>

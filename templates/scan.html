@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block titel %}Scannen{% endblock %}
+
+{% block kopf %}
+<style>
+    .scan-feld { width: 100%; max-width: 480px; padding: 14px; font-size: 20px;
+                 border: 2px solid var(--blau); border-radius: 8px; }
+    .treffer { margin-top: 22px; max-width: 640px; padding: 18px 20px; background: var(--karte);
+               border: 1px solid var(--rand); border-radius: var(--radius); box-shadow: var(--schatten); }
+    .treffer h2 { margin: 0 0 10px; }
+    .treffer.fehler { border-color: #e0a0a0; background: #fdf1f1; color: #a40000; }
+    .treffer table { border-collapse: collapse; }
+    .treffer td { padding: 4px 18px 4px 0; vertical-align: top; }
+    .treffer td:first-child { color: var(--text-leise); }
+    .verlauf { margin-top: 26px; max-width: 640px; color: var(--text-leise); font-size: 14px; }
+    .verlauf div { padding: 3px 0; }
+</style>
+{% endblock %}
+
+{% block inhalt %}
+<div class="pfad"><a href="/">Start</a> › Scannen</div>
+<h1>📷 Scannen</h1>
+<p>Etikett mit dem Scanner oder der Handykamera lesen oder die Inventarnummer eintippen und Enter drücken.</p>
+
+<input id="scanFeld" class="scan-feld" type="text" autocomplete="off" autofocus
+       placeholder="Inventarnummer scannen …">
+
+<p>
+    <button id="kameraKnopf" type="button" style="padding:10px 16px; font-size:16px;">📷 Kamera starten</button>
+</p>
+<div id="kamera" style="max-width:420px; display:none;"></div>
+
+<div id="treffer"></div>
+<div class="verlauf" id="verlauf"></div>
+{% endblock %}
+
+{% block skripte %}
+<script src="{{ url_for('static', filename='html5-qrcode.min.js') }}"></script>
+<script>
+const feld = document.getElementById("scanFeld");
+const treffer = document.getElementById("treffer");
+const verlauf = document.getElementById("verlauf");
+const verlaufListe = [];
+
+function e(t) {
+    return String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function zeile(name, wert) {
+    return wert ? `<tr><td>${name}</td><td>${e(wert)}</td></tr>` : "";
+}
+
+feld.addEventListener("keydown", ev => {
+    if (ev.key !== "Enter") return;
+    ev.preventDefault();
+    const code = feld.value.trim();
+    feld.value = "";
+    if (!code) return;
+
+    fetch("/scan/suche?code=" + encodeURIComponent(code))
+    .then(r => r.json())
+    .then(d => {
+        if (d.status !== "ok") {
+            treffer.innerHTML = `<div class="treffer fehler"><b>⚠️ ${e(d.meldung)}</b></div>`;
+            verlaufListe.unshift("❌ " + code);
+        } else {
+            treffer.innerHTML = `
+                <div class="treffer">
+                    <h2>${e(d.inventarnummer)} · ${e(d.assettyp)}</h2>
+                    <table>
+                        ${zeile("Rechnername", d.rechnername)}
+                        ${zeile("Gerät", d.geraet)}
+                        ${zeile("Seriennummer", d.seriennummer)}
+                        ${zeile("Status", d.asset_status)}
+                        ${zeile("Benutzer", d.benutzer)}
+                        ${zeile("Standort", d.standort)}
+                        ${zeile("Zimmer", d.zimmer)}
+                        ${zeile("Arbeitsplatz", d.arbeitsplatz)}
+                    </table>
+                    ${d.liste.length > 7 ? `<p><a href="${e(d.liste)}">Zur ${e(d.assettyp)}-Liste</a></p>` : ""}
+                </div>`;
+            verlaufListe.unshift("✅ " + d.inventarnummer + " – " + d.assettyp);
+        }
+        verlauf.innerHTML = verlaufListe.slice(0, 10).map(t => `<div>${e(t)}</div>`).join("");
+    })
+    .catch(() => {
+        treffer.innerHTML = '<div class="treffer fehler"><b>⚠️ Abfrage fehlgeschlagen.</b></div>';
+    })
+    .finally(() => { if (!leser) feld.focus(); });
+});
+
+// Fokus bleibt im Feld (nur ohne laufende Kamera, sonst öffnet sich am Handy die Tastatur)
+document.addEventListener("click", ev => {
+    if (!leser && !ev.target.closest("a, button")) feld.focus();
+});
+
+// ---------- Kamera ----------
+let leser = null;
+let letzterCode = "";
+let letzteZeit = 0;
+
+document.getElementById("kameraKnopf").addEventListener("click", async () => {
+    const knopf = document.getElementById("kameraKnopf");
+    const bereich = document.getElementById("kamera");
+
+    if (leser) {                       // zweiter Klick: Kamera ausschalten
+        await leser.stop();
+        leser.clear();
+        leser = null;
+        bereich.style.display = "none";
+        knopf.textContent = "📷 Kamera starten";
+        return;
+    }
+
+    bereich.style.display = "block";
+    leser = new Html5Qrcode("kamera");
+    try {
+        await leser.start(
+            { facingMode: "environment" },          // Rückkamera
+            { fps: 10, qrbox: { width: 240, height: 240 } },
+            text => {
+                const jetzt = Date.now();
+                if (text === letzterCode && jetzt - letzteZeit < 3000) return;  // Doppellesung
+                letzterCode = text;
+                letzteZeit = jetzt;
+                feld.value = text;
+                feld.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+            }
+        );
+        knopf.textContent = "⏹ Kamera stoppen";
+    } catch (fehler) {
+        bereich.style.display = "none";
+        leser = null;
+        treffer.innerHTML = '<div class="treffer fehler"><b>⚠️ Kamera nicht verfügbar. '
+            + 'Auf dem Handy braucht die Seite HTTPS und die Kameraerlaubnis.</b></div>';
+    }
+});
+</script>
+{% endblock %}

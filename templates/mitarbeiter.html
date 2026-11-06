@@ -1,22 +1,13 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
+{% block titel %}Mitarbeiter{% endblock %}
 
-<head>
+{% block kopf %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dropdowns.css') }}">
+{% endblock %}
 
-    <title>Mitarbeiter</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='assets_liste_tables.css') }}">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='dropdowns.css') }}">
-
-</head>
-
-<body>
+{% block inhalt %}
+<div class="pfad"><a href="/">Start</a> › <a href="/mitarbeiter">Mitarbeiter</a> › Alle</div>
 
 <div class="container">
 
@@ -369,13 +360,6 @@
 
     </div>
 
-    <br><br>
-
-    <p><a href="javascript:history.back()">⬅️ Zurück</a></p>
-
-    <p><a href="/mitarbeiter">📦 Mitarbeiter</a></p>
-
-    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
 
 </div>
 <script>
@@ -1148,7 +1132,5 @@ window.addEventListener("DOMContentLoaded", function () {
     ✅ Mitarbeiter wurde gelöscht
 </div>
 
-  <script src="{{ url_for('static', filename='sicher.js') }}"></script>
-  </body>
-</html>
+  {% endblock %}
 

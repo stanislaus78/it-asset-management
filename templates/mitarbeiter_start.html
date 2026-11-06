@@ -1,36 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Mitarbeiter</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='mitarbeiter_start.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block titel %}Mitarbeiter{% endblock %}
 
-<div class="container">
-
+{% block inhalt %}
+    <div class="pfad"><a href="/">Start</a> › Mitarbeiter</div>
     <h1>👥 Mitarbeiter</h1>
 
-    <div class="toolbar">
-        <a href="/mitarbeiter/anzeigen"><button>📋 Alle Mitarbeiter</button></a>
-    </div>
-
-    <div class="card-container">
-        {% for einheit, anzahl in einheiten %}
-        <a class="card" href="/mitarbeiter/anzeigen?einheit={{ einheit|urlencode }}">
-            <h2>{{ einheit }}</h2>
-            <p>👥 {{ anzahl }} Mitarbeiter</p>
+    <div class="kacheln">
+        <a class="kachel-karte" href="/mitarbeiter/anzeigen">
+            <h2>📋 Alle Mitarbeiter</h2>
+            <div class="hinweis">{{ einheiten | sum(attribute=1) }} Mitarbeiter insgesamt</div>
         </a>
-        {% else %}
-        <p>Noch keine Mitarbeiter angelegt.</p>
+
+        {% for name, anzahl in einheiten %}
+        <a class="kachel-karte" href="/mitarbeiter/anzeigen?einheit={{ name | urlencode }}">
+            <h2>{{ name }}</h2>
+            <div class="hinweis">{{ anzahl }} {{ 'Mitarbeiter' if anzahl != 1 else 'Mitarbeiter' }}</div>
+        </a>
         {% endfor %}
     </div>
-
-    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
-
-</div>
-
-  <script src="{{ url_for('static', filename='sicher.js') }}"></script>
-  </body>
-</html>
+{% endblock %}
