@@ -1,64 +1,13 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
+{% block titel %}IT Asset Management{% endblock %}
 
-<head>
+{% block inhalt %}
+    <h1>Zentrum für LehrerInnenbildung</h1>
 
-    <title>IT Asset Management Dashboard</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='dashboard.css') }}">
-
-</head>
-
-<body>
-
-    <h2 style="text-align: center; color: #666;">
-        Zentrum für LehrerInnenbildung
-    </h2>
-
-    <h1>
-        💻 IT Asset Management Dashboard
-    </h1>
-
-    <div class="container">
-
-        <div class="kachel">
-            <div class="titel">📦 Assets</div>
-            <div class="zahl">{{ assets }}</div>
-        </div>
-
-        <div class="kachel">
-            <div class="titel">👤 Mitarbeiter</div>
-            <div class="zahl">{{ mitarbeiter }}</div>
-        </div>
-
-        <div class="kachel">
-            <div class="titel">✅ Ausgegeben</div>
-            <div class="zahl">{{ ausgegeben }}</div>
-        </div>
-
-        <div class="kachel">
-            <div class="titel">🏢 Im Lager</div>
-            <div class="zahl">{{ lager }}</div>
-        </div>
-
+    <div class="kacheln">
+        <div class="kachel-karte"><div class="titel">Assets</div><div class="zahl">{{ assets }}</div></div>
+        <div class="kachel-karte"><div class="titel">Mitarbeiter</div><div class="zahl">{{ mitarbeiter }}</div></div>
+        <div class="kachel-karte"><div class="titel">Ausgegeben</div><div class="zahl">{{ ausgegeben }}</div></div>
+        <div class="kachel-karte"><div class="titel">Im Lager</div><div class="zahl">{{ lager }}</div></div>
     </div>
-
-    <div class="navigation">
-
-        <a href="/assets">📦 Assets</a>
-        <a href="/mitarbeiter">👤Mitarbeiter</a>
-        <a href="/suche">🔍Suche</a>
-        <a href="/infos">📊 Infos</a>
-        <a href="/administration">⚙️ Administration</a>
-        <!--<a href="/historie">🚪 Historie</a>-->
-
-    </div>
-
-  <script src="{{ url_for('static', filename='sicher.js') }}"></script>
-  </body>
-
-</html>
+{% endblock %}

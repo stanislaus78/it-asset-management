@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Tests</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block titel %}Tests{% endblock %}
+
+{% block kopf %}
+<style>
+    .dreher {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 10px;
+        vertical-align: -3px;
+        border: 3px solid #cfd6dd;
+        border-top-color: var(--blau, #0078d4);
+        border-radius: 50%;
+        animation: dreh 0.8s linear infinite;
+    }
+    @keyframes dreh { to { transform: rotate(360deg); } }
+
+    .laufbalken {
+        height: 4px;
+        margin-top: 10px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, transparent, var(--blau, #0078d4), transparent);
+        background-size: 40% 100%;
+        background-repeat: no-repeat;
+        animation: lauf 1.2s ease-in-out infinite;
+    }
+    @keyframes lauf { from { background-position: -40% 0; } to { background-position: 140% 0; } }
+</style>
+{% endblock %}
+
+{% block inhalt %}
+<div class="pfad"><a href="/">Start</a> › <a href="/administration">Administration</a> › Tests</div>
+
 <div class="container">
 
     <h1>🧪 Automatische Tests</h1>
@@ -22,11 +49,10 @@
         </details>
     </div>
 
-    <br><br>
-    <p><a href="/administration">⬅️ Zurück zur Administration</a></p>
-
 </div>
+{% endblock %}
 
+{% block skripte %}
 <script>
 function testsStarten() {
     const knopf = document.getElementById("startKnopf");
@@ -38,7 +64,8 @@ function testsStarten() {
     bereich.style.display = "block";
     banner.style.background = "#eee";
     banner.style.color = "#333";
-    banner.innerText = "Bitte warten, der Lauf dauert etwa 10 bis 20 Sekunden.";
+    banner.innerHTML = '<span class="dreher"></span>Bitte warten, der Lauf dauert etwa 10 bis 20 Sekunden.'
+                     + '<div class="laufbalken"></div>';
     document.getElementById("ausgabe").innerText = "";
 
     fetch("/administration/tests/starten", { method: "POST" })
@@ -72,5 +99,4 @@ function testsStarten() {
     });
 }
 </script>
-</body>
-</html>
+{% endblock %}

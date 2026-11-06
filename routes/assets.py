@@ -1,4 +1,5 @@
 import re
+from asset_typen import TYPEN
 from urllib.parse import urlparse
 from hilfen import STATUS_WERTE, abfragen, mitarbeiter_pruefen
 from flask import Blueprint, redirect, render_template, request
@@ -62,9 +63,9 @@ def garantie_pruefen(daten, alter_wert=None):
 KACHELN = [
     # (Titel, Link, Symbol, Assettypen in Kleinschreibung)
     ("Rechner", "/assets/rechner", "💻",
-     ["laptop", "stand-pc", "dockingstation", "monitor"]),
+     ["laptop", "stand-pc"]),
     ("Peripherie", "/assets/peripherie", "🖱️",
-     ["maus", "scanner", "drucker", "kopfhoerer", "switch"]),
+     ["maus", "scanner", "drucker", "kopfhoerer", "switch", "dockingstation", "monitor"]),
     ("Mobile Geräte", "/assets/mobile", "📱",
      ["tablet", "diensthandy"]),
     ("Medientechnik", "/assets/medientechnik", "🎥",
@@ -84,24 +85,42 @@ def assets_dashboard():
         for titel, link, symbol, typen in KACHELN
     ]
     return render_template("asset_dashboard.html", kacheln=kacheln)
+GRUPPEN = {
+    # Schlüssel: (Titel, Symbol, Slugs aus asset_typen.TYPEN)
+    "rechner":       ("Rechner", "💻", ["laptop", "standpc"]),
+    "peripherie":    ("Peripherie", "🖱️",
+                      ["maus", "scanner", "drucker", "kopfhoerer", "switch",
+                       "dockingstation", "monitor"]),
+    "mobile":        ("Mobile Geräte", "📱", ["tablet", "diensthandy"]),
+    "medientechnik": ("Medientechnik", "🎥",
+                      ["webcam", "kamera", "mikrofon", "aufnahmegeraet", "konferenzkamera"]),
+}
+
+
+def _gruppe_anzeigen(schluessel):
+    titel, symbol, slugs = GRUPPEN[schluessel]
+    typen = [TYPEN[s] for s in slugs if s in TYPEN]
+    return render_template("asset_gruppe.html", titel=titel, symbol=symbol, typen=typen)
+
+
 @bp.route("/assets/rechner")
 def rechner():
-    return render_template("rechner.html")
+    return _gruppe_anzeigen("rechner")
 
 
 @bp.route("/assets/mobile")
 def mobile():
-    return render_template("mobile.html")
+    return _gruppe_anzeigen("mobile")
 
 
 @bp.route("/assets/peripherie")
 def peripherie():
-    return render_template("peripherie.html")
+    return _gruppe_anzeigen("peripherie")
 
 
 @bp.route("/assets/medientechnik")
 def medientechnik():
-    return render_template("medientechnik.html")
+    return _gruppe_anzeigen("medientechnik")
 
 
 # ---------- Anlegen, Bearbeiten, Löschen ----------

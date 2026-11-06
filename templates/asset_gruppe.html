@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titel %}{{ titel }}{% endblock %}
+
+{% block inhalt %}
+    <div class="pfad"><a href="/">Start</a> › <a href="/assets">Assets</a> › {{ titel }}</div>
+    <h1>{{ symbol }} {{ titel }}</h1>
+
+    <div class="kacheln">
+        {% for t in typen %}
+        <a class="kachel-karte" href="/liste/{{ t.slug }}">
+            <h2>{{ t.icon }} {{ t.titel }}</h2>
+        </a>
+        {% endfor %}
+    </div>
+{% endblock %}

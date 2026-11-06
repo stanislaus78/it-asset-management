@@ -1,45 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Assets</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+{% extends "base.html" %}
+{% block titel %}Assets{% endblock %}
 
-        <style>
-        .card-container a {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-        }
-        .card-container a p {
-            margin: 0 !important;
-        }
-    </style>
-</head>
-<body>
+{% block inhalt %}
+    <div class="pfad"><a href="/">Start</a> › Assets</div>
+    <h1>Assets</h1>
 
-<div class="main-content">
-
-    <h1>📦 Assets</h1>
-
-    <p><a href="/">⬅️ Zurück zur Startseite</a></p>
-
-    <div class="card-container">
+    <div class="kacheln">
         {% for titel, link, symbol, anzahl in kacheln %}
-        <a href="{{ link }}">
+        <a class="kachel-karte" href="{{ link }}">
             <h2>{{ symbol }} {{ titel }}</h2>
-            <p>{{ anzahl }} Assets</p>
+               <div class="hinweis">{{ anzahl }} {{ 'Asset' if anzahl == 1 else 'Assets' }}</div>
         </a>
         {% endfor %}
     </div>
-    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:10px; margin-top:30px;">
-        <a href="/suche/asset">🔍 Asset suchen</a>
-        <a href="/administration/historie">📜 Historie</a>
-    </div>
 
-</div>
-
-<script src="{{ url_for('static', filename='sicher.js') }}"></script>
-</body>
-</html>
+    <p><a href="/suche/asset">Asset suchen</a> · <a href="/administration/historie">Historie</a></p>
+{% endblock %}

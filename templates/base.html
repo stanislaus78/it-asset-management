@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titel %}IT Asset Management{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    {% block kopf %}{% endblock %}
+</head>
+<body>
+
+<header class="kopfleiste">
+    <a class="marke" href="/">IT-Assets <span>ZLB</span></a>
+
+    <nav>
+        {% set pfad = request.path %}
+        <a href="/" class="{{ 'aktiv' if pfad == '/' }}">Start</a>
+        <a href="/assets" class="{{ 'aktiv' if pfad.startswith('/assets') or pfad.startswith('/liste') or pfad.startswith('/asset/') }}">Assets</a>
+        <a href="/mitarbeiter" class="{{ 'aktiv' if pfad.startswith('/mitarbeiter') }}">Mitarbeiter</a>
+        <a href="/suche" class="{{ 'aktiv' if pfad.startswith('/suche') }}">Suche</a>
+        <a href="/infos" class="{{ 'aktiv' if pfad.startswith('/infos') }}">Infos</a>
+        {% if session.get('rolle') != 'leser' %}
+        <a href="/administration" class="{{ 'aktiv' if pfad.startswith('/administration') }}">Administration</a>
+        {% endif %}
+    </nav>
+
+    <div id="benutzerSlot"></div>
+</header>
+
+<main class="seite">
+    {% block inhalt %}{% endblock %}
+</main>
+
+{% block skripte %}{% endblock %}
+<script src="{{ url_for('static', filename='sicher.js') }}"></script>
+</body>
+</html>

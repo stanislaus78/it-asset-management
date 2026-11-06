@@ -148,15 +148,27 @@ new MutationObserver(datumAktualisieren).observe(document.body, { childList: tru
 const ROLLEN_NAMEN = { admin: "Administrator", bearbeiter: "Bearbeiter", leser: "Nur lesen" };
 
 function anmeldungAnzeigen(d) {
+    const html =
+        `👤 <b>${esc(d.benutzer)}</b> (${esc(ROLLEN_NAMEN[d.rolle] || d.rolle)})` +
+        ` · <a href="/passwort">Passwort</a>` +
+        ` · <a href="/logout">Abmelden</a>`;
+
+    const slot = document.getElementById("benutzerSlot");
+    if (slot) {                       // Seite mit Kopfleiste
+        const feld = document.createElement("div");
+        feld.className = "benutzer";
+        feld.innerHTML = html;
+        slot.appendChild(feld);
+        return;
+    }
+
+    // Seiten ohne Kopfleiste: wie bisher oben rechts
     const feld = document.createElement("div");
     feld.style.cssText =
         "position:fixed; top:8px; right:12px; z-index:1000; font-size:13px;" +
         "background:white; border:1px solid #ccc; border-radius:8px;" +
         "padding:5px 12px; box-shadow:0 1px 4px rgba(0,0,0,0.12);";
-    feld.innerHTML =
-        `👤 <b>${esc(d.benutzer)}</b> (${esc(ROLLEN_NAMEN[d.rolle] || d.rolle)})` +
-        ` · <a href="/passwort">🔑 Passwort</a>` +
-        ` · <a href="/logout">🚪 Logout</a>`;
+    feld.innerHTML = html;
     document.body.appendChild(feld);
 }
 

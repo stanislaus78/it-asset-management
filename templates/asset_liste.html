@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ typ.titel }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% extends "base.html" %}
+{% block titel %}{{ typ.titel }}{% endblock %}
+
+{% block kopf %}
     <link rel="stylesheet" href="{{ url_for('static', filename='assets_liste_tables.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='dropdowns.css') }}">
-</head>
-<body>
+{% endblock %}
+
+{% block inhalt %}
+<div class="pfad"><a href="/">Start</a> › <a href="/assets">Assets</a> › {{ typ.titel }}</div>
 
 <div class="container">
 
@@ -21,7 +22,7 @@
 
     <div style="margin-top:10px; text-align:left;">
         <input type="text" id="globalFilter" placeholder="🔍 In allen Spalten suchen..."
-               style="width:400px; padding:8px; font-size:14px; border:1px solid #ccc; border-radius:5px;">
+               style="width:400px; max-width:100%; padding:8px; font-size:14px; border:1px solid #ccc; border-radius:5px;">
     </div>
 
     <div style="overflow-x:auto;">
@@ -54,10 +55,6 @@
             {% endfor %}
         </table>
     </div>
-
-    <br><br>
-    <p><a href="javascript:history.back()">⬅️ Zurück</a></p>
-    <p><a href="/assets">📦 Assets</a></p>
 
 </div>
 
@@ -95,10 +92,10 @@
 </div>
 
 <div id="meldung" class="toast">✅ Asset wurde gelöscht</div>
+{% endblock %}
 
+{% block skripte %}
 <script>window.ASSET_KONFIG = {{ konfig|tojson }};</script>
 <script src="{{ url_for('static', filename='asset_liste.js') }}"></script>
 <script src="{{ url_for('static', filename='mitarbeiter_auswahl.js') }}"></script>
-<script src="{{ url_for('static', filename='sicher.js') }}"></script>
-</body>
-</html>
+{% endblock %}

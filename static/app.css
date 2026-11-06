@@ -1,0 +1,128 @@
+:root {
+    --blau: #0078d4;
+    --blau-dunkel: #005ea6;
+    --text: #1f2933;
+    --text-leise: #66717d;
+    --hintergrund: #f4f6f8;
+    --karte: #ffffff;
+    --rand: #dde2e7;
+    --radius: 10px;
+    --schatten: 0 1px 3px rgba(0,0,0,0.08), 0 4px 14px rgba(0,0,0,0.05);
+}
+
+body {
+    margin: 0;
+    background: var(--hintergrund);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ---------- Kopfleiste ---------- */
+.kopfleiste {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 0 24px;
+    height: 54px;
+    background: var(--karte);
+    border-bottom: 1px solid var(--rand);
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+.marke {
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--text);
+    text-decoration: none;
+}
+.marke span { color: var(--blau); }
+
+.kopfleiste nav { display: flex; gap: 4px; flex: 1; }
+
+.kopfleiste nav a {
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: var(--text-leise);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+.kopfleiste nav a:hover { background: var(--hintergrund); color: var(--text); }
+.kopfleiste nav a.aktiv { background: #e6f1fb; color: var(--blau-dunkel); }
+
+#benutzerSlot .benutzer { font-size: 13px; color: var(--text-leise); white-space: nowrap; }
+#   #benutzerSlot .benutzer a { color: var(--blau); text-decoration: none; margin: 0 0 0 4px; }
+#benutzerSlot .benutzer a:hover { text-decoration: underline; }
+
+/* ---------- Seite ---------- */
+.seite {
+    max-width: 1850px;
+    margin: 0 auto;
+    padding: 24px;
+}
+.seite .container { width: auto; max-width: none; margin: 0; }
+.seite h1 { text-align: left; font-size: 26px; margin: 0 0 18px; }
+.seite h2 { text-align: left; color: var(--text); }
+
+/* ---------- Kacheln ---------- */
+.kacheln {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin: 18px 0 26px;
+}
+
+.kachel-karte {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 110px;
+    padding: 18px 20px;
+    background: var(--karte);
+    border: 1px solid var(--rand);
+    border-radius: var(--radius);
+    box-shadow: var(--schatten);
+    color: var(--text);
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+a.kachel-karte:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.kachel-karte .titel { font-size: 15px; font-weight: 600; color: var(--text-leise); }
+.kachel-karte .zahl { font-size: 34px; font-weight: 700; color: var(--text); }
+.kachel-karte .hinweis { font-size: 14px; color: var(--text-leise); }
+.kachel-karte h2 { margin: 0; font-size: 20px; }
+
+/* ---------- Pfad ---------- */
+.pfad { font-size: 13px; color: var(--text-leise); margin-bottom: 8px; }
+.pfad a { color: var(--blau); text-decoration: none; }
+.pfad a:hover { text-decoration: underline; }
+
+.seite p a { color: var(--blau); text-decoration: none; }
+.seite p a:hover { text-decoration: underline; }
+
+.dreher {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    vertical-align: -3px;
+    border: 3px solid #cfd6dd;
+    border-top-color: var(--blau, #0078d4);
+    border-radius: 50%;
+    animation: dreh 0.8s linear infinite;
+}
+@keyframes dreh { to { transform: rotate(360deg); } }
+
+/* Laufbalken unter dem Text */
+.laufbalken {
+    height: 4px;
+    margin-top: 10px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--blau, #0078d4), transparent);
+    background-size: 40% 100%;
+    background-repeat: no-repeat;
+    animation: lauf 1.2s ease-in-out infinite;
+}
+@keyframes lauf { from { background-position: -40% 0; } to { background-position: 140% 0; } }
