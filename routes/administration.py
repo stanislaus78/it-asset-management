@@ -16,9 +16,57 @@ from hilfen import (
     ASSET_KOPF, ASSET_SQL, ORGANISATIONSEINHEITEN, STANDORTE_LISTE,
     abfragen, admin_noetig,
 )
+import subprocess
+import sys
+import threading
+import time
+from pathlib import Path
+
+from flask import render_template
+
+from hilfen import admin_noetig
 
 bp = Blueprint("administration", __name__)
 
+PROJEKT_ORDNER = Path(__file__).resolve().parent.parent
+test_sperre = threading.Lock()
+
+
+@bp.route("/administration/tests")
+@admin_noetig
+def tests_seite():
+    return render_template("tests.html")
+
+
+@bp.route("/administration/tests/starten", methods=["POST"])
+@admin_noetig
+def tests_starten():
+    if not test_sperre.acquire(blocking=False):
+        return {"status": "fehler", "meldung": "Es läuft bereits ein Testlauf."}
+
+    try:
+        start = time.time()
+        try:
+            ergebnis = subprocess.run(
+                [sys.executable, "-m", "pytest", "-q", "--color=no",
+                 "--tb=short", "-p", "no:cacheprovider"],
+                cwd=PROJEKT_ORDNER, capture_output=True, timeout=180,
+            )
+        except subprocess.TimeoutExpired:
+            return {"status": "fehler",
+                    "meldung": "Der Testlauf dauerte länger als 3 Minuten und wurde abgebrochen."}
+
+        ausgabe = (ergebnis.stdout + ergebnis.stderr).decode("utf-8", errors="replace")
+        zeilen = [z for z in ausgabe.strip().splitlines() if z.strip()]
+        return {
+            "status": "ok",
+            "bestanden": ergebnis.returncode == 0,
+            "zusammenfassung": zeilen[-1] if zeilen else "Keine Ausgabe",
+            "ausgabe": ausgabe,
+            "dauer": round(time.time() - start, 1),
+        }
+    finally:
+        test_sperre.release()
 
 def csv_zelle(wert):
     if wert is None:
