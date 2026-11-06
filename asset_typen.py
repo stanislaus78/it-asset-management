@@ -146,7 +146,8 @@ TYPEN = {t.slug: t for t in [
             BEMERKUNG,
         ],
         berechnet={"laptop": (
-            "SELECT GROUP_CONCAT(l.inventarnummer, ', ') FROM assets l "
+            "SELECT GROUP_CONCAT(COALESCE(NULLIF(l.rechnername, ''), l.inventarnummer), ', ') "
+            "FROM assets l "
             "WHERE l.dockingstation = assets.inventarnummer "
             "AND LOWER(l.assettyp) = 'laptop'")},
     ),
@@ -191,5 +192,14 @@ TYPEN = {t.slug: t for t in [
         ],
         auswahl={"verwendungsart": ["Arbeits-PC", "Hörsaal-PC", "Labor-PC"]},
         ohne_leer=("verwendungsart",),
+    ),
+    Typ(
+        slug="monitor", assettyp="Monitor", titel="Monitore", einzahl="Monitor", icon="🖥️",
+        gruppen=[
+            ALLGEMEIN, STANDORT,
+            ("Hardware", ["hersteller", "modell", "displaygroesse"]),
+            ("Verwaltung", ["status", "garantie", "anschaffungsdatum"]),
+            BEMERKUNG,
+        ],
     ),
 ]}

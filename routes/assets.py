@@ -326,7 +326,7 @@ def asset_details_json(id):
     if (asset[10] or "").lower() == "dockingstation":
         with closing(verbinden()) as verbindung:
             zeilen = verbindung.execute(
-                "SELECT inventarnummer FROM assets "
+                "SELECT COALESCE(NULLIF(rechnername, ''), inventarnummer) FROM assets "
                 "WHERE dockingstation = ? AND LOWER(assettyp) = 'laptop'",
                 (asset[1],)
             ).fetchall()

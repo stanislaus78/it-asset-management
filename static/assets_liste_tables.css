@@ -34,3 +34,7 @@ tr:hover {
     font-size: 11px;
     box-sizing: border-box;
 }
+
+td {
+    white-space: nowrap;
+}

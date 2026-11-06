@@ -208,6 +208,22 @@ function assetNeuSpeichern() {
     });
 }
 
+// Wird beim Anlegen ein Benutzer gewählt, springt der Status auf "Ausgegeben"
+document.getElementById("anlegenInhalt").addEventListener("change", event => {
+    if (event.target.id !== "neu_benutzer" || !event.target.value) return;
+
+    const status = document.getElementById("neu_status");
+    if (!status) return;
+
+    if (status.tagName === "SELECT" &&
+        ![...status.options].some(o => o.value === "Ausgegeben")) {
+        return;   // Typen mit eigenem Status (z. B. Leihgerät/Festgerät) bleiben unberührt
+    }
+
+    if (status.value === "" || status.value === "Lager") {
+        status.value = "Ausgegeben";
+    }
+});
 /* ---------- Auswahl, Filter, Suche ---------- */
 
 function pruefeAuswahl() {
